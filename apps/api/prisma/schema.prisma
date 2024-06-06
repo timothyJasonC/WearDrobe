@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -16,7 +13,6 @@ enum Gender {
 }
 
 enum Role {
-  user
   warAdm
   superAdm
 }
@@ -33,11 +29,20 @@ enum ProductTypes {
   ACCESSORIES
 }
 
-enum AlterationTypes {
-  MUTATION
+enum ProductSize {
+  S
+  M
+  L
+  XL
+  ONESIZE
+}
+
+enum MutationTypes {
+  TRANSFER
   RESTOCK
   REMOVE
   TRANSACTION
+  INBOUND
 }
 
 enum PaymentMethod {
@@ -52,6 +57,7 @@ enum PaymentStatus {
 }
 
 enum OrderStatus {
+  CART
   PENDING_PAYMENT
   WAITING_CONFIRMATION
   PROCESSED
@@ -60,23 +66,22 @@ enum OrderStatus {
   CANCELLED
 }
 
+// FEATURE 1
 model User {
-  id            String        @id @default(uuid())
-  role          Role          @default(user)
+  id            String        @id
   accountActive Boolean       @default(false)
-  username      String        @unique
+  username      String?       @unique
   email         String        @unique
-  password      String
-  gender        Gender
-  dob           DateTime
-  imgUrl        String
+  password      String?
+  gender        Gender?
+  dob           DateTime?
   createdAt     DateTime      @default(now())
   addresses     AddressList[]
   orders        Order[]
 }
 
 model AddressList {
-  id          String  @id @default(uuid())
+  id          String  @id
   address     String
   coordinate  String
   userID      String
@@ -84,110 +89,117 @@ model AddressList {
   user        User    @relation(fields: [userID], references: [id])
 }
 
+model Admin {
+  id            String     @id
+  role          Role       @default(warAdm)
+  accountActive Boolean    @default(false)
+  fullName      String?
+  email         String     @unique
+  password      String?
+  dob           DateTime?
+  createdAt     DateTime   @default(now())
+  Warehouse     Warehouse?
+}
+
 model Warehouse {
-  id            String             @id @default(uuid())
+  id            String             @id
   warehouseName String
   city          String
   coordinate    String
   address       String
   createdAt     DateTime           @default(now())
-  admins        WarehouseAdmin[]
+  adminID       String             @unique
+  admin         Admin              @relation(fields: [adminID], references: [id])
   products      WarehouseProduct[]
-  alterations   StockAlteration[]
-  orders        Order[]
-}
-
-model WarehouseAdmin {
-  id          String    @id @default(uuid())
-  warehouseID String
-  adminID     String    @unique
-  warehouse   Warehouse @relation(fields: [warehouseID], references: [id])
+  mutations     StockMutation[]
 }
 
 model WarehouseProduct {
-  id               Int            @id @default(autoincrement())
+  id               String         @id
   warehouseId      String
-  productVariantId Int
+  productVariantId String
   stock            Int
+  productId        String?
   warehouse        Warehouse      @relation(fields: [warehouseId], references: [id])
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
   Product          Product?       @relation(fields: [productId], references: [id])
-  productId        Int?
 }
 
+// FEATURE 2
 model Product {
-  id               Int                @id @default(autoincrement())
+  id               String             @id
   name             String             @unique
   slug             String             @unique
   description      String
   price            Int
-  categoryId       Int
-  images           ProductImages[]
+  categoryId       String
+  images           ProductImage[]
   variants         ProductVariant[]
   warehouseProduct WarehouseProduct[]
   category         ProductCategory    @relation(fields: [categoryId], references: [id])
 }
 
 model ProductCategory {
-  id       Int           @id @default(autoincrement())
+  id       String        @id
   gender   ProductGender
   type     ProductTypes
   category String
   products Product[]
 }
 
-model ProductImages {
-  id        Int     @id @default(autoincrement())
-  productId Int
-  image     String
+model ProductImage {
+  id        String  @id
+  productId String
+  image     String  @unique
   product   Product @relation(fields: [productId], references: [id])
 }
 
 model ProductVariant {
-  id               Int                @id @default(autoincrement())
-  productId        Int
-  size             String
+  id               String             @id
+  productId        String
+  size             ProductSize
   color            String
-  image            String
+  image            String             @unique
   product          Product            @relation(fields: [productId], references: [id])
   warehouseProduct WarehouseProduct[]
   orderItems       OrderItem[]
-  StockAlteration  StockAlteration[]
+  StockMutation    StockMutation[]
 }
 
-model StockAlteration {
-  id                Int             @id @default(autoincrement())
-  warehouseId       String
-  senderWarehouseId Int?
-  targetWarehouseId Int?
-  type              AlterationTypes
-  productVariantId  Int
-  quantity          Int
-  createdAt         DateTime        @default(now())
-  warehouse         Warehouse       @relation(fields: [warehouseId], references: [id])
-  productVariant    ProductVariant  @relation(fields: [productVariantId], references: [id])
+model StockMutation {
+  id                    String         @id
+  warehouseId           String
+  associatedWarehouseId String?
+  type                  MutationTypes
+  productVariantId      String
+  quantity              Int
+  createdAt             DateTime       @default(now())
+  warehouse             Warehouse      @relation(fields: [warehouseId], references: [id])
+  productVariant        ProductVariant @relation(fields: [productVariantId], references: [id])
 }
+
+// FEATURE 3
 
 model Order {
-  id            String        @id @default(uuid())
+  id            String        @id
   userId        String
-  status        OrderStatus   @default(PENDING_PAYMENT)
-  paymentProof  String
-  warehouseId   String
+  status        OrderStatus   @default(CART)
+  paymentProof  String?
+  warehouseId   String?
+  totalAmount   Int?
   paymentMethod PaymentMethod
   paymentStatus PaymentStatus
-  totalAmount   Int
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime
+  createdAt     DateTime?
+  updatedAt     DateTime?
   user          User          @relation(fields: [userId], references: [id])
-  warehouse     Warehouse     @relation(fields: [warehouseId], references: [id])
-  items         OrderItem[]
+  items         OrderItem?
 }
 
 model OrderItem {
-  id               String         @id @default(uuid())
-  orderId          String
-  productVariantId Int
+  id               String         @id
+  orderId          String         @unique
+  productVariantId String
+  warehouseId      String?
   quantity         Int
   price            Int
   createdAt        DateTime       @default(now())

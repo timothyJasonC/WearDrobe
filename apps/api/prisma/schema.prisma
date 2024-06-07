@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,12 +7,203 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum Gender {
+  MALE
+  FEMALE
+}
 
-  @@map("samples") // if you want to use snake_case format
+enum Role {
+  warAdm
+  superAdm
+}
+
+enum ProductGender {
+  MEN
+  WOMEN
+  UNISEX
+}
+
+enum ProductTypes {
+  TOPS
+  BOTTOMS
+  ACCESSORIES
+}
+
+enum ProductSize {
+  S
+  M
+  L
+  XL
+  ONESIZE
+}
+
+enum MutationTypes {
+  TRANSFER
+  RESTOCK
+  REMOVE
+  TRANSACTION
+  INBOUND
+}
+
+enum PaymentMethod {
+  MANUAL
+  GATEWAY
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum OrderStatus {
+  CART
+  PENDING_PAYMENT
+  WAITING_CONFIRMATION
+  PROCESSED
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+// FEATURE 1
+model User {
+  id            String        @id
+  accountActive Boolean       @default(false)
+  username      String?       @unique
+  email         String        @unique
+  password      String?
+  gender        Gender?
+  dob           DateTime?
+  createdAt     DateTime      @default(now())
+  addresses     AddressList[]
+  orders        Order[]
+}
+
+model AddressList {
+  id          String  @id
+  address     String
+  coordinate  String
+  userID      String
+  mainAddress Boolean @default(false)
+  user        User    @relation(fields: [userID], references: [id])
+}
+
+model Admin {
+  id            String     @id
+  role          Role       @default(warAdm)
+  accountActive Boolean    @default(false)
+  fullName      String?
+  email         String     @unique
+  password      String?
+  dob           DateTime?
+  createdAt     DateTime   @default(now())
+  Warehouse     Warehouse?
+}
+
+model Warehouse {
+  id            String             @id
+  warehouseName String
+  city          String
+  coordinate    String
+  address       String
+  createdAt     DateTime           @default(now())
+  adminID       String             @unique
+  admin         Admin              @relation(fields: [adminID], references: [id])
+  products      WarehouseProduct[]
+  mutations     StockMutation[]
+}
+
+model WarehouseProduct {
+  id               String         @id
+  warehouseId      String
+  productVariantId String
+  stock            Int
+  productId        String?
+  warehouse        Warehouse      @relation(fields: [warehouseId], references: [id])
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  Product          Product?       @relation(fields: [productId], references: [id])
+}
+
+// FEATURE 2
+model Product {
+  id               String             @id
+  name             String             @unique
+  slug             String             @unique
+  description      String
+  price            Int
+  categoryId       String
+  images           ProductImage[]
+  variants         ProductVariant[]
+  warehouseProduct WarehouseProduct[]
+  category         ProductCategory    @relation(fields: [categoryId], references: [id])
+}
+
+model ProductCategory {
+  id       String        @id
+  gender   ProductGender
+  type     ProductTypes
+  category String
+  products Product[]
+}
+
+model ProductImage {
+  id        String  @id
+  productId String
+  image     String  @unique
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model ProductVariant {
+  id               String             @id
+  productId        String
+  size             ProductSize
+  color            String
+  image            String             @unique
+  product          Product            @relation(fields: [productId], references: [id])
+  warehouseProduct WarehouseProduct[]
+  orderItems       OrderItem[]
+  StockMutation    StockMutation[]
+}
+
+model StockMutation {
+  id                    String         @id
+  warehouseId           String
+  associatedWarehouseId String?
+  type                  MutationTypes
+  productVariantId      String
+  quantity              Int
+  createdAt             DateTime       @default(now())
+  warehouse             Warehouse      @relation(fields: [warehouseId], references: [id])
+  productVariant        ProductVariant @relation(fields: [productVariantId], references: [id])
+}
+
+// FEATURE 3
+
+model Order {
+  id            String        @id
+  userId        String
+  status        OrderStatus   @default(CART)
+  paymentProof  String?
+  warehouseId   String?
+  totalAmount   Int?
+  paymentMethod PaymentMethod
+  paymentStatus PaymentStatus
+  createdAt     DateTime?
+  updatedAt     DateTime?
+  user          User          @relation(fields: [userId], references: [id])
+  items         OrderItem?
+}
+
+model OrderItem {
+  id               String         @id
+  orderId          String         @unique
+  productVariantId String
+  warehouseId      String?
+  quantity         Int
+  price            Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime
+  order            Order          @relation(fields: [orderId], references: [id])
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
 }

@@ -3,13 +3,33 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import CartItem from "./CartItem"
 import { Button } from "./ui/button"
 import Link from "next/link"
-import { useContext, useEffect, useState } from "react"
-import { IOrder, initialOrder } from "@/constants"
-import { CartContext, useCart } from '@/app/CartContext'
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks"
+import { useEffect } from "react"
+import { getCartItems } from "@/lib/cart"
+import { setCart } from "@/lib/redux/features/cart/cartSlice"
 
 
 export default function Cart() {
-    const { cart } = useCart();
+    // const { cart } = useCart();
+    const cart = useAppSelector(state => state.cart.value)
+    console.log(cart);
+
+    const dispatch = useAppDispatch()
+
+    const getCartDetail = async () => {
+        try {
+            const res = await getCartItems()
+            console.log(res);
+            dispatch(setCart(res))
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
+        getCartDetail()
+    }, [])
+
     return (
         <Sheet>
             <SheetTrigger className="align-middle">
@@ -25,12 +45,12 @@ export default function Cart() {
                     </SheetDescription>
                 </SheetHeader>
                 <div className="flex flex-col gap-2 h-[70vh] overflow-y-auto">
-                    {cart && cart.items.map((item, idx) => (
+                    {/* {cart && cart.items.map((item, idx) => (
                         <CartItem key={item.id} item={item} />
-                    ))}
+                    ))} */}
                 </div>
                 <div className="w-full flex flex-col gap-2">
-                    <SheetTitle>Total Ammount : {cart.totalAmount}</SheetTitle>
+                    {/* <SheetTitle>Total Ammount : {cart.totalAmount}</SheetTitle> */}
                     <Button asChild className='rounded-full w-full' size={"lg"}>
                         <Link href={'/order'}>Checkout</Link>
                     </Button>

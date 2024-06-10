@@ -1,3 +1,7 @@
+import Cart from "./Cart";
+
 export const Header = () => {
-  return <div>Header</div>;
+  return (
+    <div><Cart /></div>
+  );
 };

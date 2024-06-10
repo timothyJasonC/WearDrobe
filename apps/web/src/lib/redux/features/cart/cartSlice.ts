@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IOrder, initialOrder } from '@/constants';
 
-export interface CartState {
+interface CartState {
     value: IOrder | null
 }
 

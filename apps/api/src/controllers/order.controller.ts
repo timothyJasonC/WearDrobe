@@ -25,37 +25,36 @@ export class OrderController {
 
     async getCartItems(req: Request, res: Response) {
         try {
-            // const cart = await prisma.order.findFirst({
-            //     where: {
-            //         userId: `${req.body.userId}`,
-            //         status: 'CART',
-            //     },
-            //     include: {
-            //         items: {
-            //             select: {
-            //                 id: true,
-            //                 orderId: true,
-            //                 productVariantId: true,
-            //                 quantity: true,
-            //                 price: true,
-            //                 createdAt: true,
-            //                 updatedAt: true,
-            //                 productVariant: {
-            //                     select: {
-            //                         color: true,
-            //                         image: true,
-            //                         product: {
-            //                             select: {
-            //                                 name: true
-            //                             }
-            //                         }
-            //                     },
-            //                 },
-            //             },
-            //         },
-            //     },
-            // });
-            const cart = await prisma.order.findMany()
+            const cart = await prisma.order.findFirst({
+                where: {
+                    userId: `${req.body.userId}`,
+                    status: 'CART',
+                },
+                include: {
+                    items: {
+                        select: {
+                            id: true,
+                            orderId: true,
+                            productVariantId: true,
+                            quantity: true,
+                            price: true,
+                            createdAt: true,
+                            updatedAt: true,
+                            productVariant: {
+                                select: {
+                                    color: true,
+                                    image: true,
+                                    product: {
+                                        select: {
+                                            name: true
+                                        }
+                                    }
+                                },
+                            },
+                        },
+                    },
+                },
+            });
             res.json(cart)
         } catch (error) {
             res.json(error)

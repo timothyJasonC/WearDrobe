@@ -186,24 +186,24 @@ model Order {
   status        OrderStatus   @default(CART)
   paymentProof  String?
   warehouseId   String?
-  totalAmount   Int?
-  paymentMethod PaymentMethod
+  totalAmount   Int           @default(0)
+  paymentMethod PaymentMethod?
   paymentStatus PaymentStatus
-  createdAt     DateTime?
-  updatedAt     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   user          User          @relation(fields: [userId], references: [id])
-  items         OrderItem?
+  items         OrderItem[]
 }
 
 model OrderItem {
   id               String         @id
-  orderId          String         @unique
+  orderId          String         
   productVariantId String
   warehouseId      String?
   quantity         Int
   price            Int
   createdAt        DateTime       @default(now())
-  updatedAt        DateTime
+  updatedAt        DateTime       @updatedAt
   order            Order          @relation(fields: [orderId], references: [id])
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
 }

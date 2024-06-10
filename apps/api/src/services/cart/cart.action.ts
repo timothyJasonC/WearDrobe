@@ -18,8 +18,6 @@ export async function getOrCreateCart(userId: string) {
                 id: cartId,
                 userId,
                 paymentStatus: 'PENDING',
-                createdAt: new Date(),
-                updatedAt: new Date()
             }
         });
         return { cart, cartId };
@@ -73,10 +71,17 @@ export async function getCartItemsWithTotal(cartId: string) {
     });
 
     const totalAmount = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0);
-    return { items: cartItems, totalAmount };
+
+    const updateAmount = await prisma.order.update({
+        where: { id: cartId },
+        data: {
+            totalAmount: totalAmount
+        }
+    })
+    return { items: cartItems, updateAmount };
 }
 
-export async function getNewCartItem(itemId:string) {
+export async function getNewCartItem(itemId: string) {
     const items = await prisma.orderItem.findUnique({
         where: { id: itemId },
         include: {
@@ -94,5 +99,5 @@ export async function getNewCartItem(itemId:string) {
         }
     })
 
-    return {items: items}
+    return { items: items }
 }

@@ -1,3 +1,4 @@
+'use client'
 import { product } from '@/lib/product';
 import  { useState } from 'react'
 import AddToCartButton from './AddToCartButton';

@@ -134,7 +134,7 @@ CREATE TABLE `Order` (
     `totalAmount` INTEGER NOT NULL DEFAULT 0,
     `paymentMethod` ENUM('MANUAL', 'GATEWAY') NULL,
     `paymentStatus` ENUM('PENDING', 'COMPLETED', 'FAILED') NOT NULL,
-    `createdAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -145,6 +145,7 @@ CREATE TABLE `OrderItem` (
     `id` VARCHAR(191) NOT NULL,
     `orderId` VARCHAR(191) NOT NULL,
     `productVariantId` VARCHAR(191) NOT NULL,
+    `warehouseId` VARCHAR(191) NULL,
     `quantity` INTEGER NOT NULL,
     `price` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),

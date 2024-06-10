@@ -41,6 +41,7 @@ export default function Cart() {
                 </svg>
                 <p className="flex absolute bg-red-500 rounded-full w-4 h-4 text-xs text-center -right-1 justify-center  text-gray-900">{totalQuantity}</p>
             </SheetTrigger>
+
             <SheetContent className="flex flex-col gap-6 bg-white">
                 <SheetHeader>
                     <SheetTitle>Cart</SheetTitle>

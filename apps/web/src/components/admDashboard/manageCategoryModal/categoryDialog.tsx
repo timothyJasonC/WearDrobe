@@ -1,0 +1,37 @@
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { PiArrowSquareOut } from "react-icons/pi"
+import { ManageCategoryList } from "./categoryTypeList";
+import { Toaster, toast } from 'sonner'
+
+export function ManageCategoryDialog() {
+  return (
+    <Dialog>
+      <Toaster position="top-center" expand={true} richColors/>
+      <DialogTrigger asChild>
+        <div className='flex items-center gap-1 border-b-2 max-sm:text-xs max-sm:border-b-[1px] border-b-black hover:bg-gray-100 hover:cursor-pointer'>
+            <p>Manage</p>
+            <PiArrowSquareOut />
+        </div>
+      </DialogTrigger>
+      <DialogContent className="h-full max-sm:min-w-full sm:h-[700px] gap-0">
+        
+        <DialogHeader>
+          <DialogTitle className='text-3xl'>Manage Categories</DialogTitle>
+          <DialogDescription>
+            Click category to manage.
+          </DialogDescription>
+        </DialogHeader>
+        
+        <ManageCategoryList />
+        
+      </DialogContent>
+    </Dialog>
+  )
+}

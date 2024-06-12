@@ -1,7 +1,7 @@
-import Banner from "@/components/landingPage/Banner"
-import BestSeller from "@/components/landingPage/BestSeller"
-import Campaign from "@/components/landingPage/Campaign"
-import HeroCarousel from "@/components/landingPage/HeroCarousel/HeroCarousel"
+import Banner from "@/app/(home)/_components/Banner"
+import BestSeller from "@/app/(home)/_components/BestSeller"
+import Campaign from "@/app/(home)/_components/Campaign"
+import HeroCarousel from "@/app/(home)/_components/HeroCarousel/HeroCarousel"
 
 export default function Home() {
   return (

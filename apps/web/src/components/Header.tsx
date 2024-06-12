@@ -4,7 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 
 import { cn } from "@/lib/utils"
-import { PiShoppingCartSimple, PiFireSimple, PiUser, PiHeart  } from "react-icons/pi";
+import { PiShoppingCartSimple, PiFireSimple, PiUser, PiHeart, PiMagnifyingGlass } from "react-icons/pi";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/navigation-menu"
 
 import { Input } from "@/components/ui/input"
-import { HeaderDropdown } from "./landingPage/HeaderDropdown";
+import { HeaderDropdown } from "../app/(home)/_components/HeaderDropdown";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -70,8 +70,11 @@ export function Header() {
                     </Link>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                    <Input type="text" placeholder="Search" className="focus-visible:ring-0 focus-visible:border-black/50" />
+                <NavigationMenuItem className="md:block hidden">
+                    <div className="relative">
+                        <Input type="text" placeholder="Search" className="focus-visible:ring-0 focus-visible:border-black/50" />
+                        <PiMagnifyingGlass className="absolute top-0 bottom-0 right-4 m-auto fill-black/50" />
+                    </div>   
                 </NavigationMenuItem>
 
                 <div className="hidden md:flex">
@@ -155,58 +158,8 @@ export function Header() {
                 <NavigationMenuItem className="md:hidden">
                     <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                         <HeaderDropdown />
-                        {/* <DropdownMenu>
-                            <DropdownMenuTrigger><PiList size={`20px`} /></DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-white text-black border-[1px] drop-shadow-md border-black/10 space-y-2 px-4 py-2 font-light rounded-md">
-                                <DropdownMenuItem>
-                                    <DropdownMenuSub>
-                                        <DropdownMenuSubTrigger>
-                                            <UserPlus className="mr-2 h-4 w-4" />
-                                            <span>Invite users</span>
-                                        </DropdownMenuSubTrigger>
-                                        <DropdownMenuPortal>
-                                            <DropdownMenuSubContent>
-                                                <DropdownMenuItem>
-                                                <Mail className="mr-2 h-4 w-4" />
-                                                <span>Email</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                <MessageSquare className="mr-2 h-4 w-4" />
-                                                <span>Message</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem>
-                                                <PlusCircle className="mr-2 h-4 w-4" />
-                                                <span>More...</span>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuSubContent>
-                                        </DropdownMenuPortal>
-                                    </DropdownMenuSub>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>Wish List</DropdownMenuItem>
-                                <DropdownMenuItem>Profile</DropdownMenuItem>
-                                <DropdownMenuItem>Cart</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu> */}
                     </NavigationMenuLink>
                 </NavigationMenuItem>
-
-                {/* <NavigationMenuItem>
-                    <NavigationMenuTrigger>Women</NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                        {components.map((component) => (
-                            <ListItem
-                            key={component.title}
-                            title={component.title}
-                            href={component.href}
-                            >
-                            {component.description}
-                            </ListItem>
-                        ))}
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem> */}
 
             </NavigationMenuList>
         </NavigationMenu>

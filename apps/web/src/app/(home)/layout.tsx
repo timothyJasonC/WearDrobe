@@ -5,6 +5,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { StoreProvider } from '../storeProvider';
 import { Toaster } from '@/components/ui/toaster';
+import { AdminSideBar } from '@/components/sidebar/adminSideBar';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -26,10 +27,10 @@ export default function RootLayout({
     <StoreProvider>
       <html lang="en">
         <body className={poppins.className}>
-          <Header />
-          {children}
-          <Footer />
-          <Toaster />
+            <Header />
+            {children}
+            <Footer />
+            <Toaster />
         </body>
       </html>
     </StoreProvider>

@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-import Cart from "./Cart";
+import Cart from "./cart/Cart";
 
 export const Header = () => {
   const [user, setUser] = useState(true)

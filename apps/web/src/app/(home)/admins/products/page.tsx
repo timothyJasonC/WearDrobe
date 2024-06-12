@@ -8,7 +8,6 @@ import { getCategory } from '@/app/action'
 import { ManageCategoryDialog } from '@/components/admDashboard/manageCategoryModal/categoryDialog'
 
 
-
 export default async function Products() {
   const data = await getCategory("", "")
   

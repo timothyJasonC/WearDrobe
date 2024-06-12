@@ -14,6 +14,8 @@ export class OrderRouter {
     private initializeRoutes(): void {
         this.router.post('/cart', this.orderController.addToCart)
         this.router.post('/cart_item', this.orderController.getCartItems)
+        this.router.post('/updateCartItem', this.orderController.updateCartItems)
+        this.router.post('/deleteCartItem', this.orderController.deleteCartItems)
     }
 
     getRouter() {

@@ -128,16 +128,17 @@ model WarehouseProduct {
 
 // FEATURE 2
 model Product {
-    id               String             @id
-    name             String             @unique
-    slug             String             @unique
-    description      String
-    price            Int
-    categoryId       String
-    images           ProductImage[]
-    variants         ProductVariant[]
-    warehouseProduct WarehouseProduct[]
-    category         ProductCategory    @relation(fields: [categoryId], references: [id])
+  id               String             @id
+  name             String             @unique
+  slug             String             @unique
+  description      String
+  price            Int
+  categoryID       String
+  createdAt        DateTime           @default(now())
+  images           ProductImage[]
+  variants         ProductVariant[]
+  warehouseProduct WarehouseProduct[]
+  category         ProductCategory    @relation(fields: [categoryID], references: [id])
 }
 
 model ProductCategory {
@@ -182,29 +183,29 @@ model StockMutation {
 // FEATURE 3
 
 model Order {
-    id            String        @id
-    userId        String
-    status        OrderStatus   @default(CART)
-    paymentProof  String?
-    warehouseId   String?
-    totalAmount   Int?
-    paymentMethod PaymentMethod
-    paymentStatus PaymentStatus
-    createdAt     DateTime?
-    updatedAt     DateTime?
-    user          User          @relation(fields: [userId], references: [id])
-    items         OrderItem?
+  id            String        @id
+  userId        String
+  status        OrderStatus   @default(CART)
+  paymentProof  String?
+  warehouseId   String?
+  totalAmount   Int           @default(0)
+  paymentMethod PaymentMethod?
+  paymentStatus PaymentStatus
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  user          User          @relation(fields: [userId], references: [id])
+  items         OrderItem[]
 }
 
 model OrderItem {
-    id               String         @id
-    orderId          String         @unique
-    productVariantId String
-    warehouseId      String?
-    quantity         Int
-    price            Int
-    createdAt        DateTime       @default(now())
-    updatedAt        DateTime
-    order            Order          @relation(fields: [orderId], references: [id])
-    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+  id               String         @id
+  orderId          String         
+  productVariantId String
+  warehouseId      String?
+  quantity         Int
+  price            Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  order            Order          @relation(fields: [orderId], references: [id])
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
 }

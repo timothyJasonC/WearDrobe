@@ -1,0 +1,192 @@
+'use client'
+import { Button } from "@/components/ui/button"
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
+import { postRequestToken } from "@/lib/fetchRequests"
+import { zodResolver } from "@hookform/resolvers/zod"
+import React, { useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { PiArrowRight } from "react-icons/pi"
+import { toast } from "sonner"
+import { DatePicker } from "../../_components/DatePicker"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useParams, useRouter } from "next/navigation"
+
+export default function SetupUserAccountForm() {
+
+    const [ isLoading, setIsLoading ] = useState(false);
+    const [date, setDate] = React.useState<Date | undefined>()
+    const params = useParams();
+    const router = useRouter();
+
+    const setupAccountSchema = z.object({
+        username: z.string().min(6, "username must at least contain 6 characters"),
+        password: z.string().min(8, "password must at least contain 8 characters"),
+        confirmPassword: z.string().min(8, "password must at least contain 8 characters"),
+        dob: z.date({
+            required_error: "A date of birth is required.",
+        }),
+        gender: z.string({required_error: "Gender is required"})
+    })
+
+    const setupAccountForm = useForm<z.infer<typeof setupAccountSchema>>({
+        resolver: zodResolver(setupAccountSchema),
+        defaultValues: { username: '', password: '', confirmPassword: '' }
+    })
+
+    async function handleSetupAccount() {
+        setIsLoading(true)
+        const { username, password, confirmPassword, dob, gender } = setupAccountForm.getValues()
+        try {
+            if (password == confirmPassword && params.token) {
+                const userData = {
+                    username: username, password: password, dob: dob, gender: gender 
+                }
+                const res = await postRequestToken(userData, '/user/setup-verify-user', params.token)
+    
+                if (res.ok) {
+                    setIsLoading(false)
+                    const data = await res.json()
+
+                    toast.success("Account has been successfully setup!")
+                    setTimeout(() => {
+                        toast("Your account has been verified!", {
+                            description: 'redirecting you to login page..'
+                        })
+                    }, 3000)
+                    setTimeout(() => {
+                        router.push('/auth')
+                    }, 6000)
+                } else if (res.status == 409) {
+                    setIsLoading(false)
+                    toast.error("Username has been taken")
+                } else if (res.status == 404) {
+                    setIsLoading(false)
+                    toast.error("User not found")
+                } else {
+                    setIsLoading(false)
+                    toast.error("Verification error", {
+                        description: "Please try again later"
+                    })
+                }
+            } else {
+                setIsLoading(false)
+                toast.error("Password doesn't match")
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    return (
+        <div>
+            <Form {...setupAccountForm} >
+                <form className="flex flex-col gap-4" onSubmit={setupAccountForm.handleSubmit(handleSetupAccount)}>
+                    <FormField
+                        control={setupAccountForm.control}
+                        name="username"
+                        render={({ field }) => {
+                            return (
+                                <FormItem>
+                                    <FormLabel className="text-black">Username</FormLabel>
+                                    <FormControl>
+                                        <Input 
+                                            placeholder="@example: batman666"
+                                            type="text"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )
+                        }}
+                    />
+                    <FormField
+                        control={setupAccountForm.control}
+                        name="password"
+                        render={({ field }) => {
+                            return (
+                                <FormItem>
+                                    <FormLabel className="text-black">Password</FormLabel>
+                                    <FormControl>
+                                        <Input 
+                                            placeholder="password"
+                                            type="password"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )
+                        }}
+                    />
+                    <FormField
+                        control={setupAccountForm.control}
+                        name="confirmPassword"
+                        render={({ field }) => {
+                            return (
+                                <FormItem>
+                                    <FormLabel className="text-black">Confirm Password</FormLabel>
+                                    <FormControl>
+                                        <Input 
+                                            placeholder="confirm password"
+                                            type="password"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )
+                        }}
+                    />
+                    <FormField
+                        control={setupAccountForm.control}
+                        name="gender"
+                        render={({ field }) => {
+                            return (
+                                <FormItem>
+                                    <FormLabel className="text-black">Gender</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select your gender" />
+                                        </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="MALE">Male</SelectItem>
+                                            <SelectItem value="FEMALE">Female</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage/>
+                                </FormItem>
+                            )
+                        }}
+                    />
+                    <FormField
+                        control={setupAccountForm.control}
+                        name="dob"
+                        render={({ field }) => {
+                            return (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel className="text-black">Date of birth</FormLabel>
+                                    <DatePicker field={field} />
+                                    <FormMessage />
+                                </FormItem>
+                            )
+                        }}
+                    />
+                    
+                    {
+                        isLoading ? 
+                        <LoadingButton loading className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></LoadingButton>
+                        :
+                        <Button className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></Button>
+                    }
+                </form>
+            </Form>
+        </div>
+    )
+};

@@ -3,7 +3,7 @@ import { useState } from "react";
 import Cart from "./cart/Cart";
 
 export const Header = () => {
-  const [user, setUser] = useState(true)
+  const [user, setUser] = useState(false)
   return (
     <div>
       <h1>Header</h1>

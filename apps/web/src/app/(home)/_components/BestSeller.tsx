@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/carousel/carousel"
 import { Badge } from "@/components/ui/badge"
 import { PiHeart  } from "react-icons/pi";
-import { parseThousandSeparator } from "@/lib/utils";
+import { formatToIDR } from "@/lib/utils";
 
 
 export default function BestSeller() {
@@ -74,7 +74,7 @@ export default function BestSeller() {
                                 <div className="flex justify-between items-center">
                                     <div>
                                         <p className="font-semibold">{ item.title }</p>
-                                        <p className="font-light">IDR { parseThousandSeparator(item.price) }</p>
+                                        <p className="font-light">{ formatToIDR(item.price) }</p>
                                     </div>
 
                                     <div className="cursor-pointer"><PiHeart size={`24px`} /></div>

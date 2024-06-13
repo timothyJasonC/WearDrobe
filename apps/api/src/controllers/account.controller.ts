@@ -3,7 +3,6 @@ import { serverResponse } from "@/helpers/apiResponse";
 import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import prisma from "@/prisma";
-import { User } from "@/helpers/types";
 
 export class AccountController {
     async loginAccount(req: Request, res: Response) {

@@ -18,13 +18,13 @@ export class AccountController {
             if (passwordValid == false) return serverResponse(res, 401, 'ok', 'password incorrect!')
             const payload = { id: user.id, role: 'user' }
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h'});
-            return serverResponse(res, 200, 'ok', 'login success', { user, token })
+            return serverResponse(res, 200, 'ok', 'login success', { user, token, role: 'user' })
         } else if ((admin && admin.password) && admin.accountActive) {
             const passwordValid = await compare(password, admin.password);
             if (passwordValid == false) return serverResponse(res, 401, 'ok', 'password incorrect!')
             const payload = { id: admin.id, role: admin.role }
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h'});
-            return serverResponse(res, 200, 'ok', 'login success', { admin, token })
+            return serverResponse(res, 200, 'ok', 'login success', { admin, token, role: admin.role })
         } else {
             return serverResponse(res, 404, 'error', 'account not found')
         }

@@ -17,9 +17,13 @@ import { postRequest } from "@/lib/fetchRequests"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { useState } from "react"
 import { toast } from "sonner"
+import Cookies from 'js-cookie'
+import { setCurrentAccount } from "@/lib/redux/features/authSlice"
+import { useDispatch } from "react-redux"
 
 export function AuthCard() {
     const router = useRouter();
+    const dispatch = useDispatch()
     const [ isLoading, setIsLoading ] = useState(false);
 
     const regFormSchema = z.object({
@@ -41,7 +45,8 @@ export function AuthCard() {
     const loginForm = useForm<z.infer<typeof loginFormSchema>>({
         resolver: zodResolver(loginFormSchema),
         defaultValues: {
-            email: ''
+            email: '',
+            password: ''
         }
     })
     
@@ -50,17 +55,15 @@ export function AuthCard() {
         const { email } = registerForm.getValues()
         try {
             const res = await postRequest({ email: email }, '/user')
+            if (res) setIsLoading(false)
             if (res.ok) {
-                setIsLoading(false)
                 const data = await res.json();
                 toast.success("Email successfully registered!", {
                     description: "Please check your email to verify account."
                 })
             } else if (res.status == 409) {
-                setIsLoading(false)
                 toast.error("Email has already been existed!")
             } else {
-                setIsLoading(false)
                 toast.warning("Registration error.", {
                     description: "Please try again later."
                 })
@@ -75,20 +78,33 @@ export function AuthCard() {
     }
 
     async function handleLogin() {
-        console.log('handleLogin:')
         setIsLoading(true)
-        const { email, password } = loginForm.getValues()
         try {
-            const res = await postRequest({ email: email, password: password }, '/login')
-            console.log(res)
+            const res = await postRequest(loginForm.getValues(), '/account/login')
 
+            if (res) setIsLoading(false)
             if (res.ok) {
-                const data = await res.json()
-                console.log(data)
+                const data = await res.json();
+                const account = data.data.user || data.data.admin;
+                Cookies.set('role', data.data.role, { expires: 1 })
+                Cookies.set('token', data.data.token, { expires: 1 })
+                dispatch(setCurrentAccount(account))
+                toast.success("Login success", { description: 'redirecting you to homepage..' })
+                setTimeout(() => {
+                    router.push('/')
+                }, 2000);
+            } else if (res.status == 401) {
+                toast.error("Password incorrect")
+            } else if (res.status == 404) {
+                toast.error("Account not found")
+            } else {
+                toast.error("Server error", { description: 'please try again later' })
             }
 
         } catch (error) {
-            console.log(error)
+            toast.error("Server error", {
+                description: 'please try again later'
+            })
         }
     }
 

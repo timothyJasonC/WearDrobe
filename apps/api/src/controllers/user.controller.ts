@@ -47,3 +47,34 @@ export class UserController {
             serverResponse(res, 400, 'error', error)
         }
     }
+
+    async setupUser(req: Request, res: Response, next: NextFunction) {
+        try { 
+
+            const { username, password, dob, gender, account } = req.body;
+            const existingUsername = await prisma.user.findUnique({ where: { username: username } })
+
+            if (existingUsername) {
+                return serverResponse(res, 409, 'error', 'username has been taken')
+            } 
+            const salt = await genSalt(10);
+            const hashedPassword = await hash(password, salt);
+
+            const user = await prisma.user.update({
+                where: { id: account.id },
+                data : {
+                    username,
+                    password: hashedPassword,
+                    dob: new Date(dob),
+                    gender
+                }
+            })
+            console.log('setting up user:', user)
+            next()
+            // serverResponse(res, 200, 'ok', 'user account has been setup!')
+    
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+}

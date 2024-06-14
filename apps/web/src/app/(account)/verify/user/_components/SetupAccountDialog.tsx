@@ -1,5 +1,4 @@
 import SetupUserAccountForm from "./SetupUserAccountForm";
-
   
   export function SetupAccountDialog({ title, form, className }: { title: string, form: any, className: string }) {
     return (

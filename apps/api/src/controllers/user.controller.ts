@@ -77,4 +77,30 @@ export class UserController {
             serverResponse(res, 400, 'error', error)
         }
     }
+
+    async createSSOUser(req: Request, res: Response, next: NextFunction) {
+        try { 
+            const { username, email } = req.body;
+            const existingUsername = await prisma.user.findUnique({ where: { username: username } })
+            const existingEmail = await prisma.user.findUnique({ where: { email: email } })
+            if (existingEmail) return serverResponse(res, 200, 'ok', 'email has been registered before. Proceed to login')
+            if (existingUsername) return serverResponse(res, 409, 'error', 'username has been taken')
+
+            const user = await prisma.user.create({
+                data: {
+                    id: uuid(),
+                    ...req.body,
+                    createdAt: new Date()
+                }
+            })
+
+            const payload = { id: user.id, role: 'user' }
+            const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
+
+            serverResponse(res, 200, 'ok', 'user has been created!', { user, token, role: 'user' })
+    
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
 }

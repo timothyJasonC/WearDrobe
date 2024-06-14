@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa6";
 import { PiArrowUpRight, PiArrowLeft } from "react-icons/pi";
-import { googleSSO, facebookSSO } from "@/lib/loginSSO"
 import * as z from 'zod'
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -15,16 +14,54 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useRouter } from "next/navigation"
 import { postRequest } from "@/lib/fetchRequests"
 import { LoadingButton } from "@/components/ui/loading-button"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import Cookies from 'js-cookie'
 import { setCurrentAccount } from "@/lib/redux/features/authSlice"
 import { useDispatch } from "react-redux"
+import useAuth from "@/hooks/useAuth"
+import { SSOUsernameForm } from "./SSOUsernameForm"
 
 export function AuthCard() {
     const router = useRouter();
     const dispatch = useDispatch()
+    const { googleSSO, facebookSSO, SSOUserData } = useAuth();
     const [ isLoading, setIsLoading ] = useState(false);
+
+    useEffect(() => {
+        async function registerUserFromProvider() {
+            const { user } = SSOUserData;
+            const userData = {
+                accountActive: user.emailVerified, username: user.displayName,
+                email: user.email, imgUrl: user.photoURL
+            }
+            try {
+                const res = await postRequest(userData, '/user/create-sso-user');
+                const data = await res.json();
+                const formDialog = document.getElementById('username-form');
+                if (res.ok && data) {
+                    Cookies.set('role', data.data.role, { expires: 1 })
+                    Cookies.set('token', data.data.token, { expires: 1 })
+                    dispatch(setCurrentAccount(data.data.user))
+                    toast.success(`Hello ${user.displayName}`, { description: 'Welcome to WearDrobe!' })
+                    setTimeout(() => { router.push('/') }, 2000);
+                } else if (res.status == 409) {
+                    toast.error("Username has been taken")
+                    formDialog?.classList.add('flex')
+                    formDialog?.classList.remove('hidden')
+                } else {
+                    toast.error("Request error")
+                }
+            } catch (error) {
+                toast.error("Server error")
+            }
+        }
+
+        if (SSOUserData) {
+            console.log(SSOUserData)
+            registerUserFromProvider()
+        }
+    }, [ SSOUserData ])
 
     const regFormSchema = z.object({
         email: z.string().email()
@@ -90,9 +127,7 @@ export function AuthCard() {
                 Cookies.set('token', data.data.token, { expires: 1 })
                 dispatch(setCurrentAccount(account))
                 toast.success("Login success", { description: 'redirecting you to homepage..' })
-                setTimeout(() => {
-                    router.push('/')
-                }, 2000);
+                setTimeout(() => { router.push('/') }, 2000);
             } else if (res.status == 401) {
                 toast.error("Password incorrect")
             } else if (res.status == 404) {
@@ -238,6 +273,8 @@ export function AuthCard() {
                 </CardContent>
                 </Card>
             </TabsContent>
+                
+            <SSOUsernameForm SSOUserData={SSOUserData} router={router} />
         </Tabs>
     )
 }

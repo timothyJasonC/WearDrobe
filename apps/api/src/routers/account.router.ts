@@ -14,6 +14,7 @@ export class AccountRouter {
 
     private initializeRoutes(): void {
         this.router.post('/login', this.accountController.loginAccount)
+        this.router.post('/refresh-token', this.accountController.refreshToken)
     }
 
     getRouter() : Router{

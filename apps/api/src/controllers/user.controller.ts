@@ -41,7 +41,7 @@ export class UserController {
                 html
             })
             
-            serverResponse(res, 201, 'ok', 'user has been registered!')
+            serverResponse(res, 201, 'ok', 'user has been registered!', user)
     
         } catch (error: any) {
             serverResponse(res, 400, 'error', error)
@@ -69,9 +69,7 @@ export class UserController {
                     gender
                 }
             })
-            console.log('setting up user:', user)
             next()
-            // serverResponse(res, 200, 'ok', 'user account has been setup!')
     
         } catch (error: any) {
             serverResponse(res, 400, 'error', error)

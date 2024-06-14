@@ -65,6 +65,32 @@ export class AccountController {
             serverResponse(res, 400, 'error', error)
         }
     }
+
+    async refreshToken(req: Request, res: Response) {
+        try {
+            const { id } = req.body;
+
+            const user = await prisma.user.findFirst({ where: { id: id } })
+            const admin = await prisma.admin.findFirst({ where: { id: id } })
+            
+            if (user) {
+                const payload = { id: user.id, role: 'user' }
+                const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
+                return serverResponse(res, 200, 'ok', 'Token refreshed!', token)
+            } 
+
+            if (admin) {
+                const payload = { id: admin.id, role: admin.role }
+                const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
+                return serverResponse(res, 200, 'ok', 'Token refreshed!', token)
+            }
+
+            serverResponse(res, 400, 'error', 'Account not found.')
+            
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
 }
 
 

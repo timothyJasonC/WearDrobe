@@ -9,6 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { PiHeart  } from "react-icons/pi";
 import { formatToIDR } from "@/lib/utils";
+import Image from "next/image";
 
 
 export default function BestSeller() {
@@ -68,8 +69,11 @@ export default function BestSeller() {
                     {
                         dummyData.map((item, idx) => {
                             return <CarouselItem key={idx} className="sm:basis-1/2 lg:basis-1/3 flex flex-col items-stretch">
-                                <div className="cursor-pointer">
-                                    <img className="rounded-lg" src={item.img} alt="" />
+                                <div className="cursor-pointer relative">
+                                    <Image
+                                        width={350} height={100}
+                                        className="rounded-lg" src={item.img} alt="" 
+                                    />
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div>

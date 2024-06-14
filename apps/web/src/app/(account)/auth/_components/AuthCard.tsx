@@ -145,7 +145,7 @@ export function AuthCard() {
     }
 
     return (
-        <Tabs defaultValue="login" className="w-[400px]  h-[40rem]">
+        <Tabs defaultValue="login" className="w-[400px] h-[40rem]">
             <TabsList className="w-full flex gap-2 ">
                 <PiArrowLeft onClick={() => router.back()} className="cursor-pointer mx-2 hover:fill-black duration-200" size={`1.3rem`} />
                 <div className="w-full flex">

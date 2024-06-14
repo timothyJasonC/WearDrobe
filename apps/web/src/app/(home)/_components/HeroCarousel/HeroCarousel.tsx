@@ -6,6 +6,7 @@ import {
     CarouselItem,
   } from "@/components/ui/carousel/carousel"
 import Autoplay from "embla-carousel-autoplay"
+import Image from "next/image";
 
 
 export default function HeroCarousel() {
@@ -48,7 +49,7 @@ export default function HeroCarousel() {
                         dummyDataCarousel.map((item, idx) => {
                             return <CarouselItem key={idx} className="basis-3/4">
                                 <div className="sm:rounded-xl overflow-hidden duration-200 lg:max-h-[38rem] relative">
-                                    <img src={item.img} alt="" />
+                                    <Image priority width={800} height={608} src={item.img} alt="" />
                                     { idx == 0 && 
                                         <div className="text-white absolute font-thin lg:text-2xl text-lg lg:bottom-4 lg:left-4 bottom-2 left-2 z-[1]">
                                             Everyday. Wear. Confident.

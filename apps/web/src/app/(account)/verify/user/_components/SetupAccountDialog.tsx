@@ -1,13 +1,14 @@
 import SetupUserAccountForm from "./SetupUserAccountForm";
   
-  export function SetupAccountDialog({ title, form, className }: { title: string, form: any, className: string }) {
+export function SetupAccountDialog({ title, className }: { title: string, className: string }) {
     return (
         <div className={`${ className }`}>
-            <div className="border-2 border-black/20 rounded-xl p-4">
+            
+            <div className=" max-lg:border-2 max-lg:border-black/15 rounded-xl p-4 bg-white">
                 <h3 className="font-semibold text-xl mb-8">{ title }</h3>
                 <SetupUserAccountForm />
             </div>
         </div>
     )
-  }
+}
   

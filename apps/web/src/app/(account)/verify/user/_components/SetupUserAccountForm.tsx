@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button"
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
-import { postRequestToken } from "@/lib/fetchRequests"
+import { postRequestToken, refreshToken } from "@/lib/fetchRequests"
 import { zodResolver } from "@hookform/resolvers/zod"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { PiArrowRight } from "react-icons/pi"
@@ -13,11 +13,12 @@ import { toast } from "sonner"
 import { DatePicker } from "../../_components/DatePicker"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useParams, useRouter } from "next/navigation"
+import { jwtDecode } from "jwt-decode"
 
 export default function SetupUserAccountForm() {
 
     const [ isLoading, setIsLoading ] = useState(false);
-    const [date, setDate] = React.useState<Date | undefined>()
+    const [ activeToken, setActiveToken ] = useState<string | string[]>('')
     const params = useParams();
     const router = useRouter();
 
@@ -25,9 +26,7 @@ export default function SetupUserAccountForm() {
         username: z.string().min(6, "username must at least contain 6 characters"),
         password: z.string().min(8, "password must at least contain 8 characters"),
         confirmPassword: z.string().min(8, "password must at least contain 8 characters"),
-        dob: z.date({
-            required_error: "A date of birth is required.",
-        }),
+        dob: z.date({ required_error: "A date of birth is required." }),
         gender: z.string({required_error: "Gender is required"})
     })
 
@@ -36,29 +35,40 @@ export default function SetupUserAccountForm() {
         defaultValues: { username: '', password: '', confirmPassword: '' }
     })
 
+    useEffect(() => {
+        const token = params.token.toString();
+        const decodedToken : undefined | { exp: number, iat: number, id: string, role: string } = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+        let isExp : boolean = false;
+        if (decodedToken?.exp) isExp = decodedToken.exp < currentTime 
+        async function requestNewToken() {
+            const newToken = await refreshToken(decodedToken?.id)
+            setActiveToken(newToken)
+        }
+
+        if (isExp && decodedToken?.id) {
+            requestNewToken() 
+        } else setActiveToken(params.token)
+
+    }, [])
+
     async function handleSetupAccount() {
         setIsLoading(true)
         const { username, password, confirmPassword, dob, gender } = setupAccountForm.getValues()
+        
         try {
-            if (password == confirmPassword && params.token) {
+
+            if (password == confirmPassword && activeToken) {
                 const userData = {
                     username: username, password: password, dob: dob, gender: gender 
                 }
-                const res = await postRequestToken(userData, '/user/setup-verify-user', params.token)
+                const res = await postRequestToken(userData, '/user/setup-verify-user', activeToken)
     
                 if (res.ok) {
                     setIsLoading(false)
-                    const data = await res.json()
-
                     toast.success("Account has been successfully setup!")
-                    setTimeout(() => {
-                        toast("Your account has been verified!", {
-                            description: 'redirecting you to login page..'
-                        })
-                    }, 3000)
-                    setTimeout(() => {
-                        router.push('/auth')
-                    }, 6000)
+                    setTimeout(() => { toast("Your account has been verified!", { description: 'redirecting you to login page..' }) }, 3000)
+                    setTimeout(() => { router.push('/auth') }, 6000)
                 } else if (res.status == 409) {
                     setIsLoading(false)
                     toast.error("Username has been taken")
@@ -67,9 +77,7 @@ export default function SetupUserAccountForm() {
                     toast.error("User not found")
                 } else {
                     setIsLoading(false)
-                    toast.error("Verification error", {
-                        description: "Please try again later"
-                    })
+                    toast.error("Verification error", { description: "Please try again later" })
                 }
             } else {
                 setIsLoading(false)

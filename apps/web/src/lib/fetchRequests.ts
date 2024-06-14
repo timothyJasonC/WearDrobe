@@ -30,3 +30,14 @@ export async function getRequest(segment: string) {
     })
     return res;
 }
+
+export async function refreshToken(id: string | undefined) {
+    try {
+        const res = await postRequest({ id: id }, '/account/refresh-token')
+        const data = await res.json()
+        const token = data.data;
+        return token;
+    } catch (error) {
+        console.log(error)
+    }
+}

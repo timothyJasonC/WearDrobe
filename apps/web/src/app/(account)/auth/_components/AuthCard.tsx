@@ -92,14 +92,15 @@ export function AuthCard() {
         const { email } = registerForm.getValues()
         try {
             const res = await postRequest({ email: email }, '/user')
+            const data = await res.json();
             if (res) setIsLoading(false)
             if (res.ok) {
-                const data = await res.json();
-                toast.success("Email successfully registered!", {
-                    description: "Please check your email to verify account."
-                })
+                toast.success("Email successfully registered!", { description: "Please check your email to verify account." })
             } else if (res.status == 409) {
-                toast.error("Email has already been existed!")
+                toast.warning("Email has been registered!")
+                if (!data.data.user.accountActive) {
+                    setTimeout(() => { toast("Check your email, to verify your account") }, 2000);
+                }
             } else {
                 toast.warning("Registration error.", {
                     description: "Please try again later."

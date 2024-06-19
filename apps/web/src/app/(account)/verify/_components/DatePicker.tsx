@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { FormControl } from "@/components/ui/form"
 
-export function DatePicker({ field }: { field: any }) {
+export function DatePicker({ field, className }: { field: any, className?: string }) {
 
     return (
         <Popover>
@@ -18,10 +18,10 @@ export function DatePicker({ field }: { field: any }) {
                 <FormControl>
                     <Button
                         variant={"outline"}
-                        className={cn(
+                        className={`${cn(
                             "pl-3 text-left font-normal",
                             !field.value && "text-muted-foreground"
-                        )}
+                        )} ${ className } `}
                         >
                         {field.value ? (
                             format(field.value, "PPP")

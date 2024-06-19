@@ -28,7 +28,7 @@ export default function BrickPhotoBackground() {
             {
                 photos.map((photo, idx) => {
                     return <div className="rounded-xl overflow-hidden" key={idx}>
-                        <Image width={500} height={500} src={photo} alt="" />
+                        <Image width={550} height={500} src={photo} alt="" />
                     </div>
                 })
             }

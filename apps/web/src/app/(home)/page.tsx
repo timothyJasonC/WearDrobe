@@ -1,7 +1,7 @@
 import Banner from "@/app/(home)/_components/Banner"
 import BestSeller from "@/app/(home)/_components/BestSeller"
 import Campaign from "@/app/(home)/_components/Campaign"
-import HeroCarousel from "@/app/(home)/_components/HeroCarousel/HeroCarousel"
+import HeroCarousel from "@/app/(home)/_components/HeroCarousel"
 
 export default function Home() {
   return (

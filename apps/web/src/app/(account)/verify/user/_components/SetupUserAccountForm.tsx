@@ -14,6 +14,7 @@ import { DatePicker } from "../../_components/DatePicker"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useParams, useRouter } from "next/navigation"
 import { jwtDecode } from "jwt-decode"
+import { isTokenExp } from "@/lib/utils"
 
 export default function SetupUserAccountForm() {
 
@@ -36,20 +37,22 @@ export default function SetupUserAccountForm() {
     })
 
     useEffect(() => {
-        const token = params.token.toString();
-        const decodedToken : undefined | { exp: number, iat: number, id: string, role: string } = jwtDecode(token);
-        const currentTime = Date.now() / 1000;
-        let isExp : boolean = false;
-        if (decodedToken?.exp) isExp = decodedToken.exp < currentTime 
-        async function requestNewToken() {
-            const newToken = await refreshToken(decodedToken?.id)
-            setActiveToken(newToken)
+        try {
+            const token = params.token.toString();
+            const decodedToken : undefined | { exp: number, iat: number, id: string, role: string } = jwtDecode(token);
+            const isExp = isTokenExp(token)
+            async function requestNewToken() {
+                const newToken = await refreshToken(decodedToken?.id)
+                setActiveToken(newToken)
+            }
+    
+            if (isExp && decodedToken?.id) {
+                requestNewToken() 
+            } else setActiveToken(params.token)
+            
+        } catch (error) {
+            router.push('/auth')
         }
-
-        if (isExp && decodedToken?.id) {
-            requestNewToken() 
-        } else setActiveToken(params.token)
-
     }, [])
 
     async function handleSetupAccount() {
@@ -85,7 +88,7 @@ export default function SetupUserAccountForm() {
             }
 
         } catch (error) {
-            console.log(error)
+            toast.warning("Something went wrong", { description: "server might be down" })
         }
     }
 

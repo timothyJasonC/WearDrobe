@@ -41,3 +41,14 @@ export async function refreshToken(id: string | undefined) {
         console.log(error)
     }
 }
+
+export async function patchRequest(data: any, segment: string) {
+    const res = await fetch(`http://localhost:8000/api${segment}`, {
+        method: 'PATCH',
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
+    })
+    return res;
+}

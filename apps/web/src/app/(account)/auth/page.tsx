@@ -2,6 +2,7 @@ import { AuthCard } from "@/app/(account)/auth/_components/AuthCard"
 import { Toaster } from "@/components/ui/sonner"
 import Image from "next/image"
 import React from "react"
+import { ForgotPassForm } from "./_components/ForgotPassForm"
 
 export default function Page() {
 
@@ -21,6 +22,7 @@ export default function Page() {
                 absolute lg:static top-0 bottom-0
             ">
                 <AuthCard/>
+                <ForgotPassForm />
                 <Toaster position="top-center" richColors />
             </div>
         </div>

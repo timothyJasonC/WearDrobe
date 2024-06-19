@@ -84,8 +84,10 @@ export class CategoryController {
       })
 
       const checkDuplicate = existingCategory.find((cat) => cat.category.toLowerCase() === category.toLowerCase())
+      console.log(checkDuplicate);
       
-      if (checkDuplicate) throw "category already exists"
+      
+      if (checkDuplicate) throw "Category already exists."
 
       await prisma.productCategory.create({
         data: {
@@ -95,7 +97,7 @@ export class CategoryController {
       })
       res.status(200).send({
         status: 'ok',
-        message: 'category created'
+        message: 'Category created.'
       })
 
     } catch (error) {
@@ -110,7 +112,13 @@ export class CategoryController {
     try {
       const {type, gender, category, newCategory } = req.body
       
-
+      const currentCategory = await prisma.productCategory.findFirst({
+        where: {
+          gender,
+          type,
+          category
+        }
+      })
       const existingCategory = await prisma.productCategory.findMany({
         where: {
           gender,
@@ -118,9 +126,8 @@ export class CategoryController {
         }
       })
 
-      const checkDuplicate = existingCategory.find((cat) => cat.category.toLowerCase() === newCategory.toLowerCase())
-
-      if (checkDuplicate) throw "category already exists"
+      const checkDuplicate = existingCategory.find((cat) => cat.category.toLowerCase() === newCategory.toLowerCase() && cat.id !== currentCategory?.id)
+      if (checkDuplicate) throw "Category already exists."
 
       const toEditCategory = await prisma.productCategory.findFirst({
         where: {
@@ -141,7 +148,7 @@ export class CategoryController {
 
       res.status(200).send({
         status: 'ok',
-        message: 'category edited'
+        message: 'Category edited.'
       })
     } catch (error) {
         res.status(400).send({
@@ -161,7 +168,7 @@ export class CategoryController {
         }
       })
       
-      if (containsProducts) throw "cannot delete category that is being used"
+      if (containsProducts) throw "Cannot delete category that is being used."
 
       await prisma.productCategory.delete({
         where: {
@@ -171,7 +178,7 @@ export class CategoryController {
 
       res.status(200).send({
         status: 'ok',
-        message: 'category deleted'
+        message: 'Category deleted.'
       })
     } catch (error) {
         res.status(400).send({

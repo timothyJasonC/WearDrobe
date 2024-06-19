@@ -33,6 +33,7 @@
     }
   },
   "dependencies": {
+    "firebase": "^10.12.2",
     "init": "^0.1.2"
   }
 }

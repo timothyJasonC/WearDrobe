@@ -22,8 +22,8 @@ const formSchema = z.object({
   .min(2, {
     message: "category must be at least 2 characters.",
   })
-  .max(15, {
-    message: "category cannot be longer than 15 characters."
+  .max(25, {
+    message: "category cannot be longer than 20 characters."
   })
 })
 
@@ -44,7 +44,7 @@ export function EditCategoryForm({type, gender, category, setOpen, getCategoryDa
         toast.success(data.message)
         setOpen(false);
         form.reset()
-      } else if (data.message == 'category already exists') {
+      } else if (data.status == 'error') {
         toast.error(data.message)
       }
     } catch (error) {
@@ -63,7 +63,7 @@ export function EditCategoryForm({type, gender, category, setOpen, getCategoryDa
               <FormLabel className="font-semibold text-lg">Edit category name</FormLabel>
               <div className="flex pt-3">
                 <FormControl>
-                  <Input placeholder={category} {...field} className="rounded-r-none focus-visible:ring-transparent"/>
+                  <Input placeholder={category} {...field} className="rounded-r-none focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black"/>
                 </FormControl>
                 <Button type="submit" className="rounded-l-none">save</Button>
               </div>

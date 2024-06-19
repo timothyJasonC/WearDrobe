@@ -84,9 +84,9 @@ model AddressList {
   id          String  @id
   address     String
   coordinate  String
-  userID      String
+  userId      String
   mainAddress Boolean @default(false)
-  user        User    @relation(fields: [userID], references: [id])
+  user        User    @relation(fields: [userId], references: [id])
 }
 
 model Admin {
@@ -115,29 +115,30 @@ model Warehouse {
 }
 
 model WarehouseProduct {
-  id               String         @id
+  id               String          @id
   warehouseID      String
   productVariantID String
+  size             ProductSize
   stock            Int
-  productId        String?
-  warehouse        Warehouse      @relation(fields: [warehouseID], references: [id])
-  productVariant   ProductVariant @relation(fields: [productVariantID], references: [id])
-  Product          Product?       @relation(fields: [productId], references: [id])
+  warehouse        Warehouse       @relation(fields: [warehouseID], references: [id])
+  productVariant   ProductVariant  @relation(fields: [productVariantID], references: [id])
+  StockMutation    StockMutation[]
 }
 
 // FEATURE 2
 model Product {
-  id               String             @id
-  name             String             @unique
-  slug             String             @unique
-  description      String
-  price            Int
-  categoryID       String
-  createdAt        DateTime           @default(now())
-  images           ProductImage[]
-  variants         ProductVariant[]
-  warehouseProduct WarehouseProduct[]
-  category         ProductCategory    @relation(fields: [categoryID], references: [id])
+  id           String           @id
+  name         String           @unique
+  slug         String           @unique
+  description  String
+  price        Int
+  oneSize      Boolean          @default(false)
+  categoryID   String
+  thumbnailURL String?
+  createdAt    DateTime         @default(now())
+  images       ProductImage[]
+  variants     ProductVariant[]
+  category     ProductCategory  @relation(fields: [categoryID], references: [id])
 }
 
 model ProductCategory {
@@ -149,74 +150,56 @@ model ProductCategory {
 }
 
 model ProductImage {
-  id        String  @id
+  id        String    @id
   productID String
-  image     String  @unique
-  product   Product @relation(fields: [productID], references: [id])
+  image     String    @unique
+  product   Product   @relation(fields: [productID], references: [id])
 }
 
 model ProductVariant {
   id               String             @id
   productID        String
-  size             ProductSize
   color            String
+  HEX              String
   image            String             @unique
   product          Product            @relation(fields: [productID], references: [id])
   warehouseProduct WarehouseProduct[]
   orderItems       OrderItem[]
-  StockMutation    StockMutation[]
 }
 
 model StockMutation {
-  id                    String         @id
+  id                    String           @id
   warehouseID           String
   associatedWarehouseId String?
   type                  MutationTypes
-  productVariantID      String
+  warehouseProductID    String
+  size                  ProductSize
   quantity              Int
-  createdAt             DateTime       @default(now())
-  warehouse             Warehouse      @relation(fields: [warehouseID], references: [id])
-  productVariant        ProductVariant @relation(fields: [productVariantID], references: [id])
+  createdAt             DateTime         @default(now())
+  warehouse             Warehouse        @relation(fields: [warehouseID], references: [id])
+  warehouseProduct      WarehouseProduct @relation(fields: [warehouseProductID], references: [id])
 }
 
 // FEATURE 3
 
 model Order {
-  id            String        @id
-  userID        String
-  status        OrderStatus   @default(CART)
+  id            String         @id
+  userId        String
+  status        OrderStatus    @default(CART)
   paymentProof  String?
   warehouseId   String?
-  totalAmount   Int           @default(0)
+  totalAmount   Int            @default(0)
   paymentMethod PaymentMethod?
   paymentStatus PaymentStatus
-<<<<<<< HEAD
-  createdAt     DateTime?
-  updatedAt     DateTime?
-  user          User          @relation(fields: [userID], references: [id])
-  items         OrderItem?
-=======
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  user          User          @relation(fields: [userId], references: [id])
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  user          User           @relation(fields: [userId], references: [id])
   items         OrderItem[]
->>>>>>> 97522f8b8c5d235136e503870c509b4ebc5e689b
 }
 
 model OrderItem {
   id               String         @id
-<<<<<<< HEAD
-  orderID          String         @unique
-  productVariantID String
-  warehouseID      String?
-  quantity         Int
-  price            Int
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime
-  order            Order          @relation(fields: [orderID], references: [id])
-  productVariant   ProductVariant @relation(fields: [productVariantID], references: [id])
-=======
-  orderId          String         
+  orderId          String
   productVariantId String
   warehouseId      String?
   quantity         Int
@@ -225,5 +208,4 @@ model OrderItem {
   updatedAt        DateTime       @updatedAt
   order            Order          @relation(fields: [orderId], references: [id])
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
->>>>>>> 97522f8b8c5d235136e503870c509b4ebc5e689b
 }

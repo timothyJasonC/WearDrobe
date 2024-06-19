@@ -54,12 +54,6 @@ export interface IImageFieldProps {
     name: string;
     variantImageURL: string
   }
-
-  export interface ICategoryData {
-    gender: string;
-    type: string;
-    category: string
-  }
   
   export interface IProductDataSet {
     name:string,
@@ -69,7 +63,7 @@ export interface IImageFieldProps {
     colorVariant: IColorVariant[], 
     additionalURL: string[], 
     thumbnailURL: string, 
-    categoryData: ICategoryData
+    categoryData: ICategory
   }
 
   interface IProductImage {
@@ -88,8 +82,8 @@ export interface IImageFieldProps {
     totalStock: number;
   }
   
-  interface ICategory {
-    id: string;
+  export interface ICategory {
+    id?: string;
     gender: string;
     type: string;
     category: string;
@@ -113,7 +107,7 @@ export interface IImageFieldProps {
   }
 
   export interface IProductList {
-    data: IProduct[]
+    productList: IProduct[]
   }
 
   export interface IEditColor {
@@ -135,7 +129,6 @@ export interface IImageFieldProps {
     isDeleted: boolean
     isNew: boolean
   }
-
 
 
 

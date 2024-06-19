@@ -71,33 +71,6 @@ export function UpdateColorDialog({color, toUpdate, setColor, index}:{color:IEdi
             <DialogHeader>
             <DialogTitle>Edit Color Variant</DialogTitle>
             </DialogHeader>
-            <div className="flex items-center gap-2">
-                <div className="flex flex-col w-full gap-2">
-                    <div className="flex items-center">
-                        <Label htmlFor="hex" className="text-sm w-28 font-semibold">HEX code</Label>
-                        <Input 
-                            name="hex" 
-                            className="text-sm h-8 focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black" 
-                            value={colorHEX} onChange={(e) => setColorHEX(e.target.value)}/>
-                        <Input 
-                            type='color'
-                            className='p-0 w-14 outline-none border-none hover:cursor-pointer'
-                            value={colorHEX}
-                            onChange={(e) => {setColorHEX(e.target.value)}}
-                        />
-                    </div>
-                    <div className="flex items-center">
-                        <Label htmlFor="colorname" className="text-sm w-24 font-semibold">Name</Label>
-                        <Input 
-                            name="colorname" 
-                            className="text-sm h-8 focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black" 
-                            placeholder="ex:Red" 
-                            value={colorName} 
-                            onChange={(e) => {setColorName(e.target.value)}}/>
-                    </div>
-                </div>
-                
-            </div>
             <div className="flex gap-4">
                 <div>
                     <Image src={colorImage? URL.createObjectURL(colorImage) : prevImageURL ? prevImageURL : "/images/emptyimage.png"} alt="variant-image" width={150} height={150} className="border-[1px]"  />
@@ -133,6 +106,35 @@ export function UpdateColorDialog({color, toUpdate, setColor, index}:{color:IEdi
                 </div>
                 
             </div>
+            <div className="flex items-center gap-2">
+                <div className="flex flex-col w-full gap-2">
+                    
+                    <div className="flex items-center">
+                        <Label htmlFor="colorname" className="text-sm w-24 font-semibold">Name</Label>
+                        <Input 
+                            name="colorname" 
+                            className="text-sm h-8 focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black" 
+                            placeholder="ex:Red" 
+                            value={colorName} 
+                            onChange={(e) => {setColorName(e.target.value)}}/>
+                    </div>
+                    <div className="flex items-center">
+                        <Label htmlFor="hex" className="text-sm w-28 font-semibold">HEX code</Label>
+                        <Input 
+                            name="hex" 
+                            className="text-sm h-8 focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black" 
+                            value={colorHEX} onChange={(e) => setColorHEX(e.target.value)}/>
+                        <Input 
+                            type='color'
+                            className='p-0 w-14 outline-none border-none hover:cursor-pointer'
+                            value={colorHEX}
+                            onChange={(e) => {setColorHEX(e.target.value)}}
+                        />
+                    </div>
+                </div>
+                
+            </div>
+            
 
             
             <Button type="submit" onClick={updateColor} disabled={colorHEX && colorName ? false : true}>Create variant</Button>

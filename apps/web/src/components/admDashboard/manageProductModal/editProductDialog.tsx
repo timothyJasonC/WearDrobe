@@ -7,12 +7,17 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PiNotePencil } from "react-icons/pi";
 import { EditProductForm } from "./editProductForm";
   
-  export function EditProductDialog({slug}:{slug:string}) {
+  export function EditProductDialog({slug, action}:{slug:string, action:()=>void}) {
     const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+      action()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open])
     return (
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>

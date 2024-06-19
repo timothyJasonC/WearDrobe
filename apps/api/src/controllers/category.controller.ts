@@ -10,6 +10,8 @@ export class CategoryController {
         await prisma.$transaction(async (tx)=> {
             if (gender?.length == 0 && type?.length == 0) {
                 const category = await tx.productCategory.findMany()
+                console.log(category);
+                
                 return res.status(200).send({
                     status: 'ok',
                     message: 'Categories found',

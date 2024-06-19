@@ -90,3 +90,11 @@ export async function editProduct(dataSet:any, slug:string) {
   const data = await res.json()
   return data
 }
+
+export async function deleteProduct(slug:string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}products/${slug}`, {
+    method: "DELETE",
+  })
+  const data = await res.json()
+  return data
+}

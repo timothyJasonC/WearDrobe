@@ -4,6 +4,8 @@ import { StoreProvider } from '@/app/storeProvider';
 import { Toaster } from 'sonner';
 import { Poppins } from 'next/font/google';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
+import Loading from './products/loading';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -23,8 +25,10 @@ export default function Template({children}: Readonly<{children: React.ReactNode
         <html lang="en">
           <body className={poppins.className}>
             <AdminSideBar>
+            <Suspense fallback={<Loading/>}>
                 <Toaster position="top-center" expand={true} richColors/>
                 {children}
+            </Suspense>
             </AdminSideBar>
           </body>
         </html>

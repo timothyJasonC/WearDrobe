@@ -56,32 +56,7 @@ export function EditColorDialog({color, setColor}:{color:IEditColor[], setColor:
             <DialogHeader>
             <DialogTitle>Create Color Variant</DialogTitle>
             </DialogHeader>
-            <div className="flex items-center gap-2">
-                <div className="flex flex-col w-full gap-2">
-                    <div className="flex items-center">
-                        <Label htmlFor="hex" className="text-sm w-28 font-semibold">HEX code</Label>
-                        <Input 
-                            name="hex" 
-                            className="text-sm h-8 focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black" 
-                            value={colorHEX} onChange={(e) => setColorHEX(e.target.value)}/>
-                        <Input 
-                            type='color'
-                            className='p-0 w-14 outline-none border-none hover:cursor-pointer'
-                            onChange={(e) => {setColorHEX(e.target.value)}}
-                        />
-                    </div>
-                    <div className="flex items-center">
-                        <Label htmlFor="colorname" className="text-sm w-24 font-semibold">Name</Label>
-                        <Input 
-                            name="colorname" 
-                            className="text-sm h-8 focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black" 
-                            placeholder="ex:Red" 
-                            value={colorName} 
-                            onChange={(e) => {setColorName(e.target.value)}}/>
-                    </div>
-                </div>
-                
-            </div>
+
             <div className="flex gap-4">
                 <div>
                     <Image src={colorImage? URL.createObjectURL(colorImage) : "/images/emptyimage.png"} alt="variant-image" width={150} height={150} className="border-[1px]"  />
@@ -92,7 +67,7 @@ export function EditColorDialog({color, setColor}:{color:IEditColor[], setColor:
                         id="variantImage"
                         type="file"
                         accept="image/jpeg, image/png, image/gif, image/jpg"
-                        className="mb-1 text-sm my-2"
+                        className="mb-1 text-sm my-2 "
                         onChange={(e) => {
                             const files = e.target.files
                             if (files && files.length > 0) {
@@ -114,6 +89,32 @@ export function EditColorDialog({color, setColor}:{color:IEditColor[], setColor:
                     />
                     
                     <div className="text-gray-500 text-xs">Supported file formats: .jpeg, .png, .gif, .jpg. Max 1MB.</div>
+                </div>
+                
+            </div>
+            <div className="flex items-center gap-2">
+                <div className="flex flex-col w-full gap-2">
+                    <div className="flex items-center">
+                        <Label htmlFor="colorname" className="text-sm w-24 font-semibold">Name</Label>
+                        <Input 
+                            name="colorname" 
+                            className="text-sm h-8 focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black" 
+                            placeholder="ex:Red" 
+                            value={colorName} 
+                            onChange={(e) => {setColorName(e.target.value)}}/>
+                    </div>
+                    <div className="flex items-center">
+                        <Label htmlFor="hex" className="text-sm w-28 font-semibold">HEX code</Label>
+                        <Input 
+                            name="hex" 
+                            className="text-sm h-8 focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black" 
+                            value={colorHEX} onChange={(e) => setColorHEX(e.target.value)}/>
+                        <Input 
+                            type='color'
+                            className='p-0 w-14 outline-none border-none hover:cursor-pointer'
+                            onChange={(e) => {setColorHEX(e.target.value)}}
+                        />
+                    </div>
                 </div>
                 
             </div>

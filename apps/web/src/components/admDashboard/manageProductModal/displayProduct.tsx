@@ -1,16 +1,14 @@
 'use client'
+
 import React, { useEffect, useState } from 'react'
 import { ProdTable } from './prodTable'
 import { PaginationTemplate } from '@/components/pagination'
 import { Input } from "@/components/ui/input"
 import { PiMagnifyingGlass } from "react-icons/pi";
-import { usePathname } from 'next/navigation';
 import { getProduct } from '@/app/action'
 import { IProduct } from '@/constants'
 
 export const AdminProductDisplay = () => {
-	const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
 	const [productList, setProductList] = useState<IProduct[]>([])
 
 	const getProductList = async() => {
@@ -30,7 +28,8 @@ export const AdminProductDisplay = () => {
 			<Input id='search' type="text" placeholder="Search products" className='max-w-60'/>
 			</div>
 			<ProdTable 
-			data={productList}
+			productList={productList}
+			action={getProductList}
 			/>
 			<PaginationTemplate />
 		</div>

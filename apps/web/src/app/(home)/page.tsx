@@ -1,4 +1,4 @@
-import AddToCart from "@/components/AddToCart"
+import AddToCart from "@/components/cart/AddToCart"
 import { Button } from "@/components/ui/button"
 
 export default function Home() {

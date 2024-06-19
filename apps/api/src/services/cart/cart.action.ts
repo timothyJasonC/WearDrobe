@@ -101,3 +101,71 @@ export async function getNewCartItem(itemId: string) {
 
     return { items: items }
 }
+
+export async function getCartItem(userId: string) {
+    const cart = await prisma.order.findFirst({
+        where: {
+            userId: `${userId}`,
+            status: 'CART',
+        },
+        include: {
+            items: {
+                select: {
+                    id: true,
+                    orderId: true,
+                    productVariantId: true,
+                    quantity: true,
+                    price: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    productVariant: {
+                        select: {
+                            color: true,
+                            image: true,
+                            product: {
+                                select: {
+                                    name: true
+                                }
+                            }
+                        },
+                    },
+                },
+            },
+        },
+    });
+    return cart
+}
+
+export async function updateCartItem(itemId: string, newQuantity: number) {
+    const orderItem = await prisma.orderItem.findFirst({
+        where: {
+            id: itemId
+        }
+    })
+    if (!orderItem) throw 'no item'
+    const variantItem = await prisma.productVariant.findFirst({
+        where: { id: orderItem?.productVariantId },
+        select: { product: true }
+    })
+    const updateItem = await prisma.orderItem.update({
+        where: { id: itemId },
+        data: { price: newQuantity * variantItem?.product.price!, quantity: newQuantity }
+    })
+    return updateItem
+}
+
+export async function deleteCartItem(itemId: string) {
+    await prisma.orderItem.delete({
+        where: { id: itemId }
+    })
+    return
+}
+
+export async function deleteCart(cartId: string) {
+    await prisma.order.delete({
+        where: {
+            id: cartId
+        }
+    })
+    return
+}

@@ -18,7 +18,7 @@ export class UserController {
             const existingAdminEmail = await prisma.admin.findUnique({ where: { email: email } })
 
             if (existingUserEmail || existingAdminEmail) {
-                return serverResponse(res, 409, 'error', 'email has been taken')
+                return serverResponse(res, 409, 'error', 'email has been taken', existingUserEmail || existingAdminEmail)
             } 
     
             const user = await prisma.user.create({
@@ -76,7 +76,7 @@ export class UserController {
         }
     }
 
-    async createSSOUser(req: Request, res: Response, next: NextFunction) {
+    async createSSOUser(req: Request, res: Response) {
         try { 
             const { username, email } = req.body;
             const existingUsername = await prisma.user.findUnique({ where: { username: username } })
@@ -97,6 +97,15 @@ export class UserController {
 
             serverResponse(res, 200, 'ok', 'user has been created!', { user, token, role: 'user' })
     
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async getUserById(req: Request, res: Response) {
+        try { 
+            const user = await prisma.user.findFirst({ where : { id: req.params.id }})
+            serverResponse(res, 200, 'ok', 'user found!', user)
         } catch (error: any) {
             serverResponse(res, 400, 'error', error)
         }

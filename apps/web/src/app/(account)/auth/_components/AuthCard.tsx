@@ -17,14 +17,11 @@ import { LoadingButton } from "@/components/ui/loading-button"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import Cookies from 'js-cookie'
-import { setCurrentAccount } from "@/lib/redux/features/authSlice"
-import { useDispatch } from "react-redux"
 import useAuth from "@/hooks/useAuth"
 import { SSOUsernameForm } from "./SSOUsernameForm"
 
 export function AuthCard() {
     const router = useRouter();
-    const dispatch = useDispatch()
     const { googleSSO, facebookSSO, SSOUserData } = useAuth();
     const [ isLoading, setIsLoading ] = useState(false);
 
@@ -42,7 +39,6 @@ export function AuthCard() {
                 if (res.ok && data) {
                     Cookies.set('role', data.data.role, { expires: 1 })
                     Cookies.set('token', data.data.token, { expires: 1 })
-                    dispatch(setCurrentAccount(data.data.user))
                     toast.success(`Hello ${user.displayName}`, { description: 'Welcome to WearDrobe!' })
                     setTimeout(() => { router.push('/') }, 2000);
                 } else if (res.status == 409) {
@@ -58,7 +54,6 @@ export function AuthCard() {
         }
 
         if (SSOUserData) {
-            console.log(SSOUserData)
             registerUserFromProvider()
         }
     }, [ SSOUserData ])
@@ -92,26 +87,22 @@ export function AuthCard() {
         const { email } = registerForm.getValues()
         try {
             const res = await postRequest({ email: email }, '/user')
-            const data = await res.json();
             if (res) setIsLoading(false)
             if (res.ok) {
                 toast.success("Email successfully registered!", { description: "Please check your email to verify account." })
             } else if (res.status == 409) {
                 toast.warning("Email has been registered!")
-                if (!data.data.user.accountActive) {
-                    setTimeout(() => { toast("Check your email, to verify your account") }, 2000);
-                }
+                if (!(await res.json()).data.accountActive) setTimeout(() => { toast("Check your email, to verify your account") }, 2000);
             } else {
                 toast.warning("Registration error.", {
                     description: "Please try again later."
                 })
             }
+            registerForm.reset()
 
         } catch(error) {
             setIsLoading(false)
-            toast.warning("Server error", {
-                description: "Please start the server."
-            })
+            toast.warning("Something went wrong", { description: "server might be down" })
         }
     }
 
@@ -126,7 +117,6 @@ export function AuthCard() {
                 const account = data.data.user || data.data.admin;
                 Cookies.set('role', data.data.role, { expires: 1 })
                 Cookies.set('token', data.data.token, { expires: 1 })
-                dispatch(setCurrentAccount(account))
                 toast.success("Login success", { description: 'redirecting you to homepage..' })
                 setTimeout(() => { router.push('/') }, 2000);
             } else if (res.status == 401) {
@@ -143,6 +133,7 @@ export function AuthCard() {
             })
         }
     }
+
 
     return (
         <Tabs defaultValue="login" className="w-[400px] h-[40rem]">
@@ -204,7 +195,12 @@ export function AuthCard() {
                                         )
                                     }}
                                 />
-                                <Label className="text-blue-600 font-light cursor-pointer">Forgot password?</Label>
+                                <Label 
+                                    onClick={() => {
+                                        document.getElementById('forgot-password-dialog')?.classList.remove('hidden')
+                                        document.getElementById('forgot-password-dialog')?.classList.add('flex')
+                                    } } 
+                                    className="text-blue-600 font-light cursor-pointer">Forgot password?</Label>
                             </div>
                             {
                                 isLoading ? 
@@ -229,49 +225,49 @@ export function AuthCard() {
 
             <TabsContent className=" min-w-" value="register">
                 <Card>
-                <CardHeader>
-                    <CardTitle>Register</CardTitle>
-                    <CardDescription>
-                        Sign up at WearDrobe with your email for personalized shopping, exclusive sales, seamless checkout, and the latest updates. Join now!
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                    <div className="space-y-1">
-                        <Form {...registerForm}>
-                            <form className="flex flex-col gap-10" onSubmit={registerForm.handleSubmit(handleRegister)}>
-                                <FormField
-                                    control={registerForm.control}
-                                    name="email"
-                                    render={({ field }) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel className="text-black">Email</FormLabel>
-                                                <FormControl>
-                                                    <Input 
-                                                        placeholder="@example: barryallen@gmail.com"
-                                                        type="email"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage/>
-                                            </FormItem>
-                                        )
-                                    }}
-                                />
-                                {
-                                    isLoading ? 
-                                    <LoadingButton loading className="px-10 flex gap-2" type="submit">Create New Account
-                                        <PiArrowUpRight />
-                                    </LoadingButton>
-                                    :
-                                    <Button className="px-10 flex gap-2" type="submit">Create New Account
-                                        <PiArrowUpRight />
-                                    </Button>
-                                }
-                            </form>
-                        </Form>
-                    </div>
-                </CardContent>
+                    <CardHeader>
+                        <CardTitle>Register</CardTitle>
+                        <CardDescription>
+                            Sign up at WearDrobe with your email for personalized shopping, exclusive sales, seamless checkout, and the latest updates. Join now!
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                        <div className="space-y-1">
+                            <Form {...registerForm}>
+                                <form className="flex flex-col gap-10" onSubmit={registerForm.handleSubmit(handleRegister)}>
+                                    <FormField
+                                        control={registerForm.control}
+                                        name="email"
+                                        render={({ field }) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel className="text-black">Email</FormLabel>
+                                                    <FormControl>
+                                                        <Input 
+                                                            placeholder="@example: barryallen@gmail.com"
+                                                            type="email"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}
+                                    />
+                                    {
+                                        isLoading ? 
+                                        <LoadingButton loading className="px-10 flex gap-2" type="submit">Create New Account
+                                            <PiArrowUpRight />
+                                        </LoadingButton>
+                                        :
+                                        <Button className="px-10 flex gap-2" type="submit">Create New Account
+                                            <PiArrowUpRight />
+                                        </Button>
+                                    }
+                                </form>
+                            </Form>
+                        </div>
+                    </CardContent>
                 </Card>
             </TabsContent>
                 

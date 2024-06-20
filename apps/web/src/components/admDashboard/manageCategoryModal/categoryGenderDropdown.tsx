@@ -15,7 +15,7 @@
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="text-4xl text-black hover:bg-gray-100 rounded-none border-b-2  border-b-black justify-between w-32 px-0">
+          <Button variant="ghost" className="focus-visible:ring-transparent focus-visible:border-[1px] focus-visible:border-black text-4xl text-black hover:bg-gray-100 rounded-none border-b-2  border-b-black justify-between w-32 px-0">
             <div className="flex items-center gap-2">
               <Icon className="text-base"/>
               <p className="text-base">{state}</p>

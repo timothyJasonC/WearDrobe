@@ -18,8 +18,7 @@ export default async function Products() {
       <div className='flex w-full mb-7 flex-col-reverse xl:flex-row'>
         <div className='flex gap-5 md:gap-10 max-md:flex-wrap'>
           <StatisticsCard 
-            title='Products'
-            number={product.productList.length}
+            title='Update Stocks'
             modalElement={<CreateProductDialog />}
           />
           <StatisticsCard 

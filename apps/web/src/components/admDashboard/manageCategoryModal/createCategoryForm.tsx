@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Toaster, toast } from 'sonner'
+import { toast } from 'sonner'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -22,8 +22,8 @@ const formSchema = z.object({
   .min(2, {
     message: "category must be at least 2 characters.",
   })
-  .max(15, {
-    message: "category cannot be longer than 15 characters."
+  .max(20, {
+    message: "category cannot be longer than 20 characters."
   })
 })
 
@@ -44,7 +44,7 @@ export function CategoryForm({type, gender, getCategoryData}:{type:string, gende
         getCategoryData()
         toast.success(data.message)
         form.reset()
-      } else if (data.message == 'category already exists') {
+      } else if (data.status == 'error') {
         toast.error(data.message)
       }
     } catch (error) {
@@ -61,11 +61,11 @@ export function CategoryForm({type, gender, getCategoryData}:{type:string, gende
           render={({ field }) => (
             <FormItem>
               <FormLabel className="font-bold">Create {gender}&apos;s {type} category</FormLabel>
-              <div className="flex pt-3">
+              <div className="flex pt-2 ">
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} className="rounded-r-none focus-visible:ring-transparent  text-sm h-8"/>
+                  <Input placeholder="new category" {...field} className="text-sm placeholder:text-xs rounded-r-none focus-visible:ring-transparent h-7"/>
                 </FormControl>
-                <Button type="submit" className="rounded-l-none h-8">create</Button>
+                <Button type="submit" className="rounded-l-none h-7 text-xs">create</Button>
               </div>
               <FormMessage />
             </FormItem>

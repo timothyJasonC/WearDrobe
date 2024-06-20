@@ -124,30 +124,30 @@ model Warehouse {
     mutations     StockMutation[]
 }
 
-model WarehouseProduct {
-    id               String         @id
-    warehouseId      String
-    productVariantId String
-    stock            Int
-    productId        String?
-    warehouse        Warehouse      @relation(fields: [warehouseId], references: [id])
-    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
-    Product          Product?       @relation(fields: [productId], references: [id])
+  id               String          @id
+  warehouseID      String
+  productVariantID String
+  size             ProductSize
+  stock            Int
+  warehouse        Warehouse       @relation(fields: [warehouseID], references: [id])
+  productVariant   ProductVariant  @relation(fields: [productVariantID], references: [id])
+  StockMutation    StockMutation[]
 }
 
 // FEATURE 2
 model Product {
-  id               String             @id
-  name             String             @unique
-  slug             String             @unique
-  description      String
-  price            Int
-  categoryID       String
-  createdAt        DateTime           @default(now())
-  images           ProductImage[]
-  variants         ProductVariant[]
-  warehouseProduct WarehouseProduct[]
-  category         ProductCategory    @relation(fields: [categoryID], references: [id])
+  id           String           @id
+  name         String           @unique
+  slug         String           @unique
+  description  String
+  price        Int
+  oneSize      Boolean          @default(false)
+  categoryID   String
+  thumbnailURL String?
+  createdAt    DateTime         @default(now())
+  images       ProductImage[]
+  variants     ProductVariant[]
+  category     ProductCategory  @relation(fields: [categoryID], references: [id])
 }
 
 model ProductCategory {
@@ -159,34 +159,34 @@ model ProductCategory {
 }
 
 model ProductImage {
-    id        String  @id
-    productId String
-    image     String  @unique
-    product   Product @relation(fields: [productId], references: [id])
+  id        String    @id
+  productID String
+  image     String    @unique
+  product   Product   @relation(fields: [productID], references: [id])
 }
 
 model ProductVariant {
-    id               String             @id
-    productId        String
-    size             ProductSize
-    color            String
-    image            String             @unique
-    product          Product            @relation(fields: [productId], references: [id])
-    warehouseProduct WarehouseProduct[]
-    orderItems       OrderItem[]
-    StockMutation    StockMutation[]
+  id               String             @id
+  productID        String
+  color            String
+  HEX              String
+  image            String             @unique
+  product          Product            @relation(fields: [productID], references: [id])
+  warehouseProduct WarehouseProduct[]
+  orderItems       OrderItem[]
 }
 
 model StockMutation {
-    id                    String         @id
-    warehouseId           String
-    associatedWarehouseId String?
-    type                  MutationTypes
-    productVariantId      String
-    quantity              Int
-    createdAt             DateTime       @default(now())
-    warehouse             Warehouse      @relation(fields: [warehouseId], references: [id])
-    productVariant        ProductVariant @relation(fields: [productVariantId], references: [id])
+  id                    String           @id
+  warehouseID           String
+  associatedWarehouseId String?
+  type                  MutationTypes
+  warehouseProductID    String
+  size                  ProductSize
+  quantity              Int
+  createdAt             DateTime         @default(now())
+  warehouse             Warehouse        @relation(fields: [warehouseID], references: [id])
+  warehouseProduct      WarehouseProduct @relation(fields: [warehouseProductID], references: [id])
 }
 
 // FEATURE 3
@@ -197,7 +197,7 @@ model Order {
   status        OrderStatus   @default(CART)
   paymentProof  String?
   warehouseId   String?
-  totalAmount   Int           @default(0)
+  totalAmount   Int            @default(0)
   paymentMethod PaymentMethod?
   paymentStatus PaymentStatus
   createdAt     DateTime      @default(now())

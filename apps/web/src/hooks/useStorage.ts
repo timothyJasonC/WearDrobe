@@ -37,7 +37,6 @@ export default function useStorage() {
             });
         });
     }
-
     async function removeImageFromStorage(fileID: string) {
         try {
             const fileRef = ref(storage, `gallery/${fileID}`);

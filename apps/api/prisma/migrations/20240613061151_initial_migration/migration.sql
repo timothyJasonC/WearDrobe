@@ -8,6 +8,7 @@ CREATE TABLE `User` (
     `gender` ENUM('MALE', 'FEMALE') NULL,
     `dob` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `imgUrl` LONGTEXT NULL,
 
     UNIQUE INDEX `User_username_key`(`username`),
     UNIQUE INDEX `User_email_key`(`email`),
@@ -57,8 +58,8 @@ CREATE TABLE `Warehouse` (
 -- CreateTable
 CREATE TABLE `WarehouseProduct` (
     `id` VARCHAR(191) NOT NULL,
-    `warehouseID` VARCHAR(191) NOT NULL,
-    `productVariantID` VARCHAR(191) NOT NULL,
+    `warehouseId` VARCHAR(191) NOT NULL,
+    `productVariantId` VARCHAR(191) NOT NULL,
     `stock` INTEGER NOT NULL,
     `productId` VARCHAR(191) NULL,
 
@@ -93,7 +94,7 @@ CREATE TABLE `ProductCategory` (
 -- CreateTable
 CREATE TABLE `ProductImage` (
     `id` VARCHAR(191) NOT NULL,
-    `productID` VARCHAR(191) NOT NULL,
+    `productId` VARCHAR(191) NOT NULL,
     `image` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `ProductImage_image_key`(`image`),
@@ -103,7 +104,7 @@ CREATE TABLE `ProductImage` (
 -- CreateTable
 CREATE TABLE `ProductVariant` (
     `id` VARCHAR(191) NOT NULL,
-    `productID` VARCHAR(191) NOT NULL,
+    `productId` VARCHAR(191) NOT NULL,
     `size` ENUM('S', 'M', 'L', 'XL', 'ONESIZE') NOT NULL,
     `color` VARCHAR(191) NOT NULL,
     `image` VARCHAR(191) NOT NULL,
@@ -115,10 +116,10 @@ CREATE TABLE `ProductVariant` (
 -- CreateTable
 CREATE TABLE `StockMutation` (
     `id` VARCHAR(191) NOT NULL,
-    `warehouseID` VARCHAR(191) NOT NULL,
+    `warehouseId` VARCHAR(191) NOT NULL,
     `associatedWarehouseId` VARCHAR(191) NULL,
     `type` ENUM('TRANSFER', 'RESTOCK', 'REMOVE', 'TRANSACTION', 'INBOUND') NOT NULL,
-    `productVariantID` VARCHAR(191) NOT NULL,
+    `productVariantId` VARCHAR(191) NOT NULL,
     `quantity` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
@@ -162,10 +163,10 @@ ALTER TABLE `AddressList` ADD CONSTRAINT `AddressList_userID_fkey` FOREIGN KEY (
 ALTER TABLE `Warehouse` ADD CONSTRAINT `Warehouse_adminID_fkey` FOREIGN KEY (`adminID`) REFERENCES `Admin`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `WarehouseProduct` ADD CONSTRAINT `WarehouseProduct_warehouseID_fkey` FOREIGN KEY (`warehouseID`) REFERENCES `Warehouse`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `WarehouseProduct` ADD CONSTRAINT `WarehouseProduct_warehouseId_fkey` FOREIGN KEY (`warehouseId`) REFERENCES `Warehouse`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `WarehouseProduct` ADD CONSTRAINT `WarehouseProduct_productVariantID_fkey` FOREIGN KEY (`productVariantID`) REFERENCES `ProductVariant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `WarehouseProduct` ADD CONSTRAINT `WarehouseProduct_productVariantId_fkey` FOREIGN KEY (`productVariantId`) REFERENCES `ProductVariant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `WarehouseProduct` ADD CONSTRAINT `WarehouseProduct_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -174,16 +175,16 @@ ALTER TABLE `WarehouseProduct` ADD CONSTRAINT `WarehouseProduct_productId_fkey` 
 ALTER TABLE `Product` ADD CONSTRAINT `Product_categoryID_fkey` FOREIGN KEY (`categoryID`) REFERENCES `ProductCategory`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `ProductImage` ADD CONSTRAINT `ProductImage_productID_fkey` FOREIGN KEY (`productID`) REFERENCES `Product`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `ProductImage` ADD CONSTRAINT `ProductImage_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `ProductVariant` ADD CONSTRAINT `ProductVariant_productID_fkey` FOREIGN KEY (`productID`) REFERENCES `Product`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `ProductVariant` ADD CONSTRAINT `ProductVariant_productId_fkey` FOREIGN KEY (`productId`) REFERENCES `Product`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `StockMutation` ADD CONSTRAINT `StockMutation_warehouseID_fkey` FOREIGN KEY (`warehouseID`) REFERENCES `Warehouse`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `StockMutation` ADD CONSTRAINT `StockMutation_warehouseId_fkey` FOREIGN KEY (`warehouseId`) REFERENCES `Warehouse`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `StockMutation` ADD CONSTRAINT `StockMutation_productVariantID_fkey` FOREIGN KEY (`productVariantID`) REFERENCES `ProductVariant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `StockMutation` ADD CONSTRAINT `StockMutation_productVariantId_fkey` FOREIGN KEY (`productVariantId`) REFERENCES `ProductVariant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Order` ADD CONSTRAINT `Order_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

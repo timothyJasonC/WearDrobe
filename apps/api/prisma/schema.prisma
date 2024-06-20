@@ -1,128 +1,138 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+    provider = "mysql"
+    url      = env("DATABASE_URL")
 }
 
 enum Gender {
-  MALE
-  FEMALE
+    MALE
+    FEMALE
 }
 
 enum Role {
-  warAdm
-  superAdm
+    warAdm
+    superAdm
 }
 
 enum ProductGender {
-  MEN
-  WOMEN
-  UNISEX
+    MEN
+    WOMEN
+    UNISEX
 }
 
 enum ProductTypes {
-  TOPS
-  BOTTOMS
-  ACCESSORIES
+    TOPS
+    BOTTOMS
+    ACCESSORIES
 }
 
 enum ProductSize {
-  S
-  M
-  L
-  XL
-  ONESIZE
+    S
+    M
+    L
+    XL
+    ONESIZE
 }
 
 enum MutationTypes {
-  TRANSFER
-  RESTOCK
-  REMOVE
-  TRANSACTION
-  INBOUND
+    TRANSFER
+    RESTOCK
+    REMOVE
+    TRANSACTION
+    INBOUND
 }
 
 enum PaymentMethod {
-  MANUAL
-  GATEWAY
+    MANUAL
+    GATEWAY
 }
 
 enum PaymentStatus {
-  PENDING
-  COMPLETED
-  FAILED
+    PENDING
+    COMPLETED
+    FAILED
 }
 
 enum OrderStatus {
-  CART
-  PENDING_PAYMENT
-  WAITING_CONFIRMATION
-  PROCESSED
-  SHIPPED
-  COMPLETED
-  CANCELLED
+    CART
+    PENDING_PAYMENT
+    WAITING_CONFIRMATION
+    PROCESSED
+    SHIPPED
+    COMPLETED
+    CANCELLED
 }
 
 // FEATURE 1
 model User {
-  id            String        @id
-  accountActive Boolean       @default(false)
-  username      String?       @unique
-  email         String        @unique
-  password      String?
-  gender        Gender?
-  dob           DateTime?
-  createdAt     DateTime      @default(now())
-  addresses     AddressList[]
-  orders        Order[]
+    id            String        @id
+    accountActive Boolean       @default(false)
+    username      String?       @unique
+    email         String        @unique
+    password      String?
+    gender        Gender?
+    dob           DateTime?
+    createdAt     DateTime      @default(now())
+    imgUrl        String?        @db.LongText
+    addresses     AddressList[]
+    orders        Order[]
 }
 
 model AddressList {
-  id          String  @id
-  address     String
-  coordinate  String
-  userID      String
-  mainAddress Boolean @default(false)
-  user        User    @relation(fields: [userID], references: [id])
+    id          String  @id
+    address     String
+    coordinate  String
+    userID      String
+    mainAddress Boolean @default(false)
+    user        User    @relation(fields: [userID], references: [id])
 }
 
 model Admin {
-  id            String     @id
-  role          Role       @default(warAdm)
-  accountActive Boolean    @default(false)
-  fullName      String?
-  email         String     @unique
-  password      String?
-  dob           DateTime?
-  createdAt     DateTime   @default(now())
-  Warehouse     Warehouse?
+    id            String     @id
+    role          Role       @default(warAdm)
+    accountActive Boolean    @default(false)
+    fullName      String?
+    email         String     @unique
+    password      String?
+    dob           DateTime?
+    createdAt     DateTime   @default(now())
+    Warehouse     Warehouse?
+}
+
+model PasswordRequest {
+    id String @id
+    accountId String @unique
+    currentToken String? @db.LongText
+    requestCount Int @default(0)
+    createdAt DateTime @default(now())
+    updatedAt DateTime? @updatedAt
 }
 
 model Warehouse {
-  id            String             @id
-  warehouseName String
-  city          String
-  coordinate    String
-  address       String
-  createdAt     DateTime           @default(now())
-  adminID       String             @unique
-  admin         Admin              @relation(fields: [adminID], references: [id])
-  products      WarehouseProduct[]
-  mutations     StockMutation[]
+    id            String             @id
+    warehouseName String
+    city          String
+    coordinate    String
+    address       String
+    createdAt     DateTime           @default(now())
+    adminID       String             @unique
+    admin         Admin              @relation(fields: [adminID], references: [id])
+    products      WarehouseProduct[]
+    mutations     StockMutation[]
 }
 
 model WarehouseProduct {
-  id               String         @id
-  warehouseID      String
-  productVariantID String
-  stock            Int
-  productId        String?
-  warehouse        Warehouse      @relation(fields: [warehouseID], references: [id])
-  productVariant   ProductVariant @relation(fields: [productVariantID], references: [id])
-  Product          Product?       @relation(fields: [productId], references: [id])
+    id               String         @id
+    warehouseId      String
+    productVariantId String
+    stock            Int
+    productId        String?
+    warehouse        Warehouse      @relation(fields: [warehouseId], references: [id])
+    productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+    Product          Product?       @relation(fields: [productId], references: [id])
 }
 
 // FEATURE 2
@@ -141,42 +151,42 @@ model Product {
 }
 
 model ProductCategory {
-  id       String        @id
-  gender   ProductGender
-  type     ProductTypes
-  category String
-  products Product[]
+    id       String        @id
+    gender   ProductGender
+    type     ProductTypes
+    category String
+    products Product[]
 }
 
 model ProductImage {
-  id        String  @id
-  productID String
-  image     String  @unique
-  product   Product @relation(fields: [productID], references: [id])
+    id        String  @id
+    productId String
+    image     String  @unique
+    product   Product @relation(fields: [productId], references: [id])
 }
 
 model ProductVariant {
-  id               String             @id
-  productID        String
-  size             ProductSize
-  color            String
-  image            String             @unique
-  product          Product            @relation(fields: [productID], references: [id])
-  warehouseProduct WarehouseProduct[]
-  orderItems       OrderItem[]
-  StockMutation    StockMutation[]
+    id               String             @id
+    productId        String
+    size             ProductSize
+    color            String
+    image            String             @unique
+    product          Product            @relation(fields: [productId], references: [id])
+    warehouseProduct WarehouseProduct[]
+    orderItems       OrderItem[]
+    StockMutation    StockMutation[]
 }
 
 model StockMutation {
-  id                    String         @id
-  warehouseID           String
-  associatedWarehouseId String?
-  type                  MutationTypes
-  productVariantID      String
-  quantity              Int
-  createdAt             DateTime       @default(now())
-  warehouse             Warehouse      @relation(fields: [warehouseID], references: [id])
-  productVariant        ProductVariant @relation(fields: [productVariantID], references: [id])
+    id                    String         @id
+    warehouseId           String
+    associatedWarehouseId String?
+    type                  MutationTypes
+    productVariantId      String
+    quantity              Int
+    createdAt             DateTime       @default(now())
+    warehouse             Warehouse      @relation(fields: [warehouseId], references: [id])
+    productVariant        ProductVariant @relation(fields: [productVariantId], references: [id])
 }
 
 // FEATURE 3

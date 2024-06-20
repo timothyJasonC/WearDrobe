@@ -33,6 +33,5 @@ export default function Template({children}: Readonly<{children: React.ReactNode
           </body>
         </html>
     </StoreProvider>
-    
   );
 }

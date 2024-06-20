@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { ref, uploadBytesResumable, getDownloadURL, UploadTask, UploadTaskSnapshot } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL, UploadTask, UploadTaskSnapshot, deleteObject } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
 import { storage } from '../firebase/config'
 
@@ -37,6 +37,14 @@ export default function useStorage() {
             });
         });
     }
+    async function removeImageFromStorage(fileID: string) {
+        try {
+            const fileRef = ref(storage, `gallery/${fileID}`);
+            deleteObject(fileRef)
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-    return { progress, error, uploadFile };
+    return { progress, error, uploadFile, removeImageFromStorage };
 }

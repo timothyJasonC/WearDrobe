@@ -6,15 +6,15 @@ import { PaginationTemplate } from '@/components/pagination'
 import { Input } from "@/components/ui/input"
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { getProduct } from '@/app/action'
-import { IProduct } from '@/constants'
+import { IProduct, IProductList } from '@/constants'
 
-export const AdminProductDisplay = () => {
-	const [productList, setProductList] = useState<IProduct[]>([])
+export const AdminProductDisplay = ({productList}:IProductList) => {
+	const [product, setProduct] = useState<IProduct[]>(productList)
 
 	const getProductList = async() => {
 		const data = await getProduct()
 		
-		setProductList(data.productList)
+		setProduct(data.productList)
 	}
 
 	useEffect(() => {
@@ -28,7 +28,7 @@ export const AdminProductDisplay = () => {
 			<Input id='search' type="text" placeholder="Search products" className='max-w-60'/>
 			</div>
 			<ProdTable 
-			productList={productList}
+			productList={product}
 			action={getProductList}
 			/>
 			<PaginationTemplate />

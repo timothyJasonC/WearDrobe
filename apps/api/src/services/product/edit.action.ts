@@ -5,10 +5,17 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient()
 
 export async function editProduct(req: Request, res: Response) {
-    const { slug } = req.params;
-    const { name, description, onesize, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData } = req.body;
-    
+    enum ProductSize {
+        S = 'S',
+        M = 'M',
+        L = 'L',
+        XL = 'XL'
+    }
     await prisma.$transaction(async (tx) => {
+        const { slug } = req.params;
+        const { name, description, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData } = req.body;
+        const sizeArray: ProductSize[] = [ProductSize.S, ProductSize.M, ProductSize.L, ProductSize.XL];
+        const wareHouseList = await tx.warehouse.findMany()
         const productCategory = await tx.productCategory.findFirst({
             where: {
                 gender: categoryData.gender.toUpperCase(),
@@ -21,7 +28,6 @@ export async function editProduct(req: Request, res: Response) {
             data: {
                 name,
                 description,
-                oneSize: onesize,
                 price,
                 slug: name.toLowerCase().replaceAll(" ", "-"),
                 categoryID: productCategory!.id
@@ -80,16 +86,41 @@ export async function editProduct(req: Request, res: Response) {
         }
 
         if (colorVariantNew.length > 0) {
-            for (let i = 0; i < colorVariantNew.length; i++) {
-                await tx.productVariant.create({
+            for (let i=0; i<colorVariantNew.length; i++) {
+                const variant = await tx.productVariant.create({
                     data: {
                         id: uuidv4(),
                         productID: product.id,
                         color: colorVariantNew[i].name,
                         HEX: colorVariantNew[i].code,
-                        image: colorVariantNew[i].variantImageURL
+                        image: colorVariantNew[i].variantImageURL  
                     }
-                });
+                })
+                for (let k = 0; k<wareHouseList.length; k++) {
+                    if (product.oneSize) {
+                        await tx.warehouseProduct.create({
+                            data: {
+                                id: uuidv4(),
+                                warehouseID: wareHouseList[k].id,
+                                productVariantID: variant.id,
+                                size: 'ONESIZE',
+                                stock: 0
+                            }
+                        })
+                    } else {
+                        for (let s = 0; s<sizeArray.length; s++) {
+                            await tx.warehouseProduct.create({
+                                data: {
+                                    id: uuidv4(),
+                                    warehouseID: wareHouseList[k].id,
+                                    productVariantID: variant.id,
+                                    size: sizeArray[s],
+                                    stock: 0
+                                }
+                            })
+                        }
+                    }
+                }
             }
         }
 

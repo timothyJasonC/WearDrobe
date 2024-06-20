@@ -92,7 +92,7 @@ interface IProdTable {
           )})
         : 
         <TableRow>
-            <TableCell className="font-medium" colSpan={11} >Data will appear here.</TableCell>
+            <TableCell className="font-medium text-center" colSpan={11} >Data will appear here.</TableCell>
         </TableRow>
         }
         </TableBody>

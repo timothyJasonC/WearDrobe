@@ -1,64 +1,13 @@
 import { Request, Response } from 'express';
 import prisma from '@/prisma';
 import { v4 as uuidv4 } from 'uuid';
-import { editProduct } from '@/services/product/product.action';
+import { editProduct } from '@/services/product/edit.action';
+import { createProduct } from '@/services/product/create.action';
 
 export class ProductController {
     async createProduct(req: Request, res: Response) {
         try {
-            const {name, description, price, categoryData, oneSize, colorVariant, thumbnailURL, additionalURL } = req.body
-            
-            await prisma.$transaction(async (tx)=> {
-                const validateName = await tx.product.findFirst({
-                    where: {
-                        name
-                    }
-                })
-                if (validateName) throw "product name already exists"
-                const productCategory = await tx.productCategory.findFirst({
-                    where: {
-                        gender: categoryData.gender.toUpperCase(),
-                        type: categoryData.type.toUpperCase(),
-                        category: categoryData.category
-                    }
-                })
-                const newProduct = await tx.product.create({
-                    data: {
-                        id: uuidv4(),
-                        name,
-                        slug: name.toLowerCase().replaceAll(" ", "-"),
-                        description,
-                        price,
-                        categoryID: productCategory!.id,
-                        oneSize: oneSize,
-                        thumbnailURL
-                    }
-                })
-                for (let i=0; i<additionalURL.length; i++) {
-                    await tx.productImage.create({
-                        data: {
-                            id: uuidv4(),
-                            productID: newProduct.id,
-                            image: additionalURL[i]
-                        } 
-                    })
-                }
-                for (let i=0; i<colorVariant.length; i++) {
-                    await tx.productVariant.create({
-                        data: {
-                            id: uuidv4(),
-                            productID: newProduct.id,
-                            color: colorVariant[i].name,
-                            HEX: colorVariant[i].code,
-                            image: colorVariant[i].variantImageURL  
-                        }
-                    })
-                }
-                return res.status(200).send({
-                        status: 'ok',
-                        message: 'product created'
-                })
-            })
+            await createProduct(req, res)
         } catch (error) {
             res.status(400).send({
                 status: 'error',
@@ -186,6 +135,7 @@ export class ProductController {
                         slug
                     }
                 })
+                
                 return res.status(200).send({
                     status: 'ok',
                     message: 'Product deleted.'

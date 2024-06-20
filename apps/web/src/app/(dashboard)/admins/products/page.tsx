@@ -11,6 +11,7 @@ import { AdminProductDisplay } from '@/components/admDashboard/manageProductModa
 export default async function Products() {
   const category = await getCategory("", "")
   const product = await getProduct()
+  const productList = await product.productList
   
   return (
     <div className='flex flex-col w-full min-h-screen py-10 px-10 md:px-20'>
@@ -19,7 +20,7 @@ export default async function Products() {
         <div className='flex gap-5 md:gap-10 max-md:flex-wrap'>
           <StatisticsCard 
             title='Products'
-            number={product.productList.length}
+            number={productList.length}
             modalElement={<CreateProductDialog />}
           />
           <StatisticsCard 
@@ -35,7 +36,9 @@ export default async function Products() {
       </div>
 
       <div>
-        <AdminProductDisplay />
+        <AdminProductDisplay 
+        productList={productList}
+        />
       </div>   
     </div>
   )

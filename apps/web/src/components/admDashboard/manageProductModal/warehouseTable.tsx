@@ -53,7 +53,7 @@ import { PiTrashFill } from "react-icons/pi";
               ))
               : 
               <TableRow>
-                  <TableCell className="font-medium text-xs" colSpan={4} >Data will appear here.</TableCell>
+                  <TableCell className="font-medium text-center" colSpan={4} >Data will appear here.</TableCell>
               </TableRow>
               }
           </TableBody>

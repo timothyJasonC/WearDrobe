@@ -76,7 +76,7 @@ export function CreateProductForm({setOpen}:{setOpen:React.Dispatch<React.SetSta
           setPriceErrorMessage)
         if (isInvalid) {
           console.log("data invalid")
-          toast.error('Product data is incomplete.')
+          toast.error("Product data is incomplete.")
         } else {
           console.log("data is valid");      
             let thumbnailURL = await uploadFile(thumbnail!)

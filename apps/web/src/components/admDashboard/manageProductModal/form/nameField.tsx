@@ -20,8 +20,8 @@ export const NameField = ({name, setName, nameErrorMessage, setNameErrorMessage}
     const symbolRegex = /[^a-zA-Z0-9\s-]/;
     if (name.length < 2) {
       setNameErrorMessage("Name must be at least 2 characters.");
-    } else if (name.length > 20) {
-      setNameErrorMessage("Name cannot be longer than 20 characters.");
+    } else if (name.length > 30) {
+      setNameErrorMessage("Name cannot be longer than 30 characters.");
     } else if (name.trim().length === 0) {
       setNameErrorMessage("Name cannot be only spaces.");
     } else if (symbolRegex.test(name)) {

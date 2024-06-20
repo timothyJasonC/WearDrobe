@@ -36,7 +36,7 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
   const [gender, setGender] = useState('')
   const [type, setType] = useState('')
   const [category, setCategory] = useState('')
-  const [isOneSize, setIsOneSize] = useState(false)
+  // const [isOneSize, setIsOneSize] = useState(false)
   const [color, setColor] = useState<IEditColor[]>([])
   const [currentThumbnail, setCurrentThumbnail] = useState('')
   const [thumbnail, setThumbnail] = useState<File | undefined>(undefined)
@@ -70,7 +70,7 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
     setGender(data.product.category.gender.charAt(0) + data.product.category.gender.slice(1).toLowerCase())
     setType(data.product.category.type.charAt(0) + data.product.category.type.slice(1).toLowerCase())
     setCategory(data.product.category.category)
-    setIsOneSize(data.product.oneSize)
+    // setIsOneSize(data.product.oneSize)
     setCurrentThumbnail(data.product.thumbnailURL)
     const getAdditional = () => {
       let additional = []
@@ -114,6 +114,7 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
     const isInvalid = checkInvalidEdit(category, color,name,description,price, setInvalidCategory, setInvalidColor, setInvalidMainImage, setNameErrorMessage, setDescErrorMessage, setPriceErrorMessage)
     if (isInvalid) {
       console.log("data invalid");
+      toast.error("Product data is incomplete.")
     } else {
         console.log('data is valid');
         let thumbnailURL = ''
@@ -151,7 +152,7 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
           }
         }       
         
-        const data = {name, description, oneSize: isOneSize, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData:{gender, type, category}}
+        const data = {name, description, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData:{gender, type, category}}
         console.log(data);
         
         const res = await editProduct(data, slug)
@@ -200,10 +201,10 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
                 category={category}
               />
             <Separator className="my-7"/>
-              <SizingField 
+              {/* <SizingField 
                 isOneSize={isOneSize}
                 setIsOneSize={setIsOneSize}
-              />
+              /> */}
             <Separator className="my-7"/>
               <EditColorField
                 setColor={setColor}

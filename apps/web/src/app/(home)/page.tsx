@@ -5,6 +5,7 @@ export default function Home() {
   return (
     <div>
       <Button>Click me</Button>
+      {/* <AddToCart/> */}
     </div>
   )
 }

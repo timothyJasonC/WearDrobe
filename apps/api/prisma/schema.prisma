@@ -45,11 +45,6 @@ enum MutationTypes {
     INBOUND
 }
 
-enum PaymentMethod {
-    MANUAL
-    GATEWAY
-}
-
 enum PaymentStatus {
     PENDING
     COMPLETED
@@ -57,13 +52,12 @@ enum PaymentStatus {
 }
 
 enum OrderStatus {
-    CART
-    PENDING_PAYMENT
-    WAITING_CONFIRMATION
-    PROCESSED
-    SHIPPED
-    COMPLETED
-    CANCELLED
+  CART
+  PENDING_PAYMENT
+  PROCESSED
+  SHIPPED
+  COMPLETED
+  CANCELLED
 }
 
 // FEATURE 1
@@ -82,12 +76,18 @@ model User {
 }
 
 model AddressList {
-    id          String  @id
-    address     String
-    coordinate  String
-    userID      String
-    mainAddress Boolean @default(false)
-    user        User    @relation(fields: [userID], references: [id])
+  id          String  @id
+  address     String
+  coordinate  String
+  userID      String
+  city_id     String
+  province_id String
+  province    String
+  type        String
+  city_name   String
+  postal_code String
+  mainAddress Boolean @default(false)
+  user        User    @relation(fields: [userID], references: [id])
 }
 
 model Admin {
@@ -112,16 +112,21 @@ model PasswordRequest {
 }
 
 model Warehouse {
-    id            String             @id
-    warehouseName String
-    city          String
-    coordinate    String
-    address       String
-    createdAt     DateTime           @default(now())
-    adminID       String             @unique
-    admin         Admin              @relation(fields: [adminID], references: [id])
-    products      WarehouseProduct[]
-    mutations     StockMutation[]
+  id            String             @id
+  warehouseName String
+  coordinate    String
+  address       String
+  city_id       String
+  province_id   String
+  province      String
+  type          String
+  city_name     String
+  postal_code   String
+  createdAt     DateTime           @default(now())
+  adminID       String             @unique
+  admin         Admin              @relation(fields: [adminID], references: [id])
+  products      WarehouseProduct[]
+  mutations     StockMutation[]
 }
 
 model WarehouseProduct{
@@ -193,23 +198,21 @@ model StockMutation {
 // FEATURE 3
 
 model Order {
-  id            String        @id
+  id            String         @id
   userId        String
-  status        OrderStatus   @default(CART)
-  paymentProof  String?
+  status        OrderStatus    @default(CART)
   warehouseId   String?
   totalAmount   Int            @default(0)
-  paymentMethod PaymentMethod?
   paymentStatus PaymentStatus
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  user          User          @relation(fields: [userId], references: [id])
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  user          User           @relation(fields: [userId], references: [id])
   items         OrderItem[]
 }
 
 model OrderItem {
   id               String         @id
-  orderId          String         
+  orderId          String
   productVariantId String
   warehouseId      String?
   quantity         Int

@@ -5,6 +5,7 @@ import { CategoryRouter } from './category.controller'
 import { OrderRouter } from './order.router'
 import { WarehouseRouter } from './warehouse.controller'
 import { ProductRouter } from './product.router'
+import { AddressRouter } from './address.router'
 
 
 export class ApiRouter {
@@ -15,6 +16,7 @@ export class ApiRouter {
     private orderRouter: OrderRouter 
     private warehouseRouter: WarehouseRouter 
     private productRouter: ProductRouter 
+    private addressRouter: AddressRouter
 
 
     constructor() {
@@ -26,6 +28,7 @@ export class ApiRouter {
         this.orderRouter = new OrderRouter()
         this.warehouseRouter = new WarehouseRouter()
         this.productRouter = new ProductRouter()
+        this.addressRouter = new AddressRouter()
         this.initializeRoutes();
     }
 
@@ -36,6 +39,7 @@ export class ApiRouter {
         this.router.use('/order', this.orderRouter.getRouter())
         this.router.use('/warehouses', this.warehouseRouter.getRouter())
         this.router.use('/products', this.productRouter.getRouter())
+        this.router.use('/address', this.addressRouter.getRouter())
     }
 
     getRouter(): Router {

@@ -44,13 +44,17 @@ export async function addOrUpdateCartItem(orderId: string, variantId: string, qu
         });
     } else {
         const orderItemId = uuidv4();
+        const variantItem = await prisma.productVariant.findFirst({
+            where: { id: variantId },
+            select: { product: true }
+        })
         existingCartItem = await prisma.orderItem.create({
             data: {
                 id: orderItemId,
                 orderId,
                 productVariantId: variantId,
                 quantity,
-                price: 100000,
+                price: variantItem?.product.price!,
                 createdAt: new Date(),
                 updatedAt: new Date()
             }
@@ -168,4 +172,18 @@ export async function deleteCart(cartId: string) {
         }
     })
     return
+}
+
+export async function updateToOrder(orderId: string, shippingCost: number, subTotal: number) {
+    const order = await prisma.order.update({
+        where: { id: orderId },
+        data: {
+            id: uuidv4(),
+            paymentStatus: "PENDING",
+            status: "PENDING_PAYMENT",
+            createdAt: new Date(),
+            totalAmount: shippingCost + subTotal
+        }
+    })
+    return order
 }

@@ -15,8 +15,8 @@ type OrderItemProps = {
 
 export default function CartItem({item}: OrderItemProps) {
     const [quantity, setQuantity] = useState(item.quantity)
-    const [price, setPrice] = useState(item.price)
     const dispatch = useAppDispatch();
+    
 
     const handleSetQuantity = async (newQuantity: number) => {
         setQuantity(newQuantity);
@@ -34,7 +34,7 @@ export default function CartItem({item}: OrderItemProps) {
                 <h1 className="font-semibold max-w-44 truncate">{item.productVariant.product.name}</h1>
                 <h1 className="max-w-44 truncate">variant: {item.productVariant.color}</h1>
                 <QuantityCounter quantity={quantity} setQuantity={handleSetQuantity} />
-                <h1>Total Price : {formatToIDR(price * quantity)}</h1>
+                <h1>Total Price : {formatToIDR(item.price)}</h1>
                 <DeleteOrderItemAlert orderItemId={item.id}/>
             </div>
 

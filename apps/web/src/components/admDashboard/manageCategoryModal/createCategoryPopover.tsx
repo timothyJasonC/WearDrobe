@@ -15,7 +15,7 @@ export function CreateCategoryPopover({type, gender, getCategoryData}:{type:stri
           <PiPlusBold/> 
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-80"  align="start" side="right">
+      <PopoverContent className="w-80"  align="start" side="top">
           
           <CategoryForm 
           gender={gender}

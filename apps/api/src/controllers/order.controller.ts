@@ -54,7 +54,7 @@ export class OrderController {
         try {
             await deleteCartItem(itemId)
             const cart = await getCartItem(userId)
-            if (cart?.items.length == 0) {
+            if (Array.isArray(cart?.items) && cart.items.length === 0) {
                 await deleteCart(cart.id)
                 res.json({message: 'cart deleted'})
             } else {

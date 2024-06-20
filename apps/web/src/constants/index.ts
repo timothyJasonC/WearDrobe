@@ -36,3 +36,101 @@ export interface IOrderItem {
     updatedAt: string; // ISO date string
     productVariant: {color: string, image: string, product: {name: string}}
 }
+
+export interface IImageFieldProps {
+  currentThumbnail?: string
+  currentAdditional?: IEditAdditional[]
+  setCurrentAdditional?:React.Dispatch<React.SetStateAction<IEditAdditional[]>>
+  thumbnail?: File;
+  setThumbnail?: (value: File | undefined) => void;
+  invalidMainImage?: boolean;
+  setInvalidMainImage?: (value: boolean) => void;
+  additionalImage?: File[];
+  setAdditionalImage?: (value: File[]) => void;
+}
+
+  export interface IColorVariant {
+    code: string; 
+    name: string;
+    variantImageURL: string
+  }
+  
+  export interface IProductDataSet {
+    name:string,
+    description:string, 
+    price: number, 
+    oneSize: Boolean, 
+    colorVariant: IColorVariant[], 
+    additionalURL: string[], 
+    thumbnailURL: string, 
+    categoryData: ICategory
+  }
+
+  interface IProductImage {
+    id: string;
+    productID: string;
+    image: string;
+  }
+  
+  interface IProductVariant {
+    id: string;
+    productID: string;
+    color: string;
+    HEX: string;
+    image: string;
+    warehouseProduct: any[];
+    totalStock: number;
+  }
+  
+  export interface ICategory {
+    id?: string;
+    gender: string;
+    type: string;
+    category: string;
+  }
+  
+  export interface IProduct {
+    id: string;
+    name: string;
+    slug: string;
+    description: string;
+    thumbnailURL: string; 
+    price: number;
+    oneSize: boolean;
+    categoryID: string;
+    createdAt: string;
+    images: IProductImage[];
+    variants: IProductVariant[];
+    category: ICategory;
+    totalStock: number;
+    sales: number
+  }
+
+  export interface IProductList {
+    productList: IProduct[]
+  }
+
+  export interface IEditColor {
+    id?: string
+    code: string
+    name: string
+    image?: File
+    imageURL?: string
+    isDeleted: boolean
+    isEdited: boolean
+    isNew: boolean
+  }
+
+  export interface IEditAdditional {
+    id?: string
+    productID: string
+    image?: string
+    imageFile?: File
+    isDeleted: boolean
+    isNew: boolean
+  }
+
+
+
+
+  

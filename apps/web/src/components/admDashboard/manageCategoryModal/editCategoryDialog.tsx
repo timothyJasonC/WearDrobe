@@ -13,7 +13,9 @@ export function EditCatagoryDialog({gender, type, category,  getCategoryData}:{g
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="flex items-center gap-1">{category} <PiPencilSimpleLineFill className='flex'/></div>
+        <div>
+          <PiPencilSimpleLineFill className='text-gray-400 hover:text-black'/>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
 

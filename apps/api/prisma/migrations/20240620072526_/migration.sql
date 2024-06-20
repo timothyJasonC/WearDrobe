@@ -8,6 +8,7 @@ CREATE TABLE `User` (
     `gender` ENUM('MALE', 'FEMALE') NULL,
     `dob` DATETIME(3) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `imgUrl` LONGTEXT NULL,
 
     UNIQUE INDEX `User_username_key`(`username`),
     UNIQUE INDEX `User_email_key`(`email`),
@@ -19,7 +20,13 @@ CREATE TABLE `AddressList` (
     `id` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
     `coordinate` VARCHAR(191) NOT NULL,
-    `userId` VARCHAR(191) NOT NULL,
+    `userID` VARCHAR(191) NOT NULL,
+    `city_id` VARCHAR(191) NOT NULL,
+    `province_id` VARCHAR(191) NOT NULL,
+    `province` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
+    `city_name` VARCHAR(191) NOT NULL,
+    `postal_code` VARCHAR(191) NOT NULL,
     `mainAddress` BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY (`id`)
@@ -41,12 +48,30 @@ CREATE TABLE `Admin` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `PasswordRequest` (
+    `id` VARCHAR(191) NOT NULL,
+    `accountId` VARCHAR(191) NOT NULL,
+    `currentToken` LONGTEXT NULL,
+    `requestCount` INTEGER NOT NULL DEFAULT 0,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL,
+
+    UNIQUE INDEX `PasswordRequest_accountId_key`(`accountId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Warehouse` (
     `id` VARCHAR(191) NOT NULL,
     `warehouseName` VARCHAR(191) NOT NULL,
-    `city` VARCHAR(191) NOT NULL,
     `coordinate` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
+    `city_id` VARCHAR(191) NOT NULL,
+    `province_id` VARCHAR(191) NOT NULL,
+    `province` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
+    `city_name` VARCHAR(191) NOT NULL,
+    `postal_code` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `adminID` VARCHAR(191) NOT NULL,
 
@@ -132,11 +157,9 @@ CREATE TABLE `StockMutation` (
 CREATE TABLE `Order` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
-    `status` ENUM('CART', 'PENDING_PAYMENT', 'WAITING_CONFIRMATION', 'PROCESSED', 'SHIPPED', 'COMPLETED', 'CANCELLED') NOT NULL DEFAULT 'CART',
-    `paymentProof` VARCHAR(191) NULL,
+    `status` ENUM('CART', 'PENDING_PAYMENT', 'PROCESSED', 'SHIPPED', 'COMPLETED', 'CANCELLED') NOT NULL DEFAULT 'CART',
     `warehouseId` VARCHAR(191) NULL,
     `totalAmount` INTEGER NOT NULL DEFAULT 0,
-    `paymentMethod` ENUM('MANUAL', 'GATEWAY') NULL,
     `paymentStatus` ENUM('PENDING', 'COMPLETED', 'FAILED') NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -159,7 +182,7 @@ CREATE TABLE `OrderItem` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `AddressList` ADD CONSTRAINT `AddressList_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `AddressList` ADD CONSTRAINT `AddressList_userID_fkey` FOREIGN KEY (`userID`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Warehouse` ADD CONSTRAINT `Warehouse_adminID_fkey` FOREIGN KEY (`adminID`) REFERENCES `Admin`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

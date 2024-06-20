@@ -134,3 +134,104 @@ export interface IImageFieldProps {
 
 
   
+export interface Province {
+    province_id: string;
+    province: string;
+}
+
+export interface City {
+    city_id: string;
+    city_name: string;
+    type?: string
+}
+
+export interface Address {
+    id: string;
+    coordinate: string;
+    mainAddress: boolean;
+}
+
+export interface Warehouse {
+    id: string;
+    warehouseName: string;
+    city: string;
+    coordinate: string;
+    address: string;
+    city_id: string;
+    province_id: string;
+    province: string;
+    type: string;
+    city_name: string;
+    postal_code: string;
+    createdAt: string;
+    adminID: string;
+}
+
+export interface ShippingCostResponse {
+    code: string;
+    name: string;
+    costs: ShippingCost[];
+}
+
+export interface ShippingCost {
+    service: string;
+    description: string;
+    cost: ShippingDetail[];
+}
+
+export interface ShippingDetail {
+    value: number;
+    etd: string;
+    note: string;
+}
+
+export interface Province {
+    province_id: string;
+    province: string;
+}
+
+export interface City {
+    city_id: string;
+    city_name: string;
+    type?: string
+}
+
+export interface Address {
+    id: string;
+    coordinate: string;
+    mainAddress: boolean;
+}
+
+export interface Warehouse {
+    id: string;
+    warehouseName: string;
+    city: string;
+    coordinate: string;
+    address: string;
+    city_id: string;
+    province_id: string;
+    province: string;
+    type: string;
+    city_name: string;
+    postal_code: string;
+    createdAt: string;
+    adminID: string;
+}
+
+export interface ShippingCostResponse {
+    code: string;
+    name: string;
+    costs: ShippingCost[];
+}
+
+export interface ShippingCost {
+    service: string;
+    description: string;
+    cost: ShippingDetail[];
+}
+
+export interface ShippingDetail {
+    value: number;
+    etd: string;
+    note: string;
+}

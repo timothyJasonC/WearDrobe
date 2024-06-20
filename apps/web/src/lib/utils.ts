@@ -18,12 +18,21 @@ export function formatToIDR(amount: number) {
   }).format(amount);
 }
 
-export async function getUser() {
+export async function getUserClientSide() {
     const token = Cookies.get('token')
     let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
     if (token || typeof token === 'string') decoded = jwtDecode(token)
     const res = await (await getRequest(`/user/${decoded.id}`)).json()
     const user = res.data
+    return user;
+}
+
+export async function getUserServerSide(cookies:any) {
+    const token = cookies().get('token')?.value
+    let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
+    if (token) decoded = jwtDecode(token) 
+    const res = await (await getRequest(`/user/${decoded.id}`)).json()
+    const user = res.data;
     return user;
 }
 

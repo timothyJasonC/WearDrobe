@@ -12,7 +12,7 @@ interface IAddressList {
     coordinate: string;
     userID: string;
     mainAddress: boolean;
-    user: IUser; // Assuming IUser is already defined
+    user: IUser; 
 }
 
 interface IUser {

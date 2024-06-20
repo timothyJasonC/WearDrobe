@@ -6,6 +6,8 @@ interface CustomJwtPayload extends JwtPayload {
     role: 'warAdm' | 'superAdm' | 'user'
 }
 
+// NOTE:  if token still valid and about to access auth, redirect to homepage
+
 export function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
     const tokenCookie = req.cookies.get('token'); // Get the cookie object
@@ -68,8 +70,6 @@ export function middleware(req: NextRequest) {
     if (publicPaths.includes(pathname)) {
         return NextResponse.next();
     }
-
-    
 }
 
 export const config = {

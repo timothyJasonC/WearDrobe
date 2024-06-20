@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { postRequest } from '@/lib/fetchRequests';
-import { getUser } from '@/lib/utils';
+import { getUserClientSide } from '@/lib/utils';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { toast } from "sonner"
 
@@ -12,7 +12,7 @@ export default function AlertDialogResetPass({ confirmText, cancelText }: { conf
 
     async function handleResetPasswordRequest() {
         setIsLoading(true)
-        const user = await getUser();
+        const user = await getUserClientSide();
         try {
             const res = await postRequest({ email: user.email }, '/account/request-reset-pass')
             if (res) setIsLoading(false)

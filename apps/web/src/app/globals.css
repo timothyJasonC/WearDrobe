@@ -79,7 +79,18 @@
         @apply max-w-[40rem] lg:max-w-[50rem] xl:max-w-[65rem];
     }
 
+    .std-max-w-2 {
+        @apply max-w-[35rem] lg:max-w-[65rem] xl:max-w-[80rem];
+    }
+
     .debugger {
         @apply bg-slate-300 sm:bg-red-300 md:bg-blue-300 lg:bg-green-300 xl:bg-yellow-300;
+    }
+
+    .input-width-user-profile {
+        @apply lg:max-w-[20rem] xl:max-w-[30rem];
+    }
+    .input-layout-user-profile {
+        @apply flex flex-col lg:flex-row items-start w-full gap-1 lg:items-center justify-between;
     }
 }

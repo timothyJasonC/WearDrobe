@@ -11,7 +11,7 @@ export function ProfileDropdown() {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild className="border-0">
+            <DropdownMenuTrigger asChild className="border-0 focus-visible:ring-black/0 focus-visible:border-black/60">
                 <Button variant="outline"><PiUser size={`20px`} /></Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">        

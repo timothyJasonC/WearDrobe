@@ -104,7 +104,6 @@ model Admin {
 model Warehouse {
   id            String             @id
   warehouseName String
-  city          String
   coordinate    String
   address       String
   city_id       String

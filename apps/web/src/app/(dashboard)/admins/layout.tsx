@@ -5,7 +5,7 @@ import { Toaster } from 'sonner';
 import { Poppins } from 'next/font/google';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import Loading from './products/loading';
+import Loading from './loading';
 
 const poppins = Poppins({
   subsets: ["latin"],

@@ -130,6 +130,16 @@ export interface IImageFieldProps {
     isNew: boolean
   }
 
+  export interface IWarehouse {
+    id?:string,
+    warehouseName?:string,
+    city?:string,
+    coordinate?:string,
+    address?:string,
+    createdAt?:Date,
+    adminID?:string,
+  }
+
 
 
 

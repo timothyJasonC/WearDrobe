@@ -1,21 +1,4 @@
 'use client'
-
-import {
-    Cloud,
-    CreditCard,
-    Github,
-    Keyboard,
-    LifeBuoy,
-    LogOut,
-    Mail,
-    MessageSquare,
-    Plus,
-    PlusCircle,
-    Settings,
-    User,
-    UserPlus,
-    Users,
-  } from "lucide-react"
   
   import { Button } from "@/components/ui/button"
   import {
@@ -24,19 +7,22 @@ import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuPortal,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+import { IWarehouse } from "@/constants";
+import { useState } from "react";
   import { PiCaretCircleDownFill } from "react-icons/pi";
   import { PiWarehouseDuotone } from "react-icons/pi";
   import { PiGlobeHemisphereWestDuotone } from "react-icons/pi";
   
   export function WarehouseDropdown() {
+    const [warehouseList, setWarehouseList] = useState<IWarehouse[]>([])
+
+    const getWarehouse = async() => {
+      const warehouse = await getWarehouse()
+
+    }
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

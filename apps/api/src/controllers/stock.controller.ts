@@ -46,7 +46,9 @@ export class StockController {
                                 data:{
                                     stock: Number(mutationType == "RESTOCK" || mutationType === "INBOUND"
                                         ? variant[i].qty + currentStock?.stock 
-                                        : currentStock!.stock - variant[i].qty
+                                        : currentStock!.stock > variant[i].qty 
+                                        ? currentStock!.stock - variant[i].qty
+                                        : 0
                                     )
                                 }
                             })
@@ -72,9 +74,12 @@ export class StockController {
                                 id: currentStock?.id,
                             }, 
                             data: {
-                                stock: (mutationType === "RESTOCK" || mutationType === "INBOUND"
-                                    ? +variant[i].qty + +currentStock!.stock
-                                    : +currentStock!.stock - +variant[i].qty)
+                                stock: Number(mutationType == "RESTOCK" || mutationType === "INBOUND"
+                                    ? variant[i].qty + currentStock?.stock 
+                                    : currentStock!.stock > variant[i].qty 
+                                    ? currentStock!.stock - variant[i].qty
+                                    : 0
+                                )
                             }
                         })
                         

@@ -1,3 +1,4 @@
+import { StockDialog } from '@/components/admDashboard/manageStocksModal/stocksDialog'
 import { StockTable } from '@/components/admDashboard/manageStocksModal/stocksTable'
 import { StatisticsCard } from '@/components/admDashboard/statisticsCard'
 import { WarehouseDropdown } from '@/components/admDashboard/warehouseDropdown'
@@ -14,6 +15,7 @@ export const Stocks = () => {
           <StatisticsCard 
             title='Total Inventories'
             number={891}
+            modalElement={<StockDialog />}
           />
         </div>
         <div className='flex flex-col w-full items-end mb-7'>

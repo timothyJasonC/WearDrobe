@@ -1,8 +1,13 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit";
-import { combineSlices, configureStore } from "@reduxjs/toolkit";
+import { combineReducers, combineSlices, configureStore } from "@reduxjs/toolkit";
 import { cartSlice } from "./features/cart/cartSlice";
+import { auth } from "@/firebase/config";
+import { warehouseSlice } from "./features/warehouse/warehouseSlice";
 
-const rootReducer = combineSlices(cartSlice);
+const rootReducer = combineReducers({
+  cart: cartSlice.reducer,
+  warehouse: warehouseSlice.reducer
+})
 export type RootState = ReturnType<typeof rootReducer>;
 export const makeStore = () => {
   return configureStore({

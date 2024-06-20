@@ -21,6 +21,12 @@ CREATE TABLE `AddressList` (
     `address` VARCHAR(191) NOT NULL,
     `coordinate` VARCHAR(191) NOT NULL,
     `userID` VARCHAR(191) NOT NULL,
+    `city_id` VARCHAR(191) NOT NULL,
+    `province_id` VARCHAR(191) NOT NULL,
+    `province` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
+    `city_name` VARCHAR(191) NOT NULL,
+    `postal_code` VARCHAR(191) NOT NULL,
     `mainAddress` BOOLEAN NOT NULL DEFAULT false,
 
     PRIMARY KEY (`id`)
@@ -58,9 +64,14 @@ CREATE TABLE `PasswordRequest` (
 CREATE TABLE `Warehouse` (
     `id` VARCHAR(191) NOT NULL,
     `warehouseName` VARCHAR(191) NOT NULL,
-    `city` VARCHAR(191) NOT NULL,
     `coordinate` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
+    `city_id` VARCHAR(191) NOT NULL,
+    `province_id` VARCHAR(191) NOT NULL,
+    `province` VARCHAR(191) NOT NULL,
+    `type` VARCHAR(191) NOT NULL,
+    `city_name` VARCHAR(191) NOT NULL,
+    `postal_code` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `adminID` VARCHAR(191) NOT NULL,
 
@@ -146,11 +157,9 @@ CREATE TABLE `StockMutation` (
 CREATE TABLE `Order` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
-    `status` ENUM('CART', 'PENDING_PAYMENT', 'WAITING_CONFIRMATION', 'PROCESSED', 'SHIPPED', 'COMPLETED', 'CANCELLED') NOT NULL DEFAULT 'CART',
-    `paymentProof` VARCHAR(191) NULL,
+    `status` ENUM('CART', 'PENDING_PAYMENT', 'PROCESSED', 'SHIPPED', 'COMPLETED', 'CANCELLED') NOT NULL DEFAULT 'CART',
     `warehouseId` VARCHAR(191) NULL,
     `totalAmount` INTEGER NOT NULL DEFAULT 0,
-    `paymentMethod` ENUM('MANUAL', 'GATEWAY') NULL,
     `paymentStatus` ENUM('PENDING', 'COMPLETED', 'FAILED') NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,

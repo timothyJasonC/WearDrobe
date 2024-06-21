@@ -2,11 +2,6 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import * as z from 'zod'
-import { Form, useForm } from "react-hook-form"
-import { zodResolver } from '@hookform/resolvers/zod'
-import { FormField, FormItem, FormControl, FormMessage, FormLabel } from "@/components/ui/form"
-import { LoadingButton } from "@/components/ui/loading-button"
 import { postRequest } from "@/lib/fetchRequests"
 import { toast } from "sonner"
 import { useState } from "react"
@@ -34,7 +29,7 @@ export function SSOUsernameForm({ SSOUserData, router }: { SSOUserData: any, rou
             const res = await postRequest(userData, '/user/create-sso-user');
             const formDialog = document.getElementById('username-form');
             const data = await res.json();
-                if (res.ok && data) {
+                if (res.status == 200 || res.status == 201) {
                     formDialog?.classList.remove('flex')
                     formDialog?.classList.add('hidden')
                     Cookies.set('role', data.data.role, { expires: 1 })

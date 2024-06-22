@@ -117,8 +117,8 @@ export function AuthCard() {
                 const account = data.data.user || data.data.admin;
                 Cookies.set('role', data.data.role, { expires: 1 })
                 Cookies.set('token', data.data.token, { expires: 1 })
-                toast.success("Login success", { description: 'redirecting you to homepage..' })
-                setTimeout(() => { router.push('/') }, 2000);
+                toast.success(`Welcome, ${account.role ? account.fullName : account.username }`, { description: `redirecting you to ${account.role ? 'dashboard' : 'homepage'}..` })
+                setTimeout(() => { router.push(account.role ? '/admins/overview' : '/' ) }, 2000);
             } else if (res.status == 401) {
                 toast.error("Password incorrect")
             } else if (res.status == 404) {

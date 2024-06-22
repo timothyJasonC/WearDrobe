@@ -25,10 +25,10 @@ export default function Template({children}: Readonly<{children: React.ReactNode
         <html lang="en">
           <body className={poppins.className}>
             <AdminSideBar>
-            <Suspense fallback={<Loading/>}>
-                <Toaster position="top-center" expand={true} richColors/>
-                {children}
-            </Suspense>
+                <Suspense fallback={<Loading/>}>
+                    <Toaster position="top-center" expand={true} richColors/>
+                    {children}
+                </Suspense>
             </AdminSideBar>
           </body>
         </html>

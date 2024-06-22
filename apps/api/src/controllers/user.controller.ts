@@ -108,4 +108,16 @@ export class UserController {
             serverResponse(res, 400, 'error', error)
         }
     }
+
+    async updatePhoto(req: Request, res: Response) {
+        try { 
+            const user = await prisma.user.findFirst({ where : { id: req.params.id }})
+            if (user) {
+                await prisma.user.update({ where: { id: user.id }, data: { imgUrl: req.body.imgUrl  } })
+            } else return serverResponse(res, 404, 'error', 'user not found!')
+            serverResponse(res, 200, 'ok', 'photo profile has been updated')
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
 }

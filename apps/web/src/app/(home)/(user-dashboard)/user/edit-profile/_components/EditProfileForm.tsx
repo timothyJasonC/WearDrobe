@@ -7,13 +7,10 @@ import { DatePicker } from "@/app/(account)/(account-setup)/verify/_components/D
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { PiFloppyDiskBold } from "react-icons/pi"
-import { Separator } from "@/components/ui/separator"
 import { SelectGroup, SelectLabel } from "@/components/ui/select"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
-import { StaticImport } from "next/dist/shared/lib/get-img-props"
-import { InputPhotoProfile } from "./InputPhotoProfile"
 
 export enum Gender {
     MALE = 'MALE',
@@ -191,12 +188,7 @@ export default function EditProfileForm({ user } : { user: IUser }) {
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    {
-                                        isLoading ? 
-                                        <LoadingButton loading={isLoading ? true: false} className="px-10 flex items-center gap-2 w-fit" type="submit">Save Change</LoadingButton>
-                                        :
-                                        <LoadingButton className="px-10 flex items-center gap-2 w-fit" type="submit">Save Change</LoadingButton>
-                                    }
+                                    <LoadingButton loading={isLoading ? true: false} className="px-10 flex items-center gap-2 w-fit" type="submit">Save Change</LoadingButton>
                                 </AlertDialogFooter>
                             </AlertDialogContent>
                         </AlertDialog>

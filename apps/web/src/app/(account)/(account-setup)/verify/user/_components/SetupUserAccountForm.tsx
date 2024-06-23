@@ -190,12 +190,7 @@ export default function SetupUserAccountForm() {
                         }}
                     />
                     
-                    {
-                        isLoading ? 
-                        <LoadingButton loading className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></LoadingButton>
-                        :
-                        <Button className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></Button>
-                    }
+                    <LoadingButton loading={isLoading ? true: false} className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></LoadingButton>
                 </form>
             </Form>
         </div>

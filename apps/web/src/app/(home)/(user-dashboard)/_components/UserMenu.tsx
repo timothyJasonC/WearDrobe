@@ -6,7 +6,7 @@ import { ToolTip } from '@/components/Tooltip';
 import Link from 'next/link';
 import Image from 'next/image';
 import { IUser } from "../user/edit-profile/_components/EditProfileForm";
-import { InputPhotoProfile } from "../user/edit-profile/_components/InputPhotoProfile";
+import { InputPhotoProfile } from "./InputPhotoProfile";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Button } from "@/components/ui/button";
 import useStorage from "@/hooks/useStorage";

@@ -67,3 +67,9 @@ export function swipeReverseToPrevForm() {
     firstForm?.classList.remove('-translate-x-96')
     secondForm?.classList.remove('-translate-x-96')
 }
+
+export function handleLogout() {
+    Cookies.remove('token')
+    Cookies.remove('role')
+    // ... optional other function
+}

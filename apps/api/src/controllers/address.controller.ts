@@ -1,7 +1,5 @@
-import prisma from "@/prisma";
 import { createAddress, findClosestWarehouse, getAddressCoordinates, getAddressUserById, getAllWarehouseAddress, getShippingCost, getUserAddressList, getWarehouseByName } from "@/services/address/address.action";
 import { Request, Response } from "express";
-import { v4 as uuidv4 } from 'uuid';
 
 export class AddressController {
     async getProvinces(req: Request, res: Response) {
@@ -34,7 +32,6 @@ export class AddressController {
     async addAddress(req: Request, res: Response) {
         try {
             const { selectedCity, address, userId } = req.body
-
             const city = await fetch(`https://api.rajaongkir.com/starter/city?id=${selectedCity}`, {
                 method: 'GET',
                 headers: { key: `${process.env.NEXT_PUBLIC_RAJA_ONGKIR_API_KEY}` }
@@ -70,9 +67,11 @@ export class AddressController {
     async getClossestWarehouse(req: Request, res: Response) {
         try {
             const { address } = req.body
+            
             const addressUser = await getAddressUserById(address)
             const addressCoordinates = await getAddressCoordinates(`${addressUser?.address}, ${addressUser?.city_name}, ${addressUser?.province}, Indonesia`)
             const allWarehouseAddress = await getAllWarehouseAddress()
+
             const closestWarehouse = await findClosestWarehouse(addressCoordinates, allWarehouseAddress)
             const warehouseId = Object.keys(closestWarehouse!)
             const warehouse = await getWarehouseByName(warehouseId[0])

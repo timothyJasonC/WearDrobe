@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+</head>
+<body>
+    <h1>Order Invoice</h1>
+    <p>Name: {{name}}</p>
+    <p>Status: {{status}}</p>
+    <p>Payment Status: {{paymentStatus}}</p>
+    <p>Total Amount: {{totalAmount}}</p>
+    <p>Created At: {{createdAt}}</p>
+    <p>Warehouse: {{warehouse}}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Variant ID</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each orderItem}}
+            <tr>
+                <td>{{productVariantId}}</td>
+                <td>{{quantity}}</td>
+                <td>{{price}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,7 +1,6 @@
 import { ShippingCost, ShippingCostResponse, ShippingDetail } from '@/constants'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatToIDR } from '@/lib/utils';
-import { useState } from 'react';
 
 interface DropdownShippingServicesProps {
     shippingServices: ShippingCost[] | null

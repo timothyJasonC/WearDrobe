@@ -5,10 +5,11 @@ import { isTokenExp } from "@/lib/utils";
 import { NavigationMenuLink, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import { PiUser } from "react-icons/pi";
+import Cart from "@/components/cart/Cart";
 
 export default function AccountMenu() {
 
-    const [ userLogged, setUserLogged ] = useState(false);
+    const [userLogged, setUserLogged] = useState(false);
 
     useEffect(() => {
         const token = Cookies.get('token')
@@ -19,12 +20,21 @@ export default function AccountMenu() {
     return (
         <div>
             {
-                userLogged? 
-                <ProfileDropdown />
-                :
-                <Link href="/auth" legacyBehavior passHref>
-                    <NavigationMenuLink className={navigationMenuTriggerStyle()}><PiUser size={`20px`} /></NavigationMenuLink>
-                </Link>
+                userLogged ? (
+                    (
+                        <div className="flex gap-2 items-center">
+                            <ProfileDropdown />
+                            <div className="relative">
+                                <Cart />
+                            </div>
+                        </div>
+                    )
+
+                )
+                    :
+                    <Link href="/auth" legacyBehavior passHref>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}><PiUser size={`20px`} /></NavigationMenuLink>
+                    </Link>
             }
         </div>
     )

@@ -1,18 +1,24 @@
 import { addOrUpdateCartItem, deleteCart, deleteCartItem, getCartItem, getCartItemsWithTotal, getNewCartItem, getOrCreateCart, updateCartItem, updateToOrder } from "@/services/cart/cart.action";
-import { failedOrder, getOrderById, getPaymentLink, successOrder } from "@/services/order/order.action";
+import { cancelOrder, failedOrder, getOrderByAdmin, getOrderById, getOrderByUser, getPaymentLink, getUserById, successOrder, updateShipped } from "@/services/order/order.action";
 import { Request, Response } from "express";
+import fs from "fs"
+import handlebars from "handlebars"
+import path from "path";
+import { transporter } from '@/helpers/nodemailer';
+import { getWarehouseById } from "@/services/address/address.action";
+import { generateInvoicePdf } from "@/helpers/pdf";
 
 export class OrderController {
 
     async addToCart(req: Request, res: Response) {
-        const { userId, variantId, quantity } = req.body
+        const { userId, variantId, quantity, color, size } = req.body
 
         try {
             const cart = await getOrCreateCart(userId)
 
-            await addOrUpdateCartItem(cart.cart.id, variantId, quantity)
+            await addOrUpdateCartItem(cart.id, variantId, color, size, quantity)
 
-            await getCartItemsWithTotal(cart.cart.id)
+            await getCartItemsWithTotal(cart.id)
 
             const items = await getCartItem(userId)
 
@@ -80,8 +86,8 @@ export class OrderController {
 
     async createOrder(req: Request, res: Response) {
         try {
-            const { orderId, shippingCost, subTotal, userId } = req.body
-            const order = await updateToOrder(orderId, shippingCost, subTotal)
+            const { orderId, shippingCost, subTotal, warehouseId } = req.body
+            const order = await updateToOrder(orderId, shippingCost, subTotal, warehouseId)
             if (order) {
                 let data = {
                     transaction_details: {
@@ -105,12 +111,90 @@ export class OrderController {
         try {
             if (req.body.transaction_status === 'settlement') {
                 const updateOrder = await successOrder(req.body.order_id)
-                console.log(updateOrder);
+                const user = await getUserById(updateOrder.userId)
+                const warehouse = await getWarehouseById(updateOrder.warehouseId!)
+
+
+                const templatePath = path.join(__dirname, "../templates", "invoice.html")
+                const templateSource = fs.readFileSync(templatePath, 'utf-8')
+                const compiledTemplate = handlebars.compile(templateSource)
+
+                const inputData = {
+                    name: user?.username,
+                    status: updateOrder.status,
+                    paymentStatus: updateOrder.paymentStatus,
+                    orderItem: updateOrder.items,
+                    totalAmount: updateOrder.totalAmount,
+                    createdAt: updateOrder.createdAt,
+                    warehouse: warehouse?.warehouseName
+                }
+
+                const html = compiledTemplate(inputData)
+                console.log(user?.email);
+
+                const pdf = await generateInvoicePdf(inputData)
+                await transporter.sendMail({
+                    from: process.env.MAIL_USER,
+                    to: user?.email,
+                    subject: `Your Order Details on WearDrobe`,
+                    html,
+                    attachments: [{ path: pdf }]
+
+                })
+
             } else if (req.body.transaction_status === 'failed') {
-                const updateOrder = await failedOrder(req.body.order_id);
-                console.log(updateOrder);
+                await failedOrder(req.body.order_id);
             } else {
-                console.log(`Transaction status is ${req.body.transaction_status}, no action taken.`);
+                return
+            }
+        } catch (err) {
+            res.json(err)
+        }
+    }
+
+    async getOrderByAdmin(req: Request, res: Response) {
+        try {
+            const { adminId, userId } = req.body
+            if (userId) {
+                const orderList = await getOrderByUser(userId)
+                res.json(orderList)
+            }
+            if (adminId) {
+                const orderList = await getOrderByAdmin(adminId)
+                res.json(orderList)
+            }
+        } catch (err) {
+            res.json(err)
+        }
+    }
+
+    async cancelOrder(req: Request, res: Response) {
+        try {
+            const { orderId, adminId, userId } = req.body
+            const cancel = await cancelOrder(orderId)
+
+            if (cancel) {
+                if (adminId) {
+                    const orderList = await getOrderByAdmin(adminId)
+                    res.json(orderList)
+                }
+                if (userId) {
+                    const orderList = await getOrderByUser(userId)
+                    res.json(orderList)
+                }
+            }
+        } catch (err) {
+            res.json(err)
+        }
+    }
+
+    async changeToShipped(req: Request, res: Response) {
+        try {
+            const { orderId, adminId } = req.body
+            const updateToShipped = await updateShipped(orderId)
+            if (updateToShipped) {
+                const orderList = await getOrderByAdmin(adminId)
+                res.json(orderList)
             }
         } catch (err) {
             res.json(err)

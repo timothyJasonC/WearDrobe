@@ -66,8 +66,8 @@ export async function editCategory(dataSet: {gender: string, type: string, categ
   return data
 }
 
-export async function getWarehouse() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}warehouses`, {
+export async function getWarehouse(id: string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}warehouses/${id}`, {
     method: "GET"
   })
   const data = await res.json()

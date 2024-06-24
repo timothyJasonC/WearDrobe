@@ -7,6 +7,7 @@ import { WarehouseDropdown } from '@/components/admDashboard/warehouseDropdown'
 import { PaginationTemplate } from '@/components/pagination'
 import { Input } from '@/components/ui/input'
 import { IProduct, IWarehouse } from '@/constants'
+import { getAdminClientSide } from '@/lib/utils'
 import React, { useEffect, useState } from 'react'
 import { PiMagnifyingGlass } from 'react-icons/pi'
 
@@ -21,13 +22,17 @@ export const Stocks = () => {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1)
 
-  
+  const getAdmWH = async() => {
+    const admin = await getAdminClientSide()
+    const warehouse = await getWarehouse(admin.id)
+    setWarehouseList(warehouse)
+    if (admin.role == 'warAdm') {
+      setSelectedWH(warehouse[0])
+    }
+  }
 
   const getData = async(wh:string) => {
-    
-    const warehouse = await getWarehouse()
     const product = await getProduct(wh, page)
-    setWarehouseList(warehouse)
     setProductQty(product.totalProduct)
     setProductList(product.productList)
     setInventory(product.totalStock)

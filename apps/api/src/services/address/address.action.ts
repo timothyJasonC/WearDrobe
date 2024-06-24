@@ -82,6 +82,13 @@ export async function getAllWarehouseAddress() {
     }
 }
 
+export async function getWarehouseById(warehouseId: string) {
+    const warehouse = await prisma.warehouse.findUnique({
+        where: {id: warehouseId}
+    })
+    return warehouse
+}
+
 async function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
     const R = 6371;
     const dLat = toRadians(lat2 - lat1);

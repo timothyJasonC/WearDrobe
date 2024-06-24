@@ -6,10 +6,11 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiShoppingCartSimple, PiSignOut, PiUser } from "react-icons/pi"
 import { Input } from "../../../components/ui/input"
+import Cart from "@/components/cart/Cart"
 import { handleLogout } from "@/lib/utils"
 import { useRouter } from "next/navigation"
   
-export function HeaderDropdown() {
+export function HeaderDropdown({userLogged}: any) {
     const router = useRouter()
     return (
         <DropdownMenu>
@@ -80,12 +81,19 @@ export function HeaderDropdown() {
                             <span className="text-white text-xs flex justify-center items-center font-light scale-[92%]">99+</span>
                         </div>
                     </DropdownMenuItem>
+                    
                     <DropdownMenuItem className="flex gap-2">
                         <PiShoppingCartSimple size={`16px`} />
                         <span>Cart</span>
-                        <div className="bg-red-400 w-6 h-6 rounded-full absolute right-2 flex justify-center items-center">
-                            <span className="text-white text-xs flex justify-center items-center font-light scale-[92%]">99+</span>
-                        </div>
+                        {
+                            userLogged ? (
+                                        <div className="absolute right-2">
+                                            <Cart />
+                                        </div>
+                            ) : (
+                                ''
+                            )
+                        }
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

@@ -2,53 +2,42 @@
 import { useState } from 'react';
 import QuantityCounter from './QuantityCounter';
 import { addToCart } from "@/lib/cart";
-import { useToast } from '../ui/use-toast';
+import { toast } from "sonner"
+
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { setCart } from '@/lib/redux/features/cart/cartSlice';
+import { getUserClientSide } from '@/lib/utils';
+import { Button } from '../ui/button';
 
-type VariantProps = {
-    selectedColor: string;
-};
-
-export default function AddToCartButton({ selectedColor }: VariantProps) {
+export default function AddToCartButton() {
     const [quantity, setQuantity] = useState(1);
     const cart = useAppSelector(state => state.cart.value);
     const dispatch = useAppDispatch();
-    const { toast } = useToast();
 
     const handleAddToCart = async () => {
         try {
-            const result = await addToCart(selectedColor, quantity);
+            const userData = await getUserClientSide()
+            const variantId = '1'
+            const color = 'Black'
+            const size = 'M'
+            const result = await addToCart(userData.id, variantId, color, size, quantity);
             if (result === 'error') throw new Error('Failed to add item to cart')
-
-            toast({
-                title: "Add item success",
-                description: "Your item has been added to your cart",
-                className: "bg-[#ffd6ba] rounded-xl"
-            });
+            toast.success('Your item has been added to your cart')
             dispatch(setCart(result));
         } catch (error) {
-            toast({
-                title: "Add item failed",
-                description: "Can't add item to your cart, please try again later",
-                variant: 'destructive',
-                className: "rounded-xl"
-            });
+            toast.error("Can't add item to your cart, please try again later")
         }
     };
 
     return (
-        <div className='mt-2'>
+        <div className='flex flex-col gap-2 mt-2'>
             <div className='flex justify-around'>
                 <h1>Quantity: </h1>
                 <QuantityCounter quantity={quantity} setQuantity={setQuantity} />
             </div>
-            <button
-                onClick={handleAddToCart}
-                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-md"
-            >
+            <Button className='rounded-full w-full' size={"lg"} onClick={handleAddToCart}>
                 Add to Cart
-            </button>
+            </Button>
         </div>
     );
 }

@@ -92,16 +92,16 @@ model AddressList {
 }
 
 model Admin {
-    id            String     @id
-    role          Role       @default(warAdm)
-    accountActive Boolean    @default(false)
-    fullName      String?
-    email         String     @unique
-    password      String?
-    gender        Gender?
-    dob           DateTime?
-    createdAt     DateTime   @default(now())
-    Warehouse     Warehouse?
+  id            String     @id
+  role          Role       @default(warAdm)
+  accountActive Boolean    @default(false)
+  fullName      String?
+  email         String     @unique
+  password      String?
+  gender        Gender?
+  dob           DateTime?
+  createdAt     DateTime   @default(now())
+  Warehouse     Warehouse?
 }
 
 model PasswordRequest {
@@ -232,6 +232,7 @@ model OrderItem {
   warehouseId      String?
   quantity         Int
   price            Int
+  size             String
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   order            Order          @relation(fields: [orderId], references: [id])

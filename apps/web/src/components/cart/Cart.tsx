@@ -7,18 +7,19 @@ import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { useEffect, useState } from "react";
 import { getCartItems } from "@/lib/cart";
 import { setCart } from "@/lib/redux/features/cart/cartSlice";
-import { formatToIDR } from "@/lib/utils";
+import { formatToIDR, getUserClientSide } from "@/lib/utils";
+import { PiShoppingCartSimple } from "react-icons/pi";
 
 export default function Cart() {
     const cart = useAppSelector(state => state.cart.value);
     const [totalAmount, setTotalAmount] = useState(0);
     const [quantity, setQuantity] = useState(0);
-
     const dispatch = useAppDispatch();
 
     const getCartDetail = async () => {
         try {
-            const res = await getCartItems();
+            const userData = await getUserClientSide()
+            const res = await getCartItems(userData.id);
             if (res.message === 'no cart') {
                 dispatch(setCart(null));
             } else {
@@ -34,7 +35,7 @@ export default function Cart() {
     }, []);
 
     useEffect(() => {
-        if (cart) {
+        if (cart?.items) {
             setTotalAmount(cart.items.reduce((acc, item) => acc + item.price, 0));
             setQuantity(cart.items.reduce((acc, item) => acc + item.quantity, 0));
         } else {
@@ -46,14 +47,15 @@ export default function Cart() {
     return (
         <Sheet>
             <SheetTrigger className="align-middle relative flex">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                </svg>
-                {quantity > 0 && (
-                    <p className="flex absolute bg-red-500 rounded-full w-4 h-4 text-xs text-center -right-1 justify-center text-gray-900">
-                        {quantity}
-                    </p>
-                )}
+                    <PiShoppingCartSimple className="max-md:hidden" size={`20px`} />
+                    {quantity > 0 && (
+                        <div className="bg-red-400 w-6 h-6 rounded-full md:absolute -top-4 -right-4 border-2 border-white flex justify-center items-center">
+                            <span className="text-white text-sm flex justify-center items-center font-light scale-[92%] md:scale-[82%] ">{quantity}</span>
+                        </div>
+                        // <div className="bg-red-400 w-6 h-6 rounded-full max-md:absolute right-2 flex justify-center items-center">
+                        // <span className="text-white text-xs flex justify-center items-center font-light scale-[92%]">{quantity}</span>
+                    // </div>
+                    )}
             </SheetTrigger>
 
             <SheetContent className="flex flex-col gap-6 bg-white">
@@ -64,7 +66,7 @@ export default function Cart() {
                     </SheetDescription>
                 </SheetHeader>
                 <div className="flex flex-col gap-2 h-[70vh] overflow-y-auto">
-                    {cart && cart?.items.length > 0 ? cart.items.map((item, idx) => (
+                    {cart?.items && cart?.items.length > 0 ? cart.items.map((item, idx) => (
                         <CartItem key={idx} item={item} />
                     )) : (
                         <p>No items in the cart.</p>

@@ -20,6 +20,10 @@ export class OrderRouter {
 
         this.router.post('/', this.orderController.createOrder)
         this.router.post('/status', this.orderController.checkStatus)
+        
+        this.router.post('/warehouseOrder', this.orderController.getOrderByAdmin)
+        this.router.post('/cancelOrder', this.orderController.cancelOrder)
+        this.router.post('/changeToShipped', this.orderController.changeToShipped)
     }
 
     getRouter() {

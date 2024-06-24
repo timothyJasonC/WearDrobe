@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu, DropdownMenuContent, DropdownMenuGroup,
-    DropdownMenuItem, DropdownMenuSeparator,DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
+    DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator,
+    DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { PiGear, PiReceipt, PiSignOut, PiUser, PiUserCircle } from "react-icons/pi"
 import { useRouter } from "next/navigation"
 import { handleLogout } from "@/lib/utils"
-  
+
 export function ProfileDropdown() {
     const router = useRouter()
 
@@ -16,7 +17,7 @@ export function ProfileDropdown() {
             <DropdownMenuTrigger asChild className="border-0 focus-visible:ring-black/0 focus-visible:border-black/60">
                 <Button variant="outline"><PiUser size={`20px`} /></Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">        
+            <DropdownMenuContent className="w-56">
                 <DropdownMenuGroup>
                     <Link href={'/user/edit-profile'}>
                         <DropdownMenuItem className="flex gap-2 cursor-pointer">
@@ -24,10 +25,13 @@ export function ProfileDropdown() {
                             <span>Profile</span>
                         </DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem className="flex gap-2 cursor-pointer">
-                        <PiReceipt size={`16px`} />
-                        <span>Order History</span>
-                    </DropdownMenuItem>
+                    <Link href={'/user/transaction'}>
+                        <DropdownMenuItem className="flex gap-2 cursor-pointer">
+                            <PiReceipt size={`16px`} />
+                            <span>Order History</span>
+                        </DropdownMenuItem>
+                    </Link>
+
                     {/* <DropdownMenuSub>
                         <DropdownMenuSubTrigger className="flex gap-2">
                             <PiGenderFemale size={'16px'} />
@@ -70,7 +74,7 @@ export function ProfileDropdown() {
                     </DropdownMenuSub> */}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => { handleLogout(); router.push('/auth') } } className="flex gap-2 cursor-pointer">
+                <DropdownMenuItem onClick={() => { handleLogout(); router.push('/auth') }} className="flex gap-2 cursor-pointer">
                     <PiSignOut size={`16px`} />
                     <span>Log out</span>
                 </DropdownMenuItem>
@@ -78,4 +82,3 @@ export function ProfileDropdown() {
         </DropdownMenu>
     )
 }
-  

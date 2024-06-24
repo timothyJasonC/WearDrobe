@@ -5,7 +5,6 @@ import SectionHeaders from "@/components/order/SectionHeaders";
 import { ShippingCost } from "@/constants";
 import { fetchShippingCost, checkoutOrder } from "@/lib/cart";
 import { formatToIDR } from "@/lib/utils";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import DropdownAddress from "@/components/order/DropdownAddress";
 import DropdownShipping from "@/components/order/DropdownShipping";
@@ -49,7 +48,7 @@ export default function page({ params: { id } }: CheckoutProps) {
     }
 
     useEffect(() => {
-        if (cart) {
+        if (cart && cart.items !== undefined) {
             setTotalAmount(cart.items.reduce((acc, item) => acc + item.price, 0));
         } else {
             setTotalAmount(0);
@@ -66,7 +65,7 @@ export default function page({ params: { id } }: CheckoutProps) {
     }, [shipping, service]);
 
     const handleCheckout = async () => {
-        const result = await checkoutOrder(id, shippingCost, totalAmount)
+        const result = await checkoutOrder(id, shippingCost, totalAmount, warehouseId!)
         router.push(result.redirect_url);
     }
 
@@ -78,7 +77,7 @@ export default function page({ params: { id } }: CheckoutProps) {
             <div className="mt-8 grid gap-8 md:grid-cols-2">
                 <div>
                     <div className="flex flex-col gap-4">
-                        {cart && cart?.items.length > 0 ? cart.items.map((item, idx) => (
+                        {cart && cart.items !== undefined && cart.items.length > 0 ? cart.items.map((item, idx) => (
                             <CartItem key={idx} item={item} />
                         )) : (
                             <div>No products in your shopping cart</div>

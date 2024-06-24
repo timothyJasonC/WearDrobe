@@ -20,6 +20,7 @@ export function formatToIDR(amount: number) {
 
 export async function getUserClientSide() {
     const token = Cookies.get('token')
+    if(!token) return 
     let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
     if (token || typeof token === 'string') decoded = jwtDecode(token)
     const res = await (await getRequest(`/user/${decoded.id}`)).json()

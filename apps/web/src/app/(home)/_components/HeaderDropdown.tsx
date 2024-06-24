@@ -7,8 +7,11 @@ import {
 import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiShoppingCartSimple, PiSignOut, PiUser } from "react-icons/pi"
 import { Input } from "../../../components/ui/input"
 import Cart from "@/components/cart/Cart"
+import { handleLogout } from "@/lib/utils"
+import { useRouter } from "next/navigation"
   
 export function HeaderDropdown({userLogged}: any) {
+    const router = useRouter()
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -30,7 +33,7 @@ export function HeaderDropdown({userLogged}: any) {
                             <span>Women</span>
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
-                            <DropdownMenuSubContent>
+                            <DropdownMenuSubContent className="md:hidden">
                                 <DropdownMenuItem>
                                     <span>category 1</span>
                                 </DropdownMenuItem>
@@ -50,7 +53,7 @@ export function HeaderDropdown({userLogged}: any) {
                             <span>Men</span>
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
-                            <DropdownMenuSubContent>
+                            <DropdownMenuSubContent className="md:hidden">
                                 <DropdownMenuItem>
                                     <span>category 1</span>
                                 </DropdownMenuItem>
@@ -94,7 +97,7 @@ export function HeaderDropdown({userLogged}: any) {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex gap-2">
+                <DropdownMenuItem onClick={() => { handleLogout(); router.push('/auth') } } className="flex gap-2">
                     <PiSignOut size={`16px`} />
                     <span>Log out</span>
                 </DropdownMenuItem>

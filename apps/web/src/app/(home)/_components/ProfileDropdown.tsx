@@ -6,14 +6,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { PiGear, PiReceipt, PiSignOut, PiUser, PiUserCircle } from "react-icons/pi"
-import Cookies from "js-cookie"
-  
-export function ProfileDropdown() {
+import { useRouter } from "next/navigation"
+import { handleLogout } from "@/lib/utils"
 
-    function handleLogout() {
-        Cookies.remove('token')
-        Cookies.remove('role')
-    }
+export function ProfileDropdown() {
+    const router = useRouter()
 
     return (
         <DropdownMenu>
@@ -31,9 +28,10 @@ export function ProfileDropdown() {
                     <Link href={'/user/transaction'}>
                         <DropdownMenuItem className="flex gap-2 cursor-pointer">
                             <PiReceipt size={`16px`} />
-                            <span>Transaction</span>
+                            <span>Order History</span>
                         </DropdownMenuItem>
                     </Link>
+
                     {/* <DropdownMenuSub>
                         <DropdownMenuSubTrigger className="flex gap-2">
                             <PiGenderFemale size={'16px'} />
@@ -76,21 +74,7 @@ export function ProfileDropdown() {
                     </DropdownMenuSub> */}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem className="flex gap-2 cursor-pointer">
-                        <PiGear size={`16px`} />
-                        <span>Settings</span>
-                    </DropdownMenuItem>
-                    {/* <DropdownMenuItem className="flex gap-2">
-                        <PiShoppingCartSimple size={`16px`} />
-                        <span>Cart</span>
-                        <div className="bg-red-400 w-6 h-6 rounded-full absolute right-2 flex justify-center items-center">
-                            <span className="text-white text-xs flex justify-center items-center font-light scale-[92%]">99+</span>
-                        </div>
-                    </DropdownMenuItem> */}
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="flex gap-2 cursor-pointer">
+                <DropdownMenuItem onClick={() => { handleLogout(); router.push('/auth') }} className="flex gap-2 cursor-pointer">
                     <PiSignOut size={`16px`} />
                     <span>Log out</span>
                 </DropdownMenuItem>

@@ -201,12 +201,7 @@ export function AuthCard() {
                                     } } 
                                     className="text-blue-600 font-light cursor-pointer">Forgot password?</Label>
                             </div>
-                            {
-                                isLoading ? 
-                                <LoadingButton loading className="px-10 flex gap-2" type="submit">Login</LoadingButton>
-                                :
-                                <Button className="px-10 flex gap-2" type="submit">Login</Button>
-                            }
+                            <LoadingButton loading={isLoading ? true: false} className="px-10 flex gap-2" type="submit">Login</LoadingButton>
                         </form>
                     </Form>
                 </CardContent>
@@ -253,16 +248,9 @@ export function AuthCard() {
                                             )
                                         }}
                                     />
-                                    {
-                                        isLoading ? 
-                                        <LoadingButton loading className="px-10 flex gap-2" type="submit">Create New Account
-                                            <PiArrowUpRight />
-                                        </LoadingButton>
-                                        :
-                                        <Button className="px-10 flex gap-2" type="submit">Create New Account
-                                            <PiArrowUpRight />
-                                        </Button>
-                                    }
+                                    <LoadingButton loading={isLoading ? true: false} className="px-10 flex gap-2" type="submit">Create New Account
+                                        <PiArrowUpRight />
+                                    </LoadingButton>
                                 </form>
                             </Form>
                         </div>

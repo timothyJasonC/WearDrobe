@@ -146,12 +146,7 @@ export function NewPassForm() {
                             </FormItem>
                         )}
                     />
-                    {
-                        isLoading ? 
-                        <LoadingButton loading type="submit" className="flex gap-2">Save New Password<PiArrowRight /></LoadingButton>
-                        :
-                        <Button type="submit" className="flex gap-2">Save New Password<PiArrowRight /></Button>
-                    }
+                    <LoadingButton loading={isLoading ? true: false} type="submit" className="flex gap-2">Save New Password<PiArrowRight /></LoadingButton>
                 </form>
             </Form>
         </div>

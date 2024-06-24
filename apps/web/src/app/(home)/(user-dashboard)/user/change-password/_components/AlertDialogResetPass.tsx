@@ -45,12 +45,7 @@ export default function AlertDialogResetPass({ confirmText, cancelText }: { conf
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel >{ cancelText }</AlertDialogCancel>
-                        {
-                            isLoading ?
-                            <LoadingButton loading onClick={handleResetPasswordRequest} >{ confirmText }</LoadingButton>
-                            :
-                            <LoadingButton onClick={handleResetPasswordRequest} >{ confirmText }</LoadingButton>
-                        }
+                        <LoadingButton loading={isLoading ? true: false} onClick={handleResetPasswordRequest} >{ confirmText }</LoadingButton>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

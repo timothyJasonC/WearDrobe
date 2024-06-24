@@ -6,17 +6,17 @@ import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import {
-  Form, FormControl, FormDescription,
+  Form, FormControl,
   FormField, FormItem,
   FormLabel, FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { PiArrowLeft, PiArrowLeftThin, PiArrowRight, PiEye, PiEyeClosed, PiX } from "react-icons/pi"
+import { PiArrowLeftThin, PiArrowRight, PiEye, PiEyeClosed, PiX } from "react-icons/pi"
 import { patchRequest } from "@/lib/fetchRequests"
 import { toast } from "sonner"
 import { useEffect, useState } from "react"
 import { LoadingButton } from "@/components/ui/loading-button"
-import { closeDialogCleanForm, isTokenExp, swipeReverseToPrevForm } from "@/lib/utils"
+import { isTokenExp, swipeReverseToPrevForm } from "@/lib/utils"
 import { useParams } from "next/navigation"
 import { jwtDecode } from "jwt-decode"
 
@@ -148,12 +148,7 @@ export function NewPassForm({ className } : { className: string }) {
                             </FormItem>
                         )}
                     />
-                    {
-                        isLoading ? 
-                        <LoadingButton loading type="submit" className="flex gap-2">Save New Password<PiArrowRight /></LoadingButton>
-                        :
-                        <Button type="submit" className="flex gap-2">Save New Password<PiArrowRight /></Button>
-                    }
+                    <LoadingButton loading={isLoading ? true: false} type="submit" className="flex gap-2">Save New Password<PiArrowRight /></LoadingButton>
                 </form>
             </Form>
         </div>

@@ -87,20 +87,11 @@ export function DialogCreateAdmin() {
                                     )
                                 }}
                             />
-                            {
-                                isLoading ? 
-                                <div className="flex justify-end">
-                                    <LoadingButton loading className="px-10 flex gap-2 w-fit" type="submit">Send Invitation
-                                        <PiArrowUpRight />
-                                    </LoadingButton>
-                                </div>
-                                :
-                                <div className="flex justify-end">
-                                    <LoadingButton className="px-10 flex gap-2 w-fit" type="submit">Send Invitation
-                                        <PiArrowUpRight />
-                                    </LoadingButton>
-                                </div>
-                            }
+                            <div className="flex justify-end">
+                                <LoadingButton loading={isLoading ? true: false} className="px-10 flex gap-2 w-fit" type="submit">Send Invitation
+                                    <PiArrowUpRight />
+                                </LoadingButton>
+                            </div>
                         </form>
                     </Form>
             </DialogContent>

@@ -2,18 +2,15 @@
 import * as React from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { PiShoppingCartSimple, PiFireSimple, PiHeart, PiMagnifyingGlass } from "react-icons/pi";
+import { PiShoppingCartSimple, PiFireSimple, PiHeart, PiMagnifyingGlass, PiUser } from "react-icons/pi";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 import { Input } from "@/components/ui/input"
 import { HeaderDropdown } from "../app/(home)/_components/HeaderDropdown";
-<<<<<<< HEAD
 import { ProfileDropdown } from "@/app/(home)/_components/ProfileDropdown";
 import Cookies from "js-cookie";
 import Cart from "./cart/Cart";
-=======
 import AccountMenu from "@/app/(home)/_components/AccountMenu";
 import CatalogDropdown from "@/app/(home)/_components/CatalogDropdown";
->>>>>>> develop
 
 const components: { title: string; href: string; description: string }[] = [
     {
@@ -53,14 +50,7 @@ const components: { title: string; href: string; description: string }[] = [
     },
 ]
 
-<<<<<<< HEAD
 export function Header() {
-    const [userLogged, setUserLogged] = React.useState(false);
-=======
->>>>>>> develop
-
-export function Header() {
-
     return (
         <div className="p-4 flex justify-center border-b-[1px]">
             <NavigationMenu>
@@ -74,7 +64,6 @@ export function Header() {
                         </Link>
                     </NavigationMenuItem>
 
-<<<<<<< HEAD
                     <NavigationMenuItem className="md:block hidden">
                         <div className="relative">
                             <Input type="text" placeholder="Search" className="focus-visible:ring-0 focus-visible:border-black/50" />
@@ -82,14 +71,12 @@ export function Header() {
                         </div>
                     </NavigationMenuItem>
 
-=======
->>>>>>> develop
                     <div className="hidden md:flex">
                         <NavigationMenuItem>
                             <div className="relative">
                                 <Input type="text" placeholder="Search" className="focus-visible:ring-white/0 focus-visible:border-black/80 duration-200" />
                                 <PiMagnifyingGlass className="absolute top-0 bottom-0 right-4 m-auto fill-black/50" />
-                            </div>   
+                            </div>
                         </NavigationMenuItem>
 
                         <div className="hidden lg:flex">
@@ -131,7 +118,7 @@ export function Header() {
                                 </NavigationMenuContent>
                             </NavigationMenuItem>
                         </div>
-                        
+
                         <NavigationMenu className="md:block lg:hidden">
                             <CatalogDropdown />
                         </NavigationMenu>
@@ -151,8 +138,7 @@ export function Header() {
                             </Link>
                         </NavigationMenuItem>
 
-                        <NavigationMenuItem>
-<<<<<<< HEAD
+                        {/* <NavigationMenuItem>
                             {
                                 userLogged ?
                                     <ProfileDropdown />
@@ -161,9 +147,9 @@ export function Header() {
                                         <NavigationMenuLink className={navigationMenuTriggerStyle()}><PiUser size={`20px`} /></NavigationMenuLink>
                                     </Link>
                             }
-                        </NavigationMenuItem>
+                        </NavigationMenuItem> */}
 
-                        {
+                        {/* {
                             userLogged ? (
                                 <NavigationMenuItem>
                                     <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -175,35 +161,22 @@ export function Header() {
                             ) : (
                                 ''
                             )
-                        }
-=======
-                            <Link href="/docs" legacyBehavior passHref>
-                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                    <div className="relative">
-                                        <PiShoppingCartSimple size={`20px`} />
-                                        <div className="bg-red-400 w-6 h-6 rounded-full absolute -top-4 -right-4 border-2 border-white flex justify-center items-center">
-                                            <span className="text-white text-xs flex justify-center items-center font-light scale-[80%]">99+</span>
-                                        </div>
-                                    </div>
-                                </NavigationMenuLink>
-                            </Link>
-                        </NavigationMenuItem>
+                        } */}
 
                         <NavigationMenuItem>
-                            <AccountMenu />
-                        </NavigationMenuItem>
->>>>>>> develop
+                        <AccountMenu />
+                    </NavigationMenuItem>
                     </div>
 
-                    <NavigationMenuItem className="md:hidden">
+                    {/* <NavigationMenuItem className="md:hidden">
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                             <HeaderDropdown userLogged={userLogged} />
                         </NavigationMenuLink>
-                    </NavigationMenuItem>
+                    </NavigationMenuItem> */}
 
                 </NavigationMenuList>
             </NavigationMenu>
-        </div>
+        </div >
     )
 }
 

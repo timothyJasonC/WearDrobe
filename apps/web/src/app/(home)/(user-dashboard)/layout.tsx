@@ -14,7 +14,7 @@ export default async function Layout({children}: Readonly<{children: React.React
                     <UserMenu className='flex flex-col gap-10' user={user} />
                     <Toaster position="top-center" richColors />
                 </div>
-                <div className='lg:w-[75%] w-full h-fit border-y-[1px] border-[1px] border-black/15 p-4'>
+                <div className='lg:w-[75%] w-full h-fit border-y-[1px] border-[1px] border-black/15 p-4 relative'>
                     {children}
                 </div>
             </div>

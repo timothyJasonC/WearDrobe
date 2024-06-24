@@ -20,6 +20,7 @@ export class UserRouter {
         this.router.post('/create-sso-user', this.userController.createSSOUser);
         this.router.post('/setup-verify-user', verifyToken, this.userController.setupUser, this.accountController.verifyUser);
         this.router.get('/:id', this.userController.getUserById);
+        this.router.patch('/:id', this.userController.updatePhoto);
     }
 
     getRouter() : Router{

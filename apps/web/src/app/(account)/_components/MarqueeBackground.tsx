@@ -29,9 +29,8 @@ export default function MarqueeBackground() {
         'https://images.pexels.com/photos/3755706/pexels-photo-3755706.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
     ]
 
-
     return (
-        <div className="absolute w-full h-screen overflow-hidden">
+        <div className="absolute w-full h-screen overflow-hidden bg-black">
             <Marquee>
                 <div className="flex gap-8 px-4 pt-8 pb-4">
                     {

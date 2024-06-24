@@ -3,7 +3,7 @@ import React, { useState } from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { DatePicker } from "@/app/(account)/verify/_components/DatePicker"
+import { DatePicker } from "@/app/(account)/(account-setup)/verify/_components/DatePicker"
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { PiFloppyDiskBold } from "react-icons/pi"
@@ -91,7 +91,6 @@ export default function EditProfileForm({ user } : { user: IUser }) {
             <Form {...userProfileForm} >
                 <form className="h-full flex flex-col lg:justify-between gap-10" onSubmit={userProfileForm.handleSubmit(handleUserProfile)}>
                     <div className="flex flex-col gap-4">
-                        <InputPhotoProfile/>
                         <FormField
                             control={userProfileForm.control}
                             name="username"

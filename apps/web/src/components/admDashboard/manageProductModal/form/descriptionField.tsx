@@ -36,7 +36,7 @@ export const DescriptionField = ({description, setDescription, descErrorMessage,
       name="description"
       render={() => (
         <FormItem>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center max-sm:justify-center gap-2">
             <FormLabel className="font-bold text-base">Product description</FormLabel>
             <CircleProgress value={description.length} unit="" max={500} className="w-6 h-6 text-[0.5rem]"/>
           </div>

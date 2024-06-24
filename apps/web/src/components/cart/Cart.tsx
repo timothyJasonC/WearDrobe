@@ -35,7 +35,7 @@ export default function Cart() {
 
     useEffect(() => {
         if (cart) {
-            setTotalAmount(cart.items.reduce((acc, item) => acc + item.quantity * item.price, 0));
+            setTotalAmount(cart.items.reduce((acc, item) => acc + item.price, 0));
             setQuantity(cart.items.reduce((acc, item) => acc + item.quantity, 0));
         } else {
             setQuantity(0)
@@ -74,7 +74,7 @@ export default function Cart() {
                     <SheetTitle>Total Amount: {formatToIDR(totalAmount)}</SheetTitle>
                     <Button asChild className='rounded-full w-full' size={"lg"}>
                         {cart ? (
-                            <Link href={'/order'}>Checkout</Link>
+                            <Link href={`/checkout/${cart.id}`}>Checkout</Link>
                         ) : (
                             <Link href={'/'}>Your Cart is empty go find some item</Link>
                         )}

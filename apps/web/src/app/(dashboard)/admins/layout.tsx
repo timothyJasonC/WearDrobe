@@ -14,7 +14,10 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
+  title: {
+    template: '%s | Weardrobe',
+    default: 'Weardrobe',
+  },
   description: 'Weardrobe admin dashboard.',
 };
 
@@ -33,6 +36,5 @@ export default function Template({children}: Readonly<{children: React.ReactNode
           </body>
         </html>
     </StoreProvider>
-    
   );
 }

@@ -25,6 +25,9 @@ const formSchema = z.object({
   .max(25, {
     message: "category cannot be longer than 20 characters."
   })
+  .regex(/^[a-zA-Z0-9\s-]*$/, {
+    message: "category can only contain letters, numbers, spaces, and hyphens."
+  })
 })
 
 export function EditCategoryForm({type, gender, category, setOpen, getCategoryData}:{type:string, gender:string, setOpen:React.Dispatch<React.SetStateAction<boolean>>, category:string, getCategoryData: () => void }) {

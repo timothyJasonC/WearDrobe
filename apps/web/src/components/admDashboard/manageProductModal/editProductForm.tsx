@@ -62,20 +62,20 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
       }
   }
 
-  const getProduct = async(slug:string) => {
-    const data = await getProductSlug(slug)
-    setName(data.product.name)
-    setDescription(data.product.description)
-    setPrice(data.product.price)
-    setGender(data.product.category.gender.charAt(0) + data.product.category.gender.slice(1).toLowerCase())
-    setType(data.product.category.type.charAt(0) + data.product.category.type.slice(1).toLowerCase())
-    setCategory(data.product.category.category)
-    // setIsOneSize(data.product.oneSize)
-    setCurrentThumbnail(data.product.thumbnailURL)
+  const getProductData = async(slug:string) => {
+    const data = await getProductSlug(slug, "", "")
+    setName(data.productList.name)
+    setDescription(data.productList.description)
+    setPrice(data.productList.price)
+    setGender(data.productList.category.gender.charAt(0) + data.productList.category.gender.slice(1).toLowerCase())
+    setType(data.productList.category.type.charAt(0) + data.productList.category.type.slice(1).toLowerCase())
+    setCategory(data.productList.category.category)
+    // setIsOneSize(data.productList.oneSize)
+    setCurrentThumbnail(data.productList.thumbnailURL)
     const getAdditional = () => {
       let additional = []
-      for (let i = 0; i < data.product.images.length; i++) {
-        const additionals = {...data.product.images[i], isDeleted: false, isNew: false}
+      for (let i = 0; i < data.productList.images.length; i++) {
+        const additionals = {...data.productList.images[i], isDeleted: false, isNew: false}
         additional.push(additionals)
       }
       return additional
@@ -83,12 +83,12 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
     setCurrentAdditional(getAdditional)
     const getColor = () => {
       let color = []
-      for (let i = 0; i < data.product.variants.length; i++) {
+      for (let i = 0; i < data.productList.variants.length; i++) {
         const colorData = {
-          id: data.product.variants[i].id,
-          code: data.product.variants[i].HEX,
-          name: data.product.variants[i].color,
-          imageURL: data.product.variants[i].image,
+          id: data.productList.variants[i].id,
+          code: data.productList.variants[i].HEX,
+          name: data.productList.variants[i].color,
+          imageURL: data.productList.variants[i].image,
           isDeleted: false,
           isEdited: false,
           isNew: false,
@@ -106,8 +106,7 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
   
 
   useEffect(() => {
-    getProduct(slug)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    getProductData(slug)
   }, [slug])
 
   async function onSubmit() {
@@ -151,10 +150,7 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
             additionalDelete.push(currentAdditional[i].id)
           }
         }       
-        
-        const data = {name, description, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData:{gender, type, category}}
-        console.log(data);
-        
+        const data = {name, description, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData:{gender, type, category}}        
         const res = await editProduct(data, slug)
         if (res.status == 'ok') {
           setOpen(false)

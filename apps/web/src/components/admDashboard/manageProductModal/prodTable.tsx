@@ -34,6 +34,8 @@ interface IProdTable {
         console.log(error);
       }
     }
+    console.log(productList);
+    
     
     return (
       <Table className="my-7">
@@ -70,7 +72,7 @@ interface IProdTable {
               <TableCell className="text-center">{product.category.gender.toLocaleLowerCase()}</TableCell>
               <TableCell className="text-center">{product.category.type.toLocaleLowerCase()}</TableCell>
               <TableCell className="text-center">{product.category.category}</TableCell>
-              <TableCell className="flex flex-wrap items-center justify-center gap-x-1"><p>{date} {month} {year},</p><p>{hours}.{minute} WIB</p></TableCell>
+              <TableCell className="flex flex-wrap items-center justify-center gap-x-1"><p>{date} {month} {year},</p><p>{hours.toString().padStart(2, '0')}.{minute.toString().padStart(2, '0')} WIB</p></TableCell>
               <TableCell className="text-center">{product.variants.length}</TableCell>
               <TableCell className="text-center">{product.totalStock}</TableCell>
               <TableCell className="text-center">{product.sales ? product.sales : 'no data'}</TableCell>

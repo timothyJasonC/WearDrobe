@@ -3,11 +3,11 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IWarehouse } from '@/constants';
 
 interface WarehouseState {
-    value: IWarehouse | null
+    value: IWarehouse
 }
 
 const initialState: WarehouseState = {
-    value: null
+    value: {}
 };
 
 export const warehouseSlice = createSlice({

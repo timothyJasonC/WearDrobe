@@ -31,8 +31,8 @@ export const PriceField = ({price, setPrice, priceErrorMessage, setPriceErrorMes
       name="price"
       render={() => (
         <FormItem>
-          <FormLabel className="font-bold text-base">Price</FormLabel>
-          <div className="flex max-md:justify-center">
+          <FormLabel className="font-bold text-base max-sm:block max-sm:text-center">Price</FormLabel>
+          <div className="flex max-sm:justify-center">
             <FormControl>
               <Input
                 type='text'
@@ -45,7 +45,7 @@ export const PriceField = ({price, setPrice, priceErrorMessage, setPriceErrorMes
                     validatePrice(Number(value));
                 }
                 }}
-                className="focus-visible:ring-transparent text-sm w-36 max-md:text-center"
+                className="focus-visible:ring-transparent text-sm w-36 text-center"
               />
             </FormControl>
           </div>

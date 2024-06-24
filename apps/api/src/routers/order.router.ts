@@ -16,6 +16,10 @@ export class OrderRouter {
         this.router.post('/cart_item', this.orderController.getCartItems)
         this.router.post('/updateCartItem', this.orderController.updateCartItems)
         this.router.post('/deleteCartItem', this.orderController.deleteCartItems)
+        this.router.post('/orderDetail', this.orderController.getOrderById)
+
+        this.router.post('/', this.orderController.createOrder)
+        this.router.post('/status', this.orderController.checkStatus)
     }
 
     getRouter() {

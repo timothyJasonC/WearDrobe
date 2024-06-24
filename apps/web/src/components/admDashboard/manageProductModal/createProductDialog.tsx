@@ -11,8 +11,7 @@ import { PiArrowSquareOut } from "react-icons/pi"
 import { CreateProductForm } from "./createProductForm"
 import { useState } from "react";
   
-  export function CreateProductDialog() {
-    const [open, setOpen] = useState(false);
+  export function CreateProductDialog({open, setOpen}:{open:boolean, setOpen:React.Dispatch<React.SetStateAction<boolean>>}) {
     return (
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>

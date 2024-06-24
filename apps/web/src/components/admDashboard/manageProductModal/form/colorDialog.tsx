@@ -45,7 +45,7 @@ export function ColorDialog({setColor, color}:{setColor:any, color:any}) {
   return (
         <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-            <div className='flex  items-center justify-center gap-1 font-semibold text-xs ]mr-3 bg-gray-100 rounded-sm p-1 cursor-pointer mb-2 w-40'>
+            <div className='flex  items-center justify-center gap-1 font-semibold text-xs mr-3 bg-gray-100 rounded-sm p-1 cursor-pointer mb-2 w-40'>
                 <p>Create color variant</p>
                 <PiPlusBold/> 
             </div>

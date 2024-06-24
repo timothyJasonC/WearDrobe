@@ -25,6 +25,9 @@ const formSchema = z.object({
   .max(20, {
     message: "category cannot be longer than 20 characters."
   })
+  .regex(/^[a-zA-Z0-9\s-]*$/, {
+    message: "category can only contain letters, numbers, spaces, and hyphens."
+  })
 })
 
 export function CategoryForm({type, gender, getCategoryData}:{type:string, gender:string, getCategoryData: () => void }) {

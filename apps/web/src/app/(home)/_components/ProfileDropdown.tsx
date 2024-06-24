@@ -6,8 +6,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { PiGear, PiReceipt, PiSignOut, PiUser, PiUserCircle } from "react-icons/pi"
-
+import Cookies from "js-cookie"
+  
 export function ProfileDropdown() {
+
+    function handleLogout() {
+        Cookies.remove('token')
+        Cookies.remove('role')
+    }
 
     return (
         <DropdownMenu>
@@ -84,7 +90,7 @@ export function ProfileDropdown() {
                     </DropdownMenuItem> */}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex gap-2 cursor-pointer">
+                <DropdownMenuItem onClick={handleLogout} className="flex gap-2 cursor-pointer">
                     <PiSignOut size={`16px`} />
                     <span>Log out</span>
                 </DropdownMenuItem>

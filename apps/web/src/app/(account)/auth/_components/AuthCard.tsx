@@ -36,8 +36,8 @@ export function AuthCard() {
                 const res = await postRequest(userData, '/user/create-sso-user');
                 const data = await res.json();
                 const formDialog = document.getElementById('username-form');
-                if (res.ok && data) {
-                    Cookies.set('role', data.data.role, { expires: 1 })
+                if (res.status == 200 || res.status == 201) {
+                    Cookies.set('role', 'user', { expires: 1 })
                     Cookies.set('token', data.data.token, { expires: 1 })
                     toast.success(`Hello ${user.displayName}`, { description: 'Welcome to WearDrobe!' })
                     setTimeout(() => { router.push('/') }, 2000);
@@ -117,8 +117,8 @@ export function AuthCard() {
                 const account = data.data.user || data.data.admin;
                 Cookies.set('role', data.data.role, { expires: 1 })
                 Cookies.set('token', data.data.token, { expires: 1 })
-                toast.success("Login success", { description: 'redirecting you to homepage..' })
-                setTimeout(() => { router.push('/') }, 2000);
+                toast.success(`Welcome, ${account.role ? account.fullName : account.username }`, { description: `redirecting you to ${account.role ? 'dashboard' : 'homepage'}..` })
+                setTimeout(() => { router.push(account.role ? '/admins/overview' : '/' ) }, 2000);
             } else if (res.status == 401) {
                 toast.error("Password incorrect")
             } else if (res.status == 404) {
@@ -133,7 +133,6 @@ export function AuthCard() {
             })
         }
     }
-
 
     return (
         <Tabs defaultValue="login" className="w-[400px] h-[40rem]">

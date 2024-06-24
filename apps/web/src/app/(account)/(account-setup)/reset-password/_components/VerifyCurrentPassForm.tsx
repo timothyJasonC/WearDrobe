@@ -12,13 +12,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { PiArrowRight, PiEye, PiEyeClosed, PiX } from "react-icons/pi"
-import { patchRequest, postRequest } from "@/lib/fetchRequests"
+import { postRequest } from "@/lib/fetchRequests"
 import { toast } from "sonner"
 import { useEffect, useState } from "react"
 import { LoadingButton } from "@/components/ui/loading-button"
-import { closeDialogCleanForm, isTokenExp, swipeToNextForm } from "@/lib/utils"
+import { isTokenExp, swipeToNextForm } from "@/lib/utils"
 import { useParams } from "next/navigation"
-import { JwtPayload, jwtDecode } from "jwt-decode"
+import { jwtDecode } from "jwt-decode"
 
 const formSchema = z.object({
     password: z.string().min(6, 'your password must be at least 6 characters')

@@ -37,9 +37,10 @@ export default function useStorage() {
             });
         });
     }
+    
     async function removeImageFromStorage(fileID: string) {
         try {
-            const fileRef = ref(storage, `gallery/${fileID}`);
+            const fileRef = ref(storage, `${fileID}`);
             deleteObject(fileRef)
         } catch (error) {
             console.log(error);

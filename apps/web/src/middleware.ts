@@ -2,8 +2,9 @@ import { JwtPayload, jwtDecode } from 'jwt-decode';
 import { NextRequest, NextResponse } from 'next/server';
 import { isTokenExp } from './lib/utils';
 
-interface CustomJwtPayload extends JwtPayload {
-    role: 'warAdm' | 'superAdm' | 'user'
+export interface CustomJwtPayload extends JwtPayload {
+    role?: 'warAdm' | 'superAdm' | 'user';
+    id?: string;
 }
 
 export function middleware(req: NextRequest) {
@@ -17,53 +18,58 @@ export function middleware(req: NextRequest) {
         }
         return NextResponse.next();
     } else {
-        const isExp = isTokenExp(token)
-        if (!isExp) {
-            const decoded: CustomJwtPayload = jwtDecode(token);
+        const isExp = isTokenExp(token);
+        if (isExp) {
+            const response = NextResponse.redirect(new URL(`/auth`, req.url));
+            response.cookies.delete('token');
+            response.cookies.delete('role');
+            return response;
+        } else {
             try {
+                const decoded: CustomJwtPayload = jwtDecode(token);
+                
                 if (pathname.startsWith('/auth')) {
-                    if (decoded.role == 'warAdm' || decoded.role == 'superAdm') {
+                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
                         return NextResponse.redirect(new URL('/admins/overview', req.url));
                     }
                     return NextResponse.redirect(new URL('/', req.url));
                 }
-
+                
                 if (pathname.startsWith('/admins')) {
-                    if (decoded.role == 'warAdm' || decoded.role == 'superAdm') {
-                        return NextResponse.next(); 
+                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
+                        return NextResponse.next();
                     }
                     return NextResponse.redirect(new URL('/', req.url));
                 } else if (pathname.startsWith('/user')) {
-                    if (decoded.role == 'user') {
+                    if (decoded.role === 'user') {
                         return NextResponse.next();
                     }
-                    if (decoded.role == 'warAdm' || decoded.role == 'superAdm') {
+                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
                         return NextResponse.redirect(new URL('/admins/overview', req.url));
                     }
                     return NextResponse.redirect(new URL('/auth', req.url));
                 } else if (pathname === '/') {
-                    if (decoded.role == 'warAdm' || decoded.role == 'superAdm') {
+                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
                         return NextResponse.redirect(new URL('/admins/overview', req.url));
                     }
-                    return NextResponse.next(); 
+                    return NextResponse.next();
                 } else if (pathname.startsWith('/catalog')) {
-                    if (decoded.role == 'warAdm' || decoded.role == 'superAdm') {
+                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
                         return NextResponse.redirect(new URL('/admins/overview', req.url));
                     }
-                    return NextResponse.next(); 
-                } 
+                    return NextResponse.next();
+                }
         
             } catch (err) {
-                const loginUrl = new URL('/', req.url);
-                return NextResponse.redirect(loginUrl);
+                const response = NextResponse.redirect(new URL('/auth', req.url));
+                response.cookies.delete('token');
+                response.cookies.delete('role');
+                return response;
             }
-        
-        } else {
-            return NextResponse.redirect(new URL(`/auth`, req.url));
         }
     }
 }
 
 export const config = {
-    matcher: [ '/admins/:path*', '/user/:path*',  '/auth',  '/' , '/catalog/:path*' ],
+    matcher: ['/admins/:path*', '/user/:path*', '/auth', '/', '/catalog/:path*'],
 };

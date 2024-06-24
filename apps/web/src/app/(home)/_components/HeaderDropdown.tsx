@@ -6,8 +6,11 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiShoppingCartSimple, PiSignOut, PiUser } from "react-icons/pi"
 import { Input } from "../../../components/ui/input"
+import { handleLogout } from "@/lib/utils"
+import { useRouter } from "next/navigation"
   
 export function HeaderDropdown() {
+    const router = useRouter()
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -29,7 +32,7 @@ export function HeaderDropdown() {
                             <span>Women</span>
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
-                            <DropdownMenuSubContent>
+                            <DropdownMenuSubContent className="md:hidden">
                                 <DropdownMenuItem>
                                     <span>category 1</span>
                                 </DropdownMenuItem>
@@ -49,7 +52,7 @@ export function HeaderDropdown() {
                             <span>Men</span>
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
-                            <DropdownMenuSubContent>
+                            <DropdownMenuSubContent className="md:hidden">
                                 <DropdownMenuItem>
                                     <span>category 1</span>
                                 </DropdownMenuItem>
@@ -86,7 +89,7 @@ export function HeaderDropdown() {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex gap-2">
+                <DropdownMenuItem onClick={() => { handleLogout(); router.push('/auth') } } className="flex gap-2">
                     <PiSignOut size={`16px`} />
                     <span>Log out</span>
                 </DropdownMenuItem>

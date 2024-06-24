@@ -24,7 +24,7 @@ export default function SetupUserAccountForm() {
     const router = useRouter();
 
     const setupAccountSchema = z.object({
-        username: z.string().min(6, "username must at least contain 6 characters"),
+        username: z.string().trim().min(6, "username must at least contain 6 characters"),
         password: z.string().min(8, "password must at least contain 8 characters"),
         confirmPassword: z.string().min(8, "password must at least contain 8 characters"),
         dob: z.date({ required_error: "A date of birth is required." }),
@@ -190,12 +190,7 @@ export default function SetupUserAccountForm() {
                         }}
                     />
                     
-                    {
-                        isLoading ? 
-                        <LoadingButton loading className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></LoadingButton>
-                        :
-                        <Button className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></Button>
-                    }
+                    <LoadingButton loading={isLoading ? true: false} className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></LoadingButton>
                 </form>
             </Form>
         </div>

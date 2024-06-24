@@ -83,12 +83,7 @@ export function ForgotPassForm() {
                         </FormItem>
                     )}
                     />
-                    {
-                        isLoading ? 
-                        <LoadingButton loading type="submit" className="flex gap-2">Reset Password<PiEnvelopeSimple size={'1.1rem'} /></LoadingButton>
-                        :
-                        <Button type="submit" className="flex gap-2">Reset Password<PiEnvelopeSimple size={'1.1rem'} /></Button>
-                    }
+                    <LoadingButton loading={isLoading ? true: false} type="submit" className="flex gap-2">Reset Password<PiEnvelopeSimple size={'1.1rem'} /></LoadingButton>
                 </form>
             </Form>
         </div>

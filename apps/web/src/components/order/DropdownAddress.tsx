@@ -3,8 +3,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import AddressInputs from "./AddressInput";
 import { useEffect, useState } from "react";
 import { addAddressUser, fetchWarehouse, getAddressList, getCities, getProvinces } from "@/lib/cart";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner"
 import { Address, City, Province, Warehouse } from "@/constants";
+import { getUserClientSide } from "@/lib/utils";
 
 interface DropdownAddressProps {
     setUserAddress: (value: string) => void
@@ -19,7 +20,6 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
     const [address, setAddress] = useState<string>('');
     const [addressList, setAddressList] = useState<Address[]>([]);
     const [warehouse, setWarehouse] = useState<Warehouse | null>(null)
-    const { toast } = useToast();
 
     const fetchProvinces = async () => {
         try {
@@ -32,7 +32,8 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
 
     const fetchAddressList = async () => {
         try {
-            const data: Address[] = await getAddressList();
+            const userData = await getUserClientSide()
+            const data: Address[] = await getAddressList(userData.id);
             setAddressList(data);
             if (data.length > 0) {
                 setAddress(data[0].id);
@@ -44,20 +45,13 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
     };
 
     const addAddress = async () => {
-        const data = await addAddressUser(selectedCity, address);
+        const userData = await getUserClientSide()
+        const data = await addAddressUser(selectedCity, address, userData.id);
         if (data.message === 'add address successfull') {
             setAddressList((prevState) => [...prevState, data.addressUser]);
-            toast({
-                title: "Create address success",
-                description: "Your address has been added to your address list",
-                className: "bg-[#ffd6ba] rounded-xl"
-            });
+            toast.success('Your address has been added to your address list')
         } else {
-            toast({
-                variant: "destructive",
-                title: "Create address failed",
-                description: "There was a problem with your request. Please try again later",
-            });
+            toast.success('There was a problem with your request. Please try again later')
         }
         setSelectedProvince('');
         setSelectedCity('');
@@ -78,7 +72,6 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
     const fetchWarehouseAddress = async () => {
         const warehouse = await fetchWarehouse(address)
         const warehouseId = warehouse.id
-        console.log(warehouse);
         
         setWarehouse(warehouse)
         setWarehouseId(warehouseId)
@@ -144,7 +137,7 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
             <h2>Warehouse :</h2>
             {address ? (
                 warehouse ? (
-                    <h2>{warehouse ? `${warehouse.warehouseName}` : 'No warehouse found'}</h2>
+                    <h2>{warehouse.warehouseName ? `${warehouse.warehouseName}` : 'Invalid address please change your address'}</h2>
                 ) : (
                     <div className="flex gap-1 items-center">
                         <div className="w-4 h-4 border-2 border-dashed rounded-full animate-spin border-blue-500"></div>

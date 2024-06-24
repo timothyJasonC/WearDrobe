@@ -20,43 +20,46 @@ export async function getOrCreateCart(userId: string) {
                 paymentStatus: 'PENDING',
             }
         });
-        return { cart, cartId };
+        return cart
     }
-    return { cart, cartId: cart.id };
+    return cart
 }
 
 
-export async function addOrUpdateCartItem(orderId: string, variantId: string, quantity: number) {
+export async function addOrUpdateCartItem(orderId: string, variantId: string, color: string, size: string, quantity: number) {
     let existingCartItem = await prisma.orderItem.findFirst({
         where: {
             orderId,
-            productVariantId: variantId
+            productVariantId: variantId,
+            color, size
         }
     });
+    const variantItem = await prisma.productVariant.findFirst({
+        where: { id: variantId },
+        select: { product: true }
+    })
 
     if (existingCartItem) {
         existingCartItem = await prisma.orderItem.update({
             where: { id: existingCartItem.id },
             data: {
                 quantity: existingCartItem.quantity + quantity,
-                updatedAt: new Date()
+                price: existingCartItem.price + (quantity * variantItem?.product.price!)
             }
         });
     } else {
         const orderItemId = uuidv4();
-        const variantItem = await prisma.productVariant.findFirst({
-            where: { id: variantId },
-            select: { product: true }
-        })
         existingCartItem = await prisma.orderItem.create({
             data: {
                 id: orderItemId,
                 orderId,
                 productVariantId: variantId,
                 quantity,
-                price: variantItem?.product.price!,
+                price: variantItem?.product.price! * quantity,
                 createdAt: new Date(),
-                updatedAt: new Date()
+                updatedAt: new Date(),
+                color: color,
+                size: size
             }
         });
     }
@@ -118,6 +121,7 @@ export async function getCartItem(userId: string) {
                     id: true,
                     orderId: true,
                     productVariantId: true,
+                    size: true,
                     quantity: true,
                     price: true,
                     createdAt: true,
@@ -174,13 +178,14 @@ export async function deleteCart(cartId: string) {
     return
 }
 
-export async function updateToOrder(orderId: string, shippingCost: number, subTotal: number) {
+export async function updateToOrder(orderId: string, shippingCost: number, subTotal: number, warehouseId:string) {
     const order = await prisma.order.update({
         where: { id: orderId },
         data: {
             id: uuidv4(),
             paymentStatus: "PENDING",
             status: "PENDING_PAYMENT",
+            warehouseId,
             createdAt: new Date(),
             totalAmount: shippingCost + subTotal
         }

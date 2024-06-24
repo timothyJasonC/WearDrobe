@@ -1,54 +1,54 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 enum Gender {
-    MALE
-    FEMALE
+  MALE
+  FEMALE
 }
 
 enum Role {
-    warAdm
-    superAdm
+  warAdm
+  superAdm
 }
 
 enum ProductGender {
-    MEN
-    WOMEN
-    UNISEX
+  MEN
+  WOMEN
+  UNISEX
 }
 
 enum ProductTypes {
-    TOPS
-    BOTTOMS
-    ACCESSORIES
+  TOPS
+  BOTTOMS
+  ACCESSORIES
 }
 
 enum ProductSize {
-    S
-    M
-    L
-    XL
-    ONESIZE
+  S
+  M
+  L
+  XL
+  ONESIZE
 }
 
 enum MutationTypes {
-    TRANSFER
-    RESTOCK
-    REMOVE
-    TRANSACTION
-    INBOUND
+  TRANSFER
+  RESTOCK
+  REMOVE
+  TRANSACTION
+  INBOUND
 }
 
 enum PaymentStatus {
-    PENDING
-    COMPLETED
-    FAILED
+  PENDING
+  COMPLETED
+  FAILED
 }
 
 enum OrderStatus {
@@ -62,17 +62,17 @@ enum OrderStatus {
 
 // FEATURE 1
 model User {
-    id            String        @id
-    accountActive Boolean       @default(false)
-    username      String?       @unique
-    email         String        @unique
-    password      String?
-    gender        Gender?
-    dob           DateTime?
-    createdAt     DateTime      @default(now())
-    imgUrl        String?        @db.LongText
-    addresses     AddressList[]
-    orders        Order[]
+  id            String        @id
+  accountActive Boolean       @default(false)
+  username      String?       @unique
+  email         String        @unique
+  password      String?
+  gender        Gender?
+  dob           DateTime?
+  createdAt     DateTime      @default(now())
+  imgUrl        String?       @db.LongText
+  addresses     AddressList[]
+  orders        Order[]
 }
 
 model AddressList {
@@ -91,24 +91,24 @@ model AddressList {
 }
 
 model Admin {
-    id            String     @id
-    role          Role       @default(warAdm)
-    accountActive Boolean    @default(false)
-    fullName      String?
-    email         String     @unique
-    password      String?
-    dob           DateTime?
-    createdAt     DateTime   @default(now())
-    Warehouse     Warehouse?
+  id            String     @id
+  role          Role       @default(warAdm)
+  accountActive Boolean    @default(false)
+  fullName      String?
+  email         String     @unique
+  password      String?
+  dob           DateTime?
+  createdAt     DateTime   @default(now())
+  Warehouse     Warehouse?
 }
 
 model PasswordRequest {
-    id String @id
-    accountId String @unique
-    currentToken String? @db.LongText
-    requestCount Int @default(0)
-    createdAt DateTime @default(now())
-    updatedAt DateTime? @updatedAt
+  id           String    @id
+  accountId    String    @unique
+  currentToken String?   @db.LongText
+  requestCount Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
 }
 
 model Warehouse {
@@ -129,7 +129,7 @@ model Warehouse {
   mutations     StockMutation[]
 }
 
-model WarehouseProduct{
+model WarehouseProduct {
   id               String          @id
   warehouseID      String
   productVariantID String
@@ -157,18 +157,18 @@ model Product {
 }
 
 model ProductCategory {
-    id       String        @id
-    gender   ProductGender
-    type     ProductTypes
-    category String
-    products Product[]
+  id       String        @id
+  gender   ProductGender
+  type     ProductTypes
+  category String
+  products Product[]
 }
 
 model ProductImage {
-  id        String    @id
+  id        String  @id
   productID String
-  image     String    @unique
-  product   Product   @relation(fields: [productID], references: [id])
+  image     String  @unique
+  product   Product @relation(fields: [productID], references: [id])
 }
 
 model ProductVariant {
@@ -198,15 +198,15 @@ model StockMutation {
 // FEATURE 3
 
 model Order {
-  id            String         @id
+  id            String        @id
   userId        String
-  status        OrderStatus    @default(CART)
+  status        OrderStatus   @default(CART)
   warehouseId   String?
-  totalAmount   Int            @default(0)
+  totalAmount   Int           @default(0)
   paymentStatus PaymentStatus
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  user          User           @relation(fields: [userId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  user          User          @relation(fields: [userId], references: [id])
   items         OrderItem[]
 }
 
@@ -215,6 +215,8 @@ model OrderItem {
   orderId          String
   productVariantId String
   warehouseId      String?
+  color            String
+  size             String
   quantity         Int
   price            Int
   createdAt        DateTime       @default(now())

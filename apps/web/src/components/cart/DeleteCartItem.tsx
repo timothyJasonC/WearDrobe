@@ -2,8 +2,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { deleteCartItem } from "@/lib/cart";
 import { setCart } from "@/lib/redux/features/cart/cartSlice";
 import { useAppDispatch } from "@/lib/redux/hooks";
+import { getUserClientSide } from "@/lib/utils";
 import { PiTrashFill } from "react-icons/pi";
-import { useToast } from "../ui/use-toast";
+import { toast } from "sonner"
 
 type deleteItemProps = {
     orderItemId: string
@@ -11,22 +12,17 @@ type deleteItemProps = {
 
 export function DeleteOrderItemAlert({ orderItemId }: deleteItemProps) {
     const dispatch = useAppDispatch();
-    const { toast } = useToast()
-    const dataToast = {
-        title: "Delete item success",
-        description: "Your item has been deleted from your cart",
-        className: "bg-[#ffd6ba] rounded-xl"
-    }
+    const dataToast = "Your item has been deleted from your cart"
     const handleDelete = async () => {
-        const updatedCart = await deleteCartItem(orderItemId, 'user_01')
+        const userData = await getUserClientSide()
+        const updatedCart = await deleteCartItem(orderItemId, userData.id)
         if (updatedCart.message === 'cart deleted') {
             dispatch(setCart(null))
-            toast(dataToast);
+            toast.success(dataToast);
         } else {
             dispatch(setCart(updatedCart))
-            toast(dataToast);
+            toast.success(dataToast);
         }
-
     };
     return (
         <AlertDialog>

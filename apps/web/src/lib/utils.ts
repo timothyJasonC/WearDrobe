@@ -18,6 +18,16 @@ export function formatToIDR(amount: number) {
   }).format(amount);
 }
 
+export async function getAdminClientSide() {
+    const token = Cookies.get('token')
+    if(!token) return 
+    let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
+    if (token || typeof token === 'string') decoded = jwtDecode(token)
+    const res = await (await getRequest(`/admin/${decoded.id}`)).json()
+    const admin = res.data
+    return admin;
+}
+
 export async function getUserClientSide() {
     const token = Cookies.get('token')
     if(!token) return 
@@ -41,6 +51,7 @@ export async function getUserServerSide(cookies:any) {
     }
     
 }
+
 
 // auth
 export function isTokenExp(token: string) {

@@ -18,6 +18,8 @@ export class AdminRouter {
     private initializeRoutes(): void {
         this.router.post('/', this.adminController.createAdmin);
         this.router.post('/setup-verify-admin', verifyToken, this.adminController.setupAdmin, this.accountController.verifyAdmin);
+        this.router.get('/:id', this.adminController.getAdminById);
+
     }
 
     getRouter() : Router{

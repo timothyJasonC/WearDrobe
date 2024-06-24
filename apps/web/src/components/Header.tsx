@@ -64,12 +64,12 @@ export function Header() {
                         </Link>
                     </NavigationMenuItem>
 
-                    <NavigationMenuItem className="md:block hidden">
+                    {/* <NavigationMenuItem className="md:block hidden">
                         <div className="relative">
                             <Input type="text" placeholder="Search" className="focus-visible:ring-0 focus-visible:border-black/50" />
                             <PiMagnifyingGlass className="absolute top-0 bottom-0 right-4 m-auto fill-black/50" />
                         </div>
-                    </NavigationMenuItem>
+                    </NavigationMenuItem> */}
 
                     <div className="hidden md:flex">
                         <NavigationMenuItem>
@@ -138,41 +138,10 @@ export function Header() {
                             </Link>
                         </NavigationMenuItem>
 
-                        {/* <NavigationMenuItem>
-                            {
-                                userLogged ?
-                                    <ProfileDropdown />
-                                    :
-                                    <Link href="/auth" legacyBehavior passHref>
-                                        <NavigationMenuLink className={navigationMenuTriggerStyle()}><PiUser size={`20px`} /></NavigationMenuLink>
-                                    </Link>
-                            }
-                        </NavigationMenuItem> */}
-
-                        {/* {
-                            userLogged ? (
-                                <NavigationMenuItem>
-                                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                        <div className="relative">
-                                            <Cart />
-                                        </div>
-                                    </NavigationMenuLink>
-                                </NavigationMenuItem>
-                            ) : (
-                                ''
-                            )
-                        } */}
-
                         <NavigationMenuItem>
-                        <AccountMenu />
-                    </NavigationMenuItem>
+                            <AccountMenu />
+                        </NavigationMenuItem>
                     </div>
-
-                    {/* <NavigationMenuItem className="md:hidden">
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            <HeaderDropdown userLogged={userLogged} />
-                        </NavigationMenuLink>
-                    </NavigationMenuItem> */}
 
                 </NavigationMenuList>
             </NavigationMenu>

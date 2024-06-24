@@ -6,7 +6,7 @@ import { ToolTip } from '@/components/Tooltip';
 import Link from 'next/link';
 import Image from 'next/image';
 import { IUser } from "../user/edit-profile/_components/EditProfileForm";
-import { InputPhotoProfile } from "./InputPhotoProfile";
+import { InputPhotoProfile } from "../user/edit-profile/_components/InputPhotoProfile";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Button } from "@/components/ui/button";
 import useStorage from "@/hooks/useStorage";
@@ -114,16 +114,7 @@ export default function UserMenu({ className, user }: { className?: string, user
                     }
                     
                     <div className="absolute right-1 bottom-1 w-auto cursor-pointer">
-                        {
-                            user.accountActive ?
-                                <ToolTip className='' content={<span>Your account has been verified!</span>} >
-                                    <PiSealCheckFill className='fill-[#2a9ef0] z-10 absolute bottom-14 right-8' size={'2rem'} /> 
-                                </ToolTip>
-                            :
-                                <ToolTip className='' content={<span>Your account hasn't been verified!</span>}  >
-                                    <PiWarningFill className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'2rem'} /> 
-                                </ToolTip>
-                        }
+                        { !user.accountActive && <ToolTip className='' content={<span>Your account hasn't been verified!</span>} ><PiWarningFill className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'2rem'} /> </ToolTip> }
                     </div>
                     <div className='text-center'>
                         <h2 className='text-lg font-semibold'>{ user.username }</h2>

@@ -120,4 +120,53 @@ export class UserController {
             serverResponse(res, 400, 'error', error)
         }
     }
+
+    async updatePersonalInfo(req: Request, res: Response) {
+        try { 
+            const { email } = req.body
+
+            const user = await prisma.user.findFirst({ where : { id: req.params.id }})
+            if (email) {
+                const existingUserEmail = await prisma.user.findUnique({ where : { email: email }})
+                const existingAdminEmail = await prisma.admin.findUnique({ where : { email: email }})
+                if (existingAdminEmail || existingUserEmail) return serverResponse(res, 409, 'error', 'Email has been taken!')
+            }
+
+            if (user) {
+                for (const [key, value] of Object.entries(req.body)) {
+                    if (key == 'username' && value) {
+                        const existingUsername = await prisma.user.findFirst({ where : { username: value }})
+                        if (existingUsername) return serverResponse(res, 409, 'error', 'Username has been taken!')
+                    }
+                    await prisma.user.update({ where: { id: user.id }, data: {
+                        [key]: value,
+                    } })
+                }
+                if (email) {
+                    await prisma.user.update({ where: { id: user.id }, data: { accountActive: false, } })
+                    
+                    const payload = { id: user.id, role: 'user' }
+                    const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
+                    const link = `http://localhost:3000/verify/user/${token}`;
+            
+                    const templatePath = path.join(__dirname, "../templates", "reVerifyAccount.html")
+                    const templateSource = fs.readFileSync(templatePath, 'utf-8')
+                    const compiledTemplate = handlebars.compile(templateSource)
+                    const html = compiledTemplate({ link, name: user?.username })
+            
+                    await transporter.sendMail({
+                        from: "weardrobe2000@gmail.com",
+                        to: email,
+                        subject: "Action Required: Re-Verify Your WearDrobe Account Email",
+                        html
+                    })
+                } 
+                
+            } else return serverResponse(res, 404, 'error', 'Account not found!')
+
+            serverResponse(res, 200, 'ok', 'Your personal info has been successfully updated!')
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
 }

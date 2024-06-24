@@ -28,24 +28,34 @@ export async function getUserClientSide() {
 }
 
 export async function getUserServerSide(cookies:any) {
-    const token = cookies().get('token')?.value
-    let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
-    if (token) decoded = jwtDecode(token) 
-    const res = await (await getRequest(`/user/${decoded.id}`)).json()
-    const user = res.data;
-    return user;
+    try {
+        const token = cookies().get('token')?.value
+        let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
+        if (token) decoded = jwtDecode(token) 
+        const res = await (await getRequest(`/user/${decoded.id}`)).json()
+        const user = res.data;
+        return user;    
+    } catch (error) {
+        return null
+    }
+    
 }
 
 // auth
 export function isTokenExp(token: string) {
-    const decodedToken : undefined | { exp: number, iat: number, id: string, role: string } = jwtDecode(token);
-    if (decodedToken) {
-        if (Date.now() <= decodedToken.exp * 1000) {
-            return false
-        } else return true
-    } else {
-        true
+    try {
+        const decodedToken : undefined | { exp: number, iat: number, id: string, role: string } = jwtDecode(token);
+        if (decodedToken) {
+            if (Date.now() <= decodedToken.exp * 1000) {
+                return false
+            } else return true
+        } else {
+            true
+        }    
+    } catch (error) {
+        return true
     }
+    
 }
 
 export function closeDialogCleanForm(dialogId: string, form?: UseFormReturn | any ) {

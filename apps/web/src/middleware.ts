@@ -2,8 +2,9 @@ import { JwtPayload, jwtDecode } from 'jwt-decode';
 import { NextRequest, NextResponse } from 'next/server';
 import { isTokenExp } from './lib/utils';
 
-interface CustomJwtPayload extends JwtPayload {
-    role: 'warAdm' | 'superAdm' | 'user';
+export interface CustomJwtPayload extends JwtPayload {
+    role?: 'warAdm' | 'superAdm' | 'user';
+    id?: string;
 }
 
 export function middleware(req: NextRequest) {

@@ -23,7 +23,7 @@ export default function SetupAdminAccountForm() {
     const router = useRouter();
 
     const setupAccountSchema = z.object({
-        fullName: z.string().min(6, "fullName must at least contain 6 characters"),
+        fullName: z.string().trim().min(6, "fullName must at least contain 6 characters"),
         password: z.string().min(8, "password must at least contain 8 characters"),
         confirmPassword: z.string().min(8, "password must at least contain 8 characters"),
         dob: z.date({ required_error: "A date of birth is required." }),

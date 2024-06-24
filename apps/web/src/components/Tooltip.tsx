@@ -8,17 +8,17 @@ import {
 
 export function ToolTip({ children, content, className }: { children: React.ReactNode, content: any, className?: string }) {
     return (
-        <TooltipProvider>
-        <Tooltip>
-            <TooltipTrigger asChild>
-            <div className={`${ className }`}>
-                { children }
-            </div>
-            </TooltipTrigger>
-            <TooltipContent>
-                { content }
-            </TooltipContent>
-        </Tooltip>
+        <TooltipProvider delayDuration={0}>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                <div className={`${ className }`}>
+                    { children }
+                </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                    { content }
+                </TooltipContent>
+            </Tooltip>
         </TooltipProvider>
     )
 }

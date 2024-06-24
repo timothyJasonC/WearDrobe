@@ -21,6 +21,17 @@ export async function postRequestToken(data: any, segment: string, token: string
     return res;
 }
 
+export async function getRequestToken(segment: string, token: string | string[]) {
+    const res = await fetch(`http://localhost:8000/api${segment}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    return res;
+}
+
 export async function getRequest(segment: string) {
     const res = await fetch(`http://localhost:8000/api${segment}`, {
         method: 'GET',

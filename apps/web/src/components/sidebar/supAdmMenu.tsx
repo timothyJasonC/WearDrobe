@@ -16,6 +16,7 @@ export const SupAdmMenu = () => {
     return (
         <div>
             <ul className='space-y-4'>
+                <li><Link href={'/admins/overview'} className={`hover:cursor-pointer hover:text-gray-500 ${activeButton === 'overview' ? 'font-bold' : ''}`}>Overview</Link></li>
                 <li><Link href={'/admins/warehouses'} className={`hover:cursor-pointer hover:text-gray-500 ${activeButton === 'warehouses' ? 'font-bold' : ''}`}>Warehouses</Link></li>
                 <li><Link href={'/admins/products'} className={`hover:cursor-pointer hover:text-gray-500 ${activeButton === 'products' ? 'font-bold' : ''}`}>Products</Link></li>
                 <li><Link href={'/admins/stocks'} className={`hover:cursor-pointer hover:text-gray-500 ${activeButton === 'stocks' ? 'font-bold' : ''}`}>Stocks</Link></li>

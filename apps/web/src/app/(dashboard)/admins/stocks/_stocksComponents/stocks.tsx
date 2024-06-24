@@ -21,7 +21,10 @@ export const Stocks = () => {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1)
 
+  
+
   const getData = async(wh:string) => {
+    
     const warehouse = await getWarehouse()
     const product = await getProduct(wh, page)
     setWarehouseList(warehouse)
@@ -41,7 +44,7 @@ export const Stocks = () => {
 
           <StatisticsCard 
             title='Total Inventories'
-            number={inventory}
+            number={inventory ? inventory : 0}
           />
         </div>
         <div className='flex flex-col w-full items-end mb-7'>
@@ -56,7 +59,7 @@ export const Stocks = () => {
 
       <div>
         <div className='flex items-center justify-between'>
-          <div className={`${inventory > 0 ? "flex" : 'hidden'}`}>
+          <div className={`${productList ? "flex" : 'hidden'}`}>
             <StockDialog 
               selectedWH={selectedWH} 
               setSelectedWH={setSelectedWH} 

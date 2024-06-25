@@ -14,7 +14,6 @@ export const CatalogHeader = () => {
   const getCat = async(gen:string, type:string, cat:string) => {
     if (gen && type && cat) {
       const res = await getCategorySlug(gen, type, cat) 
-      console.log(res);
       if (res.status == 'ok') {
         setCat(res.data.category)
         setNotfound(false)

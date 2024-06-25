@@ -47,8 +47,6 @@ interface IStock {
         toast.warning("Current stock data is incomplete.")
       }
     }
-    console.log(tableRows);
-    
     
     const handleDelete = (index:number) => {
       if (tableRows.length > 1) {

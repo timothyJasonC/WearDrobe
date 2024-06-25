@@ -22,7 +22,6 @@ export const Search = () => {
 	const debounced = useDebouncedCallback(
     (value) => {
         setValue(value);
-        console.log(value);
       },
       500
   )

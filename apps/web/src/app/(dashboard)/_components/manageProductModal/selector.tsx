@@ -12,7 +12,7 @@ import {
 
 export function Selector({label, state, defValue, setState, disabled, width}:{label:string, state:any, defValue?:string, setState:any, disabled?:boolean, width?:string}) {   
   return (
-    <Select value={defValue} onValueChange={(value) => state.length > 0 ? setState(value) : console.log(value)} disabled={disabled ? disabled : state.length == 0 ? true : false}>
+    <Select value={defValue} onValueChange={(value) => { if (state.length > 0) setState(value)}} disabled={disabled ? disabled : state.length == 0 ? true : false}>
       <SelectTrigger className={`focus:ring-transparent  focus-visible:border-[1px] focus-visible:border-black max-sm:text-xs text-sm truncate ${width}`}>
         <SelectValue placeholder={label}/>
       </SelectTrigger>

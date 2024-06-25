@@ -112,10 +112,8 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
   async function onSubmit() {
     const isInvalid = checkInvalidEdit(category, color,name,description,price, setInvalidCategory, setInvalidColor, setInvalidMainImage, setNameErrorMessage, setDescErrorMessage, setPriceErrorMessage)
     if (isInvalid) {
-      console.log("data invalid");
       toast.error("Product data is incomplete.")
     } else {
-        console.log('data is valid');
         let thumbnailURL = ''
         if (thumbnail) {thumbnailURL = await uploadFile(thumbnail!)}
         let additionalURL = []
@@ -157,7 +155,6 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
           toast.success("Product successfully updated.")
         } else if (res.status =='error') {
           toast.error("Failed to update product.")
-          console.log(res.message);
         }
       }
     }

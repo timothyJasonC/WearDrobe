@@ -31,11 +31,7 @@ export function CatAccordion({gender, activeCat}:{gender:string, activeCat:IActi
       }
       getData()
     }, [gender])
-
-    console.log(activeCat);
-    
-
-    
+     
     return (
       <Accordion type="single"  className="w-full" defaultValue="item-1">
         <AccordionItem value="item-1">

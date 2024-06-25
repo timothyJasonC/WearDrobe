@@ -49,9 +49,7 @@ export const StockForm = ({selectedWH, warehouseList, setOpen}:IDropdown) => {
 
   const getData = async(product:string, warehouse:string) => {
     if (product) {
-      const slug = product.toLowerCase().replaceAll(" ", "-")
-      console.log(slug);
-      
+      const slug = product.toLowerCase().replaceAll(" ", "-") 
       const sizeValue = size === "All Sizes" ? "" : size
       const prodData = await getProductSlug(slug, warehouse, sizeValue)      
       setProductData(prodData.productList)

@@ -35,10 +35,6 @@ export const Catalogs = () => {
     getData(page)
   }, [params, page, sort])
 
-  console.log(sort.toLowerCase().replace(' ', '-'));
-  
-
-
   return (
     <div className={`w-full ${isLoading ? 'h-screen' : ''}`}>
       <div className="flex justify-between mb-10 lg:px-5 xl:px-3">

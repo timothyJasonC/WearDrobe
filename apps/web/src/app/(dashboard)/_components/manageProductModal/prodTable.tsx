@@ -35,7 +35,6 @@ interface IProdTable {
         console.log(error);
       }
     }
-    console.log(productList);
     
     
     return (

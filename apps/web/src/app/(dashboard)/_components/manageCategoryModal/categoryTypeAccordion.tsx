@@ -28,7 +28,6 @@ export const CategoryAccordion = ({ type, data, gender, getCategoryData, isSuper
     if (data.status === "ok") {
         toast.success(data.message)
     } else if (data.status === "error") {
-      console.log(data);
         toast.error(data.message)
     }
     getCategoryData();

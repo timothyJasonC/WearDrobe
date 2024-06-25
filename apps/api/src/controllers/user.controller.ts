@@ -122,6 +122,19 @@ export class UserController {
         }
     }
 
+    async removePhoto(req: Request, res: Response) {
+        try { 
+            const user = await prisma.user.findFirst({ where : { id: req.params.id }})
+            if (user) {
+                if (user.imgUrl == null) return serverResponse(res, 400, 'error', 'You have no photo profile')
+                await prisma.user.update({ where: { id: user.id }, data: { imgUrl: null  } })
+            } else return serverResponse(res, 404, 'error', 'user not found!')
+            serverResponse(res, 200, 'ok', 'Photo profile has deleted!')
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
     async updatePersonalInfo(req: Request, res: Response) {
         try { 
             const { email } = req.body
@@ -170,4 +183,5 @@ export class UserController {
             serverResponse(res, 400, 'error', error)
         }
     }
+
 }

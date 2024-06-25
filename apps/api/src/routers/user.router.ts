@@ -23,6 +23,7 @@ export class UserRouter {
         this.router.get('/:id', this.userController.getUserById);
         this.router.patch('/:id', this.userController.updatePhoto);
         this.router.patch('/personal/:id', this.userController.updatePersonalInfo);
+        this.router.delete('/:id', this.userController.removePhoto);
     }
 
     getRouter() : Router{

@@ -42,6 +42,16 @@ export async function getRequest(segment: string) {
     return res;
 }
 
+export async function deleteRequest(segment: string) {
+    const res = await fetch(`http://localhost:8000/api${segment}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    return res;
+}
+
 export async function refreshToken(id: string | undefined) {
     try {
         const res = await postRequest({ id: id }, '/account/refresh-token')

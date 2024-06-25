@@ -1,9 +1,9 @@
 'use client'
 import { getProduct, getWarehouse } from '@/app/action'
-import { StockDialog } from '@/components/admDashboard/manageStocksModal/stocksDialog'
-import { StockTable } from '@/components/admDashboard/manageStocksModal/stocksTable'
-import { StatisticsCard } from '@/components/admDashboard/statisticsCard'
-import { WarehouseDropdown } from '@/components/admDashboard/warehouseDropdown'
+import { StockDialog } from '@/app/(dashboard)/_components/manageStocksModal/stocksDialog'
+import { StockTable } from '@/app/(dashboard)/_components/manageStocksModal/stocksTable'
+import { StatisticsCard } from '@/app/(dashboard)/_components/statisticsCard'
+import { WarehouseDropdown } from '@/app/(dashboard)/_components/warehouseDropdown'
 import { PaginationTemplate } from '@/components/pagination'
 import { Input } from '@/components/ui/input'
 import { IProduct, IWarehouse } from '@/constants'
@@ -21,13 +21,15 @@ export const Stocks = () => {
   const [productQty, setProductQty] = useState(0)
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1)
+  const [isSuper, setIsSuper] = useState(false)
+  
 
   const getAdmWH = async() => {
     const admin = await getAdminClientSide()
     const warehouse = await getWarehouse(admin.id)
     setWarehouseList(warehouse)
     if (admin.role == 'warAdm') {
-      setSelectedWH(warehouse[0])
+      setSelectedWH(warehouse[0].warehouseName)
     }
   }
 
@@ -39,7 +41,12 @@ export const Stocks = () => {
   }
 
   useEffect(() => {
+    getAdmWH()
+  }, [])
+
+  useEffect(() => {
     getData(selectedWH)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWH, open, page])
   
   return (
@@ -55,7 +62,8 @@ export const Stocks = () => {
         <div className='flex flex-col w-full items-end mb-7'>
             <p className='text-xl'>Warehouse</p>
             <WarehouseDropdown 
-              warehouseList={warehouseList}
+              isSuper={isSuper}
+              warehouseList={[...warehouseList]}
               setSelectedWH={setSelectedWH}
               selectedWH={selectedWH}
             />
@@ -64,11 +72,11 @@ export const Stocks = () => {
 
       <div>
         <div className='flex items-center justify-between'>
-          <div className={`${productList ? "flex" : 'hidden'}`}>
+          <div className={`${productList.length > 0 ? "flex" : 'hidden'}`}>
             <StockDialog 
               selectedWH={selectedWH} 
               setSelectedWH={setSelectedWH} 
-              warehouseList={warehouseList} 
+              warehouseList={[...warehouseList]} 
               setOpen={setOpen}
               open={open}
             />
@@ -80,7 +88,7 @@ export const Stocks = () => {
         </div>
         <StockTable
           productList={productList}
-          warehouseList={warehouseList}
+          warehouseList={[...warehouseList]}
           setSelectedWH={setSelectedWH}
           selectedWH={selectedWH}
         />

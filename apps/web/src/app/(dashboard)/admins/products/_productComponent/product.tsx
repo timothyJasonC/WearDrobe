@@ -1,12 +1,13 @@
 'use client'
-import { StatisticsCard } from '@/components/admDashboard/statisticsCard'
-import { WarehouseDropdown } from '@/components/admDashboard/warehouseDropdown'
+import { StatisticsCard } from '@/app/(dashboard)/_components/statisticsCard'
+import { WarehouseDropdown } from '@/app/(dashboard)/_components/warehouseDropdown'
 import React, { useEffect, useState } from 'react'
 import { getCategory, getProduct, getWarehouse } from '@/app/action'
-import { ManageCategoryDialog } from '@/components/admDashboard/manageCategoryModal/categoryDialog'
-import { CreateProductDialog } from '@/components/admDashboard/manageProductModal/createProductDialog'
-import { AdminProductDisplay } from '@/components/admDashboard/manageProductModal/displayProduct'
+import { ManageCategoryDialog } from '@/app/(dashboard)/_components/manageCategoryModal/categoryDialog'
+import { CreateProductDialog } from '@/app/(dashboard)/_components/manageProductModal/createProductDialog'
+import { AdminProductDisplay } from '@/app/(dashboard)/_components/manageProductModal/displayProduct'
 import { IProduct, IWarehouse } from '@/constants'
+import { getAdminClientSide } from '@/lib/utils'
 
 
 
@@ -18,23 +19,40 @@ const [open, setOpen] = useState(false);
 const [categoryLength, setCategoryLength] = useState(0) 
 const [productQty, setProductQty] = useState(0) 
 const [page, setPage] = useState(1)
+const [isSuper, setIsSuper] = useState(false)
 
+
+const getAdmWH = async() => {
+  const admin = await getAdminClientSide()
+  const warehouse = await getWarehouse(admin.id)
+  setWarehouseList(warehouse)
+  if (admin.role == 'warAdm') {
+    setSelectedWH(warehouse[0].warehouseName)
+  } else if (admin.role == 'superAdm') {
+    setSelectedWH('All Warehouses')
+    setIsSuper(true)
+  }
+}
 
 const getData = async(wh:string) => {
-    const warehouse = await getWarehouse()
     const product = await getProduct(wh, page)
     const category = await getCategory("", "")
-    setWarehouseList(warehouse)
     setProductList(product.productList)
     setProductQty(product.totalProduct)
-    setCategoryLength(category.category.length)
+    setCategoryLength(category.totalStock)
   }
 
   useEffect(() => {
-    getData(selectedWH)
+    getAdmWH()
+  }, [])
+  
+  useEffect(() => {
+    if (selectedWH) {
+      getData(selectedWH)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWH, open, page])
-
-
+  
   
   return (
     <div className='flex flex-col w-full py-10 px-10 md:px-20'>
@@ -44,12 +62,12 @@ const getData = async(wh:string) => {
           <StatisticsCard 
             title='Products'
             number={productQty ? productQty : 0}
-            modalElement={<CreateProductDialog setOpen={setOpen} open={open}/>}
+            modalElement={<CreateProductDialog isSuper={isSuper} setOpen={setOpen} open={open}/>}
           />
           <StatisticsCard 
             title='Categories'
             number={categoryLength}
-            modalElement={<ManageCategoryDialog />}
+            modalElement={<ManageCategoryDialog isSuper={isSuper}/>}
           />
         </div>
         <div className='flex flex-col w-full items-end mb-7'>
@@ -58,6 +76,7 @@ const getData = async(wh:string) => {
                 selectedWH={selectedWH}
                 setSelectedWH={setSelectedWH}
                 warehouseList={warehouseList}
+                isSuper={isSuper}
             />
         </div>
       </div>
@@ -69,6 +88,7 @@ const getData = async(wh:string) => {
         productList={productList}
         getData={() => getData(selectedWH)}
         productQty={productQty}
+        isSuper={isSuper}
         />
       </div>   
     </div>

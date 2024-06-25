@@ -9,7 +9,7 @@ export class CategoryController {
     const { gender, type } = req.query;
     try {
         await prisma.$transaction(async (tx)=> {
-            if (gender?.length == 0 && type?.length == 0) {
+            if (!gender && !type) {
                 const category = await tx.productCategory.findMany({
                   orderBy: {
                     category: 'asc'
@@ -101,6 +101,7 @@ export class CategoryController {
             slug: String(slug)
           }
         }) 
+        if (!category) throw 'Product not found.'
         serverResponse(res, 200, 'ok', 'Category found.', category)
       } catch (error:any) {
         serverResponse(res, 400, 'error', error)

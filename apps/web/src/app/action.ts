@@ -37,16 +37,16 @@ export async function getCategorySlug(gender:string, type:string, slug:string) {
   return data
 }
 
-export async function getProductName() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}products/names`, {
+export async function getProductName(n?:string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}products/names?n=${n}`, {
     method: 'GET',
   })
   const data = await res.json()
   return data
 }
 
-export async function getCatalog(g:string, c:string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}products/catalogs?g=${g}&c=${c}`, {
+export async function getCatalog(g?:string, t?:string, c?:string, q?:string, s?:string, p?:string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}products/catalogs?g=${g}&t=${t}&c=${c}&q=${q}&s=${s}&p=${p}`, {
     method: 'GET',
   })
   const data = await res.json()

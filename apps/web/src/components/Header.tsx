@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import Cart from "./cart/Cart";
 import AccountMenu from "@/app/(home)/_components/AccountMenu";
 import CatalogDropdown from "@/app/(home)/_components/CatalogDropdown";
+import { Search } from "./search";
 
 const components: { title: string; href: string; description: string }[] = [
     {
@@ -59,7 +60,7 @@ export function Header() {
                     <NavigationMenuItem>
                         <Link href="/" legacyBehavior passHref>
                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                <span className={`font-thin text-xl`}>WearDrobe</span>
+                                <span className={`font-light text-xl`}>WearDrobe</span>
                             </NavigationMenuLink>
                         </Link>
                     </NavigationMenuItem>
@@ -74,14 +75,13 @@ export function Header() {
                     <div className="hidden md:flex">
                         <NavigationMenuItem>
                             <div className="relative">
-                                <Input type="text" placeholder="Search" className="focus-visible:ring-white/0 focus-visible:border-black/80 duration-200" />
-                                <PiMagnifyingGlass className="absolute top-0 bottom-0 right-4 m-auto fill-black/50" />
+                                <Search />
                             </div>
                         </NavigationMenuItem>
 
                         <div className="hidden lg:flex">
                             <NavigationMenuItem>
-                                <Link href="/docs" legacyBehavior passHref>
+                                <Link href="/catalogs" legacyBehavior passHref>
                                     <NavigationMenuLink className={`${navigationMenuTriggerStyle()} flex gap-2`}>
                                         New Arrival <PiFireSimple fontSize={`1rem`} className=" text-black" />
                                     </NavigationMenuLink>

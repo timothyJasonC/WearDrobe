@@ -83,6 +83,7 @@ export interface IImageFieldProps {
   
   export interface ICategory {
     id?: string;
+    slug?: string
     gender: string;
     type: string;
     category: string;

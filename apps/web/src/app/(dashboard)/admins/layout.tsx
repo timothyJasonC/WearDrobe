@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description: 'Weardrobe admin dashboard.',
 };
 
-export default function Template({children}: Readonly<{children: React.ReactNode}>) {
+export default function Layout({children}: Readonly<{children: React.ReactNode}>) {
 
   return (
     <StoreProvider>

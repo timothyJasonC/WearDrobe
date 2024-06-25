@@ -12,7 +12,7 @@ export class WarehouseRouter {
     }
 
     private initializeRoutes(): void {
-        this.router.get('/', this.warehouseController.getWarehouseList)
+        this.router.get('/:id', this.warehouseController.getWarehouseList)
     }
 
     getRouter() : Router{

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'Weardrobe admin stock dashboard.',
 };
 
-export default function Template({children}: Readonly<{children: React.ReactNode}>) {
+export default function Layout({children}: Readonly<{children: React.ReactNode}>) {
 
   return (
     <div className='w-full'>

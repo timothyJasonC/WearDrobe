@@ -4,14 +4,14 @@ import {
     DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator,
     DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiShoppingCartSimple, PiSignOut, PiUser } from "react-icons/pi"
+import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiShoppingCartSimple, PiSignIn, PiSignOut, PiUser } from "react-icons/pi"
 import { Input } from "../../../components/ui/input"
 import Cart from "@/components/cart/Cart"
 import { handleLogout } from "@/lib/utils"
-import { useRouter } from "next/navigation"
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
   
-export function HeaderDropdown({userLogged}: any) {
-    const router = useRouter()
+export function HeaderDropdown({ userLogged, router }: { userLogged: boolean, router: AppRouterInstance }) {
+    
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -69,38 +69,46 @@ export function HeaderDropdown({userLogged}: any) {
                     </DropdownMenuSub>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                    <DropdownMenuItem className="flex gap-2">
-                        <PiUser size={`16px`} />
-                        <span>Account</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="flex gap-2">
-                        <PiHeart size={`16px`} />
-                        <span>Wishlist</span>
-                        <div className="bg-red-400 w-6 h-6 rounded-full absolute right-2 flex justify-center items-center">
-                            <span className="text-white text-xs flex justify-center items-center font-light scale-[92%]">99+</span>
-                        </div>
-                    </DropdownMenuItem>
+                {
+                    userLogged &&
+                    <>
+                        <DropdownMenuGroup>
+                            <DropdownMenuItem className="flex gap-2" onClick={() => { router.push('/user/edit-profile') } }>
+                                <PiUser size={`16px`} />
+                                <span>Profile</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="flex gap-2" onClick={() => { router.push('/user/wishlist') } }>
+                                <PiHeart size={`16px`} />
+                                <span>Wishlist</span>
+                                {/* <div className="bg-red-400 w-6 h-6 rounded-full absolute right-2 flex justify-center items-center">
+                                    <span className="text-white text-xs flex justify-center items-center font-light scale-[92%]">99+</span>
+                                </div> */}
+                            </DropdownMenuItem>
+                            
+                            <DropdownMenuItem className="flex gap-2">
+                                <PiShoppingCartSimple size={`16px`} />
+                                <span>Cart</span>
+                                <div className="absolute right-2">
+                                    <Cart />
+                                </div>
+                            </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                    </>
                     
-                    <DropdownMenuItem className="flex gap-2">
-                        <PiShoppingCartSimple size={`16px`} />
-                        <span>Cart</span>
-                        {
-                            userLogged ? (
-                                        <div className="absolute right-2">
-                                            <Cart />
-                                        </div>
-                            ) : (
-                                ''
-                            )
-                        }
+                }
+                {
+                    userLogged ?
+                    <DropdownMenuItem onClick={() => { handleLogout(); router.push('/auth') } } className="flex gap-2">
+                        <PiSignOut size={`16px`} />
+                        <span>Logout</span>
                     </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => { handleLogout(); router.push('/auth') } } className="flex gap-2">
-                    <PiSignOut size={`16px`} />
-                    <span>Log out</span>
-                </DropdownMenuItem>
+                    :
+                    <DropdownMenuItem onClick={() => { router.push('/auth') } } className="flex gap-2">
+                        <PiSignIn size={`16px`} />
+                        <span>Login</span>
+                    </DropdownMenuItem>
+                }
             </DropdownMenuContent>
         </DropdownMenu>
     )

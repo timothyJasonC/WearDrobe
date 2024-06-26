@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { PiMagnifyingGlass } from 'react-icons/pi'
-import { PaginationTemplate } from '../pagination'
+import { Pagination } from '../pagination'
 import OrderTable from './manageOrderList/OrderTable'
 import { IOrder } from '@/constants'
 import { getOrderByAdminId } from '@/lib/cart'
@@ -32,7 +32,7 @@ export default function DisplayOrder() {
                 <Input id='search' type="text" placeholder="Search Order" className='max-w-60' />
             </div >
             <OrderTable orderList={orderList} setOrderList={setOrderList} />
-            <PaginationTemplate />
+            PaginationTemplate/>
         </>
     )
 }

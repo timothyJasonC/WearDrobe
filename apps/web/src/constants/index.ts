@@ -71,7 +71,7 @@ export interface IImageFieldProps {
     image: string;
   }
   
-  interface IProductVariant {
+  export interface IProductVariant {
     id: string;
     productID: string;
     color: string;
@@ -83,6 +83,7 @@ export interface IImageFieldProps {
   
   export interface ICategory {
     id?: string;
+    slug?: string
     gender: string;
     type: string;
     category: string;
@@ -92,6 +93,7 @@ export interface IImageFieldProps {
     id: string;
     name: string;
     slug: string;
+    stockUpdatedAt: Date
     description: string;
     thumbnailURL: string; 
     price: number;
@@ -127,6 +129,16 @@ export interface IImageFieldProps {
     imageFile?: File
     isDeleted: boolean
     isNew: boolean
+  }
+
+  export interface IWarehouse {
+    id?:string,
+    warehouseName?:string,
+    city?:string,
+    coordinate?:string,
+    address?:string,
+    createdAt?:Date,
+    adminID?:string,
   }
 
 

@@ -246,3 +246,9 @@ export interface ShippingDetail {
     etd: string;
     note: string;
 }
+
+export interface ISizeSum {
+  _sum: {stock: number},
+  size: string,
+  productVariantID: string
+}

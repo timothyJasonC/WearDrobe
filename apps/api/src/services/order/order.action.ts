@@ -112,7 +112,7 @@ export async function failedOrder(orderId: string) {
     return updateOrder
 }
 
-async function getAllOrder(warehouseId: string | null, query: string, page: string, limit: string) {
+async function getAllOrder(warehouseId: string | null, query: string, page: string, limit: string, warehouse: string) {
     if (warehouseId === 'none') return null;
     const order = await prisma.order.findMany({
         orderBy: {
@@ -127,6 +127,9 @@ async function getAllOrder(warehouseId: string | null, query: string, page: stri
             ]
 
         } : {
+            AND: [
+                { warehouseId: warehouse }
+            ],
             OR: [
                 { id: { contains: query } },
             ]
@@ -207,7 +210,7 @@ export async function getTotalOrderByAdmin(adminId: string, query: string) {
     }
 }
 
-export async function getOrderByAdmin(adminId: string, query: string, page: string, limit: string) {
+export async function getOrderByAdmin(adminId: string, query: string, page: string, limit: string, warehouse: string) {
     const admin = await prisma.admin.findUnique({
         where: { id: adminId },
         include: {
@@ -215,11 +218,11 @@ export async function getOrderByAdmin(adminId: string, query: string, page: stri
         }
     })
     if (admin?.role === 'superAdm') {
-        const orders = await getAllOrder(null, query, page, limit)
+        const orders = await getAllOrder(null, query, page, limit, warehouse)
         return orders
     }
     if (admin?.role === 'warAdm') {
-        const orders = await getAllOrder(admin.Warehouse?.id ? admin.Warehouse.id : 'none', query, page, limit)
+        const orders = await getAllOrder(admin.Warehouse?.id ? admin.Warehouse.id : 'none', query, page, limit, warehouse)
         return orders
     }
 }

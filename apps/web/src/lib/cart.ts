@@ -136,8 +136,8 @@ export const checkoutOrder = async (orderId: string, shippingCost: number, subTo
     return data;
 }
 
-export const getAllOrder = async (adminId: string | null, userId: string | null, searchQuery: string | null, limitQuery: string | null, currentQuery: string | null) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/warehouseOrder?q=${encodeURIComponent(searchQuery || '')}&limit=${encodeURIComponent(limitQuery || '10')}&page=${encodeURIComponent(currentQuery || '1')}`, {
+export const getAllOrder = async (adminId: string | null, userId: string | null, searchQuery: string | null, limitQuery: string | null, currentQuery: string | null, warehouseQuery: string | null) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/warehouseOrder?q=${encodeURIComponent(searchQuery || '')}&limit=${encodeURIComponent(limitQuery || '10')}&page=${encodeURIComponent(currentQuery || '1')}&w=${encodeURIComponent(warehouseQuery || '')}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ adminId: adminId, userId: userId })

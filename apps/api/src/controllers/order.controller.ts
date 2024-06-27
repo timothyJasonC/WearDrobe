@@ -5,7 +5,7 @@ import fs from "fs"
 import handlebars from "handlebars"
 import path from "path";
 import { transporter } from '@/helpers/nodemailer';
-import { getWarehouseById } from "@/services/address/address.action";
+import { getWarehouseById, getWarehouseByName } from "@/services/address/address.action";
 import { generateInvoicePdf } from "@/helpers/pdf";
 
 export class OrderController {
@@ -153,12 +153,14 @@ export class OrderController {
     async getOrderByAdmin(req: Request, res: Response) {
         try {
             const { adminId, userId } = req.body
-            let { q: query, page, limit } = req.query;
+            let { q: query, page, limit, w } = req.query;
 
             if (typeof query !== "string") throw 'Invalid request'
+            if (typeof w !== "string") throw 'Invalid request'
             if (typeof page !== "string" || isNaN(+page)) page = '1';
             if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
 
+            const warehouse = await getWarehouseByName(w)
 
             if (userId) {
                 const orderList = await getOrderByUser(userId, query, page, limit)
@@ -168,7 +170,7 @@ export class OrderController {
                 res.json({ orderList, totalPages, currentPage })
             }
             if (adminId) {
-                const orderList = await getOrderByAdmin(adminId, query, page, limit)
+                const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!)
                 const totalOrders = await getTotalOrderByAdmin(adminId, query)
                 const totalPages = Math.ceil(totalOrders! / +limit)
                 const currentPage = +page
@@ -182,16 +184,19 @@ export class OrderController {
     async cancelOrder(req: Request, res: Response) {
         try {
             const { orderId, adminId, userId } = req.body
-            let { q: query, page, limit } = req.query;
+            let { q: query, page, limit, w } = req.query;
 
             if (typeof query !== "string") throw 'Invalid request'
+            if (typeof w !== "string") throw 'Invalid request'
             if (typeof page !== "string" || isNaN(+page)) page = '1';
             if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
             const cancel = await cancelOrder(orderId)
 
+            const warehouse = await getWarehouseByName(w)
+
             if (cancel) {
                 if (adminId) {
-                    const orderList = await getOrderByAdmin(adminId, query, page, limit)
+                    const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!)
                     res.json(orderList)
                 }
                 if (userId) {
@@ -207,15 +212,18 @@ export class OrderController {
     async changeToShipped(req: Request, res: Response) {
         try {
             const { orderId, adminId } = req.body
-            let { q: query, page, limit } = req.query;
+            let { q: query, page, limit, w } = req.query;
             if (typeof query !== "string") throw 'Invalid request'
+            if (typeof w !== "string") throw 'Invalid request'
             if (typeof page !== "string" || isNaN(+page)) page = '1';
             if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
 
             const updateToShipped = await updateShipped(orderId)
+            const warehouse = await getWarehouseByName(w)
+
 
             if (updateToShipped) {
-                const orderList = await getOrderByAdmin(adminId, query, page, limit)
+                const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!)
                 res.json(orderList)
             }
         } catch (err) {

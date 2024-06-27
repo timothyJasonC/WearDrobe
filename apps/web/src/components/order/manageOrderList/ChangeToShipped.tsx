@@ -12,7 +12,7 @@ type ChangeOrderPorps = {
 export default function ChangeToShipped({ orderId, setOrderList }: ChangeOrderPorps) {
 
     const changeStatusToShipped = async () => {
-       const adminId = '1'
+        const adminId = '6f09cf0c-2a9b-4550-8d1d-bc02157bdc4d'
         const result = await changeToShipped(orderId, adminId)
         setOrderList(result)
     }

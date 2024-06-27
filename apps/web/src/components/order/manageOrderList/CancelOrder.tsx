@@ -12,7 +12,7 @@ type CancelOrderPorps = {
 
 export default function CancelOrder({ orderId, setOrderList }: CancelOrderPorps) {
     const handleDelete = async () => {
-        const adminId = '1'
+        const adminId = '6f09cf0c-2a9b-4550-8d1d-bc02157bdc4d'
         const dataUser = await getUserClientSide()
         if (dataUser) {
             const res = await cancelOrder(orderId, null, dataUser.id)

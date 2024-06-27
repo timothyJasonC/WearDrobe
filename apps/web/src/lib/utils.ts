@@ -4,6 +4,9 @@ import { UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge"
 import { getRequest } from "./fetchRequests";
 import Cookies from "js-cookie";
+import qs from 'query-string'
+import { RemoveUrlQueryParams, UrlQueryParams } from "@/constants";
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -95,3 +98,33 @@ export function handleLogout() {
     Cookies.remove('role')
     // ... optional other function
 }
+
+export function formUrlQuery({ params, key, value }: UrlQueryParams) {
+    const currentUrl = qs.parse(params)
+  
+    currentUrl[key] = value
+  
+    return qs.stringifyUrl(
+      {
+        url: window.location.pathname,
+        query: currentUrl,
+      },
+      { skipNull: true }
+    )
+  }
+  
+  export function removeKeysFromQuery({ params, keysToRemove }: RemoveUrlQueryParams) {
+    const currentUrl = qs.parse(params)
+  
+    keysToRemove.forEach(key => {
+      delete currentUrl[key]
+    })
+  
+    return qs.stringifyUrl(
+      {
+        url: window.location.pathname,
+        query: currentUrl,
+      },
+      { skipNull: true }
+    )
+  }

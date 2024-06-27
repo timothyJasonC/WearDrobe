@@ -11,14 +11,13 @@ import { Button } from '../ui/button';
 
 export default function AddToCartButton() {
     const [quantity, setQuantity] = useState(1);
-    const cart = useAppSelector(state => state.cart.value);
     const dispatch = useAppDispatch();
 
     const handleAddToCart = async () => {
         try {
             const userData = await getUserClientSide()
             const variantId = '1'
-            const color = 'Black'
+            const color = 'Milo'
             const size = 'M'
             const result = await addToCart(userData.id, variantId, color, size, quantity);
             if (result === 'error') throw new Error('Failed to add item to cart')

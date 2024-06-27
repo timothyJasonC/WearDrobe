@@ -6,7 +6,6 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import CancelOrder from "./CancelOrder"
 import { formatToIDR, getUserClientSide } from "@/lib/utils"
-import { changeToShipped } from "@/lib/order"
 import ChangeToShipped from "./ChangeToShipped"
 
 type OrderProps = {

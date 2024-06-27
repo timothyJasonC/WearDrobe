@@ -247,6 +247,16 @@ export interface ShippingDetail {
     note: string;
 }
 
+export type UrlQueryParams = {
+  params: string
+  key: string
+  value: string | null
+}
+
+export type RemoveUrlQueryParams = {
+  params: string
+  keysToRemove: string[]
+}
 export interface ISizeSum {
   _sum: {stock: number},
   size: string,

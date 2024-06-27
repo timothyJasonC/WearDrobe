@@ -18,14 +18,15 @@ interface ISubmitButton {
     cta?:string 
     message:string
     icon?: ReactNode
+    hidden?: boolean
 }
   
-  export function SubmitAlert({action, title, icon, cta, message}:ISubmitButton) {
+  export function SubmitAlert({action, title, icon, cta, message, hidden}:ISubmitButton) {
 
     return (
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <div>
+          <div className={hidden ? 'hidden' : ''}>
             {icon}
             <Button type="button" className={cta? "block" : "hidden"}>{cta}</Button>
           </div>

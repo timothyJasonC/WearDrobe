@@ -58,13 +58,22 @@ export class AdminController {
             const admin = await prisma.admin.update({
                 where: { id: account.id },
                 data : {
-                    fullName, gender,
+                    fullName, gender ,
                     password: hashedPassword,
                     dob: new Date(dob),
                 }
             })
             next()
     
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async getAdminById(req: Request, res: Response) {
+        try {
+            const admin = await prisma.admin.findFirst({ where: { id: req.params.id } })
+            serverResponse(res, 200, 'ok', 'admin found!', admin)
         } catch (error: any) {
             serverResponse(res, 400, 'error', error)
         }

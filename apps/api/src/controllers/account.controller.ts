@@ -321,7 +321,6 @@ export class AccountController {
                 subject: "Password Reset Request for Your WearDrobe Account",
                 html
             })
-
             serverResponse(res, 200, 'ok', 'Email has been sent!')
             
         } catch (error: any) {

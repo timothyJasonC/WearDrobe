@@ -144,7 +144,7 @@ export async function getShippingCost(warehouseId: string, userAddress: string, 
     const formBody = new URLSearchParams();
     formBody.append('origin', `${warehouse?.city_id}`);
     formBody.append('destination', `${address?.city_id}`);
-    formBody.append('weight', '1700');  // Assuming weight is fixed
+    formBody.append('weight', '1700');
     formBody.append('courier', `${shipping}`);
 
     const cost = await fetch('https://api.rajaongkir.com/starter/cost', {

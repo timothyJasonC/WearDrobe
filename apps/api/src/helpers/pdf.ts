@@ -8,6 +8,7 @@ export async function generateInvoicePdf(inputData: any) {
     let templateHtml = fs.readFileSync(templatePath, 'utf-8')
 
     let template = handlebars.compile(templateHtml);
+    
     let html = template(inputData);
 
     let now = new Date();
@@ -30,20 +31,23 @@ export async function generateInvoicePdf(inputData: any) {
         path: pdfPath,
     };
 
-    const browser = await puppeteer.launch({
-        args: ['--no-sandbox'],
-        headless: true,
-    });
+    try {
+        const browser = await puppeteer.launch({
+            args: ['--no-sandbox'],
+            headless: true,
+        });
 
-    var page = await browser.newPage();
-    await page.goto(`data:text/html;charset=UTF-8,${html}`, {
-        waitUntil: 'networkidle0',
-    });
-    // await page.addStyleTag({
-    //     path: `./src/templates/style.css`,
-    // });
-    await page.pdf(options);
-    await browser.close();
+        const page = await browser.newPage();
+        await page.setContent(html, { waitUntil: 'networkidle0' });
+
+        await page.addStyleTag({ path: path.join(__dirname, "../templates", "invoice.css") });
+
+        await page.pdf(options);
+        await browser.close();
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        throw error;
+    }
 
     return pdfPath
 }

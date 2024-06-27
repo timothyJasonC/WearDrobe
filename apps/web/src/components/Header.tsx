@@ -64,13 +64,6 @@ export function Header() {
                         </Link>
                     </NavigationMenuItem>
 
-                    <NavigationMenuItem className="md:block hidden">
-                        <div className="relative">
-                            <Input type="text" placeholder="Search" className="focus-visible:ring-0 focus-visible:border-black/50" />
-                            <PiMagnifyingGlass className="absolute top-0 bottom-0 right-4 m-auto fill-black/50" />
-                        </div>
-                    </NavigationMenuItem>
-
                     <div className="hidden md:flex">
                         <NavigationMenuItem>
                             <div className="relative">

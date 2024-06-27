@@ -9,12 +9,12 @@ export async function getCartItems(userId: string) {
     return result
 }
 
-export async function addToCart(userId: string, variantId: string, color:string, size:string, quantity: number) {
+export async function addToCart(userId: string, variantId: string, color: string, size: string, quantity: number) {
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/cart`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: userId, variantId,color , size, quantity })
+            body: JSON.stringify({ userId: userId, variantId, color, size, quantity })
         });
         const data = await response.json();
         if (!response.ok) {
@@ -58,7 +58,7 @@ export async function deleteCartItem(itemId: string, userId: string) {
     return response.json();
 }
 
-export async function getOrderById(userId: string,orderId: string) {
+export async function getOrderById(userId: string, orderId: string) {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/orderDetail`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -79,8 +79,8 @@ export const getProvinces = async () => {
 export const getCities = async (provinceId: string) => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}address/getCities`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({provinceId})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provinceId })
     });
     const data = await response.json();
     return data;
@@ -89,58 +89,58 @@ export const getCities = async (provinceId: string) => {
 export const addAddressUser = async (selectedCity: string, address: string, userId: string) => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}address/`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({selectedCity, address, userId: userId })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ selectedCity, address, userId: userId })
     });
     const data = await response.json();
     return data;
 }
 
-export const getAddressList = async(userId: string) => {
-    const response =  await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}address/addressList`, {
+export const getAddressList = async (userId: string) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}address/addressList`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({userId: userId })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: userId })
     });
     const data = await response.json();
     return data;
 }
 
-export const fetchWarehouse = async(address: string) => {
-    const response =  await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}address/getClossestWarehouse`, {
+export const fetchWarehouse = async (address: string) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}address/getClossestWarehouse`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({address: address })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: address })
     });
     const data = await response.json();
     return data;
 }
 
-export const fetchShippingCost = async(warehouseId: string, userAddress:string, shipping:string) => {
-    const response =  await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}address/getShippingCost`, {
+export const fetchShippingCost = async (warehouseId: string, userAddress: string, shipping: string) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}address/getShippingCost`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({warehouseId: warehouseId, userAddress: userAddress, shipping: shipping})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ warehouseId: warehouseId, userAddress: userAddress, shipping: shipping })
     });
     const data = await response.json();
     return data;
 }
 
-export const checkoutOrder = async(orderId:string, shippingCost:number, subTotal:number, warehouseId:string) => {
-    const response =  await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/`, {
+export const checkoutOrder = async (orderId: string, shippingCost: number, subTotal: number, warehouseId: string) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({orderId: orderId, shippingCost: shippingCost, subTotal: subTotal, warehouseId})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: orderId, shippingCost: shippingCost, subTotal: subTotal, warehouseId })
     });
     const data = await response.json();
     return data;
 }
 
-export const getOrderByAdminId = async(adminId: string|null, userId: string|null) => {
-    const response =  await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/warehouseOrder`, {
+export const getAllOrder = async (adminId: string | null, userId: string | null, searchQuery: string | null, limitQuery: string | null, currentQuery: string | null) => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/warehouseOrder?q=${encodeURIComponent(searchQuery || '')}&limit=${encodeURIComponent(limitQuery || '10')}&page=${encodeURIComponent(currentQuery || '1')}`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({adminId: adminId, userId: userId})
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminId: adminId, userId: userId })
     });
     const data = await response.json();
     return data;

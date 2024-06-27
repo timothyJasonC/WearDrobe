@@ -18,6 +18,7 @@ export const Search = () => {
 	const router = useRouter()
 	const [nameArr, setNameArr] = useState<INameArr[]>([])
 	const [focus, setFocus] = useState(false)
+	const [hover, setHover] = useState(false)
   
 	const debounced = useDebouncedCallback(
     (value) => {
@@ -51,14 +52,17 @@ export const Search = () => {
             <Input 
                 type="text" 
                 placeholder="Search" 
-                className="focus-visible:ring-white/0 w-56 focus-visible:border-black/80 duration-200"
+                className="group focus-visible:ring-white/0 w-56 focus-visible:border-black/80 duration-200"
                 onChange={(e) => {debounced(e.target.value); setSearch(e.target.value)}}
 				onFocus={() => setFocus(true)}
 				onBlur={() => setFocus(false)}
             />
             <PiMagnifyingGlass className="absolute top-0 bottom-0 right-4 m-auto fill-black/50" />
         </div>
-        <div className={`absolute bg-white w-56 border-[1px] p-2 border-black/15 rounded-lg top-12 flex flex-col gap-1 ${nameArr.length > 0 && focus ? '' : 'hidden'}`}>
+        <div className={`absolute bg-white w-56 border-[1px] p-2 border-black/15 rounded-lg top-12 flex flex-col gap-1 ${nameArr.length > 0 && (focus || hover) ? '' : 'hidden'}`}
+		 onMouseEnter={() => setHover(true)}
+		 onMouseLeave={() => setHover(false)}
+		>
 				{
 					nameArr.map((item, index:number) => {
 						return (

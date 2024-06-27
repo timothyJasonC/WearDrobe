@@ -257,3 +257,8 @@ export type RemoveUrlQueryParams = {
   params: string
   keysToRemove: string[]
 }
+export interface ISizeSum {
+  _sum: {stock: number},
+  size: string,
+  productVariantID: string
+}

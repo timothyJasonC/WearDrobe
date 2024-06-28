@@ -1,3 +1,4 @@
+import { ShippingCost } from "@/constants";
 
 export async function getCartItems(userId: string) {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/cart_item`, {
@@ -126,11 +127,11 @@ export const fetchShippingCost = async (warehouseId: string, userAddress: string
     return data;
 }
 
-export const checkoutOrder = async (orderId: string, shippingCost: number, subTotal: number, warehouseId: string) => {
+export const checkoutOrder = async (orderId: string, shippingCost: number, subTotal: number, warehouseId: string,userAddress:string,shipping:string, selectedShipping: ShippingCost|undefined) => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: orderId, shippingCost: shippingCost, subTotal: subTotal, warehouseId })
+        body: JSON.stringify({ orderId: orderId, shippingCost: shippingCost, subTotal: subTotal, warehouseId, userAddress ,shipping, selectedShipping })
     });
     const data = await response.json();
     return data;

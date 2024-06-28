@@ -178,7 +178,7 @@ export async function deleteCart(cartId: string) {
     return
 }
 
-export async function updateToOrder(orderId: string, shippingCost: number, subTotal: number, warehouseId:string) {
+export async function updateToOrder(orderId: string, shippingCost: number, subTotal: number, warehouseId: string, userAddress: string, shipping: string, service: string, description: string, estimation: string) {
     const order = await prisma.order.update({
         where: { id: orderId },
         data: {
@@ -187,7 +187,9 @@ export async function updateToOrder(orderId: string, shippingCost: number, subTo
             status: "PENDING_PAYMENT",
             warehouseId,
             createdAt: new Date(),
-            totalAmount: shippingCost + subTotal
+            totalAmount: shippingCost + subTotal,
+            addressID: userAddress,
+            shippingMethod: `${shipping}, ${service}, ${description}, ${estimation}`
         }
     })
     return order

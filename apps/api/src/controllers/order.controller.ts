@@ -86,8 +86,8 @@ export class OrderController {
 
     async createOrder(req: Request, res: Response) {
         try {
-            const { orderId, shippingCost, subTotal, warehouseId } = req.body
-            const order = await updateToOrder(orderId, shippingCost, subTotal, warehouseId)
+            const { orderId, shippingCost, subTotal, warehouseId, userAddress, shipping, selectedShipping } = req.body
+            const order = await updateToOrder(orderId, shippingCost, subTotal, warehouseId, userAddress, shipping, selectedShipping.service, selectedShipping.description, selectedShipping.cost[0].etd)
             if (order) {
                 let data = {
                     transaction_details: {

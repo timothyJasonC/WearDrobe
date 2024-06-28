@@ -4,7 +4,7 @@ import CartItem from "@/components/cart/CartItem";
 import SectionHeaders from "@/components/order/SectionHeaders";
 import { ShippingCost } from "@/constants";
 import { fetchShippingCost, checkoutOrder } from "@/lib/cart";
-import { formatToIDR } from "@/lib/utils";
+import { formatToIDR, getUserClientSide } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import DropdownAddress from "@/components/order/DropdownAddress";
 import DropdownShipping from "@/components/order/DropdownShipping";
@@ -12,6 +12,7 @@ import DropdownShippingServices from "@/components/order/DropdownShippingService
 import { useAppSelector } from "@/lib/redux/hooks";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Loading from "@/app/Loading";
 
 type CheckoutProps = {
     params: {
@@ -28,7 +29,15 @@ export default function page({ params: { id } }: CheckoutProps) {
     const [shippingService, setShippingService] = useState<ShippingCost[] | null>(null);
     const [service, setService] = useState<string>('');
     const [shippingCost, setShippingCost] = useState<number>(0);
+    const [selectedShipping, setSelectedShipping] = useState<ShippingCost>()
+    const [isLoading, setIsLoading] = useState(true)
     const router = useRouter()
+
+    const getUser = async () => {
+        const user = await getUserClientSide()
+        if (user === undefined) router.push('/auth')
+        return
+    }
 
     const fetchShipping = async () => {
         try {
@@ -44,15 +53,19 @@ export default function page({ params: { id } }: CheckoutProps) {
         if (res !== undefined && res.length > 0) {
             const cost = res[0].cost[0].value;
             setShippingCost(cost);
+            setSelectedShipping(res[0])
         }
     }
 
     useEffect(() => {
+        if (cart === null) router.push('/404')
+        getUser()
         if (cart && cart.items !== undefined) {
             setTotalAmount(cart.items.reduce((acc, item) => acc + item.price, 0));
         } else {
             setTotalAmount(0);
         }
+        setIsLoading(false)
     }, [cart, cart?.items]);
 
     useEffect(() => {
@@ -65,8 +78,13 @@ export default function page({ params: { id } }: CheckoutProps) {
     }, [shipping, service]);
 
     const handleCheckout = async () => {
-        const result = await checkoutOrder(id, shippingCost, totalAmount, warehouseId!)
+        const result = await checkoutOrder(id, shippingCost, totalAmount, warehouseId!, userAddress!, shipping, selectedShipping)
         router.push(result.redirect_url);
+    }
+
+
+    if (isLoading) {
+        return <Loading />
     }
 
     return (

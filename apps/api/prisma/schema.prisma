@@ -92,16 +92,16 @@ model AddressList {
 }
 
 model Admin {
-    id            String     @id
-    role          Role       @default(warAdm)
-    accountActive Boolean    @default(false)
-    fullName      String?
-    email         String     @unique
-    password      String?
-    gender        Gender?
-    dob           DateTime?
-    createdAt     DateTime   @default(now())
-    Warehouse     Warehouse?
+  id            String     @id
+  role          Role       @default(warAdm)
+  accountActive Boolean    @default(false)
+  fullName      String?
+  email         String     @unique
+  password      String?
+  gender        Gender?
+  dob           DateTime?
+  createdAt     DateTime   @default(now())
+  Warehouse     Warehouse?
 }
 
 model PasswordRequest {
@@ -213,16 +213,18 @@ model StockMutationItem {
 // FEATURE 3
 
 model Order {
-  id            String        @id
-  userId        String
-  status        OrderStatus   @default(CART)
-  warehouseId   String?
-  totalAmount   Int           @default(0)
-  paymentStatus PaymentStatus
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  user          User          @relation(fields: [userId], references: [id])
-  items         OrderItem[]
+  id             String        @id
+  userId         String
+  status         OrderStatus   @default(CART)
+  warehouseId    String?
+  totalAmount    Int           @default(0)
+  addressID      String?
+  shippingMethod String?
+  paymentStatus  PaymentStatus
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  user           User          @relation(fields: [userId], references: [id])
+  items          OrderItem[]
 }
 
 model OrderItem {

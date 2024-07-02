@@ -1,37 +1,39 @@
 import { Button } from '@/components/ui/button'
 import React from 'react'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { cancelOrder, changeToShipped } from '@/lib/order';
 import { IOrder } from '@/constants';
-import { getAdminClientSide, getUserClientSide } from '@/lib/utils';
+import { getUserClientSide } from '@/lib/utils';
+import { confirmOrder } from '@/lib/order';
 
-type ChangeOrderPorps = {
+type ConfirmShippedPorps = {
     orderId: string
     setOrderList: (value: IOrder[] | null) => void
     currentPage: string | null
 }
-export default function ChangeToShipped({ orderId, setOrderList, currentPage }: ChangeOrderPorps) {
 
-    const changeStatusToShipped = async () => {
-        const admin =  await getAdminClientSide()
-        const result = await changeToShipped(orderId, admin.id, currentPage)
-        setOrderList(result)
-    }
+export default function ConfirmShipped({ orderId, setOrderList, currentPage }: ConfirmShippedPorps) {
+    const handleConfirmShipped = async () => {
+        const dataUser = await getUserClientSide()
+        if (dataUser) {
+            const res = await confirmOrder(orderId, dataUser.id, currentPage)
+            setOrderList(res)
+        }
+    };
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button className='rounded-full w-full px-4' variant={'default'} size={"sm"}>Shipped</Button>
+                <Button className='rounded-full w-full px-4' size={"sm"}>Konfirmasi Penerimaan Barang</Button>
             </AlertDialogTrigger>
             <AlertDialogContent className="w-96">
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone and the status of this order will change to shipped so the warehouse admin should send the user orders.
+                        This action cannot be undone and the status of this order will be set to completed.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={changeStatusToShipped}>Shipped</AlertDialogAction>
+                    <AlertDialogAction onClick={() => { handleConfirmShipped() }}>Confirm Order</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

@@ -72,7 +72,7 @@ export default function DisplayOrder({ warehouse }: DisplayOrderProps) {
     return (
         <>
             <SearchOrder data={searchQuery || ''} />
-            <OrderTable orderList={orderList} setOrderList={setOrderList} />
+            <OrderTable orderList={orderList} setOrderList={setOrderList} currentPage={currentQuery}/>
             <PaginationOrder page={currentPage} totalPages={totalPages} />
         </>
     )

@@ -9,6 +9,7 @@ import { setCart } from '@/lib/redux/features/cart/cartSlice';
 import { getUserClientSide } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { PiShoppingCart } from 'react-icons/pi';
+import { useRouter } from 'next/navigation';
 
 type AddToCartButtonProps = {
     variantId: string
@@ -20,10 +21,12 @@ type AddToCartButtonProps = {
 
 export default function AddToCartButton({ variantId, color, size, quantity, stock }: AddToCartButtonProps) {
     const dispatch = useAppDispatch();
+    const router = useRouter()
 
     const handleAddToCart = async () => {
         try {
             const userData = await getUserClientSide()
+            if (!userData) router.push('/auth')
             const result = await addToCart(userData.id, variantId, color, size, quantity);
             if (result === 'error') throw new Error('Failed to add item to cart')
             toast.success('Your item has been added to your cart')

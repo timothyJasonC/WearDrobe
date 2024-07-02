@@ -46,6 +46,12 @@ enum MutationTypes {
   DELETE
 }
 
+enum MutationStatus {
+  WAITING
+  ACCEPTED
+  REJECTED
+}
+
 enum PaymentStatus {
   PENDING
   COMPLETED
@@ -196,7 +202,9 @@ model StockMutation {
   warehouseID           String
   associatedWarehouseID String?
   type                  MutationTypes
+  status                MutationStatus?
   createdAt             DateTime            @default(now())
+  updatedAt             DateTime?
   warehouse             Warehouse           @relation(fields: [warehouseID], references: [id])
   StockMutationItem     StockMutationItem[]
 }
@@ -220,6 +228,7 @@ model Order {
   totalAmount    Int           @default(0)
   addressID      String?
   shippingMethod String?
+  shippedAt      DateTime?
   paymentStatus  PaymentStatus
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt

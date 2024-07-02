@@ -5,7 +5,7 @@ import { IOrder } from "@/constants";
 import { getOrderById } from "@/lib/cart";
 import { formatDateTime, formatToIDR, getAdminClientSide, getUserClientSide } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 type OrderDetailProps = {
@@ -14,7 +14,7 @@ type OrderDetailProps = {
     }
 }
 
-export default function page({ params: { id } }: OrderDetailProps) {
+export default function Page({ params: { id } }: OrderDetailProps) {
     const [order, setOrder] = useState<IOrder | null>(null)
     const [address, setAddress] = useState<string | null>(null)
     const [warehouseLoc, setWarehouseLoc] = useState<string | null>(null)
@@ -23,15 +23,15 @@ export default function page({ params: { id } }: OrderDetailProps) {
     const router = useRouter()
     const shipping = order?.shippingMethod?.split(',')
 
-    const validateUser = async () => {
+    const validateUser = useCallback(async () => {
         const order = await getOrderById(id)
         const user = await getUserClientSide()
         const admin = await getAdminClientSide()
         if (!user && !admin) router.push('/auth')
         if (user && user.id !== order.cart.userId && !admin) router.push('/auth')
-    }
+    }, [id, router])
 
-    const getOrder = async () => {
+    const getOrder = useCallback(async () => {
         const order = await getOrderById(id)
         if (order.name === "PrismaClientValidationError" || order.status === "CANCELED") router.push('/404')
         setOrder(order.cart)
@@ -39,12 +39,13 @@ export default function page({ params: { id } }: OrderDetailProps) {
         setWarehouseLoc(order.warehouse.coordinate)
         setShippingCost(order.shippingCost)
         setIsLoading(false)
-    }
+    }, [id, router])
 
     useEffect(() => {
         validateUser()
         getOrder()
-    }, [])
+    }, [validateUser, getOrder])
+    
     if (isLoading) {
         return <Loading />
     }

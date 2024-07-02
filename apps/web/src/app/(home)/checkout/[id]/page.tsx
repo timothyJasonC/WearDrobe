@@ -5,7 +5,7 @@ import SectionHeaders from "@/components/order/SectionHeaders";
 import { ShippingCost } from "@/constants";
 import { fetchShippingCost, checkoutOrder, checkStock, getOrderById } from "@/lib/cart";
 import { formatToIDR, getUserClientSide } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DropdownAddress from "@/components/order/DropdownAddress";
 import DropdownShipping from "@/components/order/DropdownShipping";
 import DropdownShippingServices from "@/components/order/DropdownShippingServices";
@@ -21,7 +21,7 @@ type CheckoutProps = {
     }
 }
 
-export default function page({ params: { id } }: CheckoutProps) {
+export default function Page({ params: { id } }: CheckoutProps) {
     const cart = useAppSelector(state => state.cart.value);
     const [stockData, setStockData] = useState([])
     const [totalAmount, setTotalAmount] = useState(0);
@@ -37,58 +37,56 @@ export default function page({ params: { id } }: CheckoutProps) {
 
     const router = useRouter()
 
-    const validate = async () => {
-        const user = await getUserClientSide()
-        if (!user) router.push('/auth')
-        return
-    }
+    const validate = useCallback(async () => {
+        const user = await getUserClientSide();
+        if (!user) router.push('/auth');
+    }, [router]);
 
-    const getStock = async () => {
-        const stock = await checkStock(id)
-        setStockData(stock)
-    }
+    const getStock = useCallback(async () => {
+        const stock = await checkStock(id);
+        setStockData(stock);
+    }, [id]);
 
-    const fetchShipping = async () => {
+    const fetchShipping = useCallback(async () => {
         try {
             const result = await fetchShippingCost(warehouseId!, userAddress!, shipping);
             setShippingService(result[0].costs);
         } catch (err) {
-            console.log(err);
+            toast.error('can &apos; t get shipping cost ')
         }
-    };
+    }, [warehouseId, userAddress, shipping]);
 
-    const calculateShippingCost = async () => {
+    const calculateShippingCost = useCallback(async () => {
         const res = shippingService?.filter(item => item.service === `${service}`);
         if (res !== undefined && res.length > 0) {
             const cost = res[0].cost[0].value;
             setShippingCost(cost);
-            setSelectedShipping(res[0])
+            setSelectedShipping(res[0]);
         }
-    }
+    }, [service, shippingService]);
 
     useEffect(() => {
         try {
-            validate()
-            getStock()
+            validate();
+            getStock();
             if (cart && cart.items !== undefined) {
                 setTotalAmount(cart.items.reduce((acc, item) => acc + item.price, 0));
             } else {
                 setTotalAmount(0);
             }
         } catch (err) {
-            router.push('/404')
+            router.push('/404');
         }
-        setIsLoading(false)
-    }, [cart, cart?.items]);
+        setIsLoading(false);
+    }, [validate, getStock, cart, cart?.items, router]);
+
+    console.log(shipping);
 
     useEffect(() => {
         if (shipping !== '') {
             fetchShipping();
         }
-        if (service !== '') {
-            calculateShippingCost();
-        }
-    }, [shipping, service]);
+    }, [shipping, service, fetchShipping,])
 
     useEffect(() => {
         if (stockData.length > 0) {
@@ -144,7 +142,7 @@ export default function page({ params: { id } }: CheckoutProps) {
                     <DropdownAddress setUserAddress={setUserAddress} setWarehouseId={setWarehouseId} />
                     <h2>Set Courier :</h2>
                     <DropdownShipping shipping={shipping} setShipping={setShipping} warehouseId={warehouseId} />
-                    <DropdownShippingServices shippingServices={shippingService} service={service} setService={setService} />
+                    <DropdownShippingServices shippingServices={shippingService} service={service} setService={setService} calculateShippingCost={calculateShippingCost} fetchShipping={fetchShipping} />
                     <div className={`${!service || !isStockSufficient ? 'hover:cursor-not-allowed' : ''}`}>
                         <Button onClick={handleCheckout} disabled={!service || !isStockSufficient} className='rounded-full w-full' size={"lg"}>
                             {!service ? 'calculating cost' : 'checkout'}

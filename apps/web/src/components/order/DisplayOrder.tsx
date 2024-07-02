@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import OrderTable from './manageOrderList/OrderTable'
 import { IOrder } from '@/constants'
 import { getAllOrder } from '@/lib/cart'
@@ -24,7 +24,7 @@ export default function DisplayOrder({ warehouse }: DisplayOrderProps) {
     const currentQuery = search ? search.get('page') : '1';
     const router = useRouter()
 
-    const warehouseData = async (warehouse: string) => {
+    const warehouseData = useCallback(async (warehouse: string) => {
         let newUrl = ''
         if (warehouse && warehouse !== 'All Warehouses') {
             newUrl = formUrlQuery({
@@ -39,18 +39,15 @@ export default function DisplayOrder({ warehouse }: DisplayOrderProps) {
             })
         }
         router.push(newUrl, { scroll: false });
-
-    }
+    }, [router, search])
 
     useEffect(() => {
         if (warehouse) {
             warehouseData(warehouse)
         }
-    }, [warehouse, router, search])
+    }, [warehouse, warehouseData])
 
-
-
-    const getOrder = async () => {
+    const getOrder = useCallback(async () => {
         const dataUser = await getUserClientSide()
         const dataAdmin = await getAdminClientSide()
         if (dataUser) {
@@ -64,11 +61,11 @@ export default function DisplayOrder({ warehouse }: DisplayOrderProps) {
             setTotalPages(orders.totalPages)
             setCurrectPage(orders.currentPage)
         }
-    }
+    }, [searchQuery, limitQuery, currentQuery, warehouseQuery])
 
     useEffect(() => {
         getOrder()
-    }, [encodedsSearchQuery, limitQuery, currentQuery, encodedsWarehouseQuery])
+    }, [encodedsSearchQuery, limitQuery, currentQuery, encodedsWarehouseQuery, getOrder])
     return (
         <>
             <SearchOrder data={searchQuery || ''} />

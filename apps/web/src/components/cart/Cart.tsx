@@ -4,7 +4,7 @@ import CartItem from "./CartItem";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { checkStock, getCartItems } from "@/lib/cart";
 import { setCart } from "@/lib/redux/features/cart/cartSlice";
 import { formatToIDR, getUserClientSide } from "@/lib/utils";
@@ -17,12 +17,12 @@ export default function Cart() {
     const [stockData, setStockData] = useState([])
     const dispatch = useAppDispatch();
 
-    const getStock = async () => {
+    const getStock = useCallback(async () => {
         const stock = await checkStock(cart?.id!)
         setStockData(stock)
-    }
+    }, [cart?.id])
 
-    const getCartDetail = async () => {
+    const getCartDetail = useCallback(async () => {
         try {
             const userData = await getUserClientSide()
             const res = await getCartItems(userData.id);
@@ -34,11 +34,11 @@ export default function Cart() {
         } catch (err) {
             console.log(err);
         }
-    };
+    }, [dispatch])
 
     useEffect(() => {
         getCartDetail();
-    }, []);
+    }, [getCartDetail])
 
     useEffect(() => {
         if (cart?.items) {
@@ -49,7 +49,7 @@ export default function Cart() {
             setQuantity(0)
             setTotalAmount(0)
         }
-    }, [cart]);
+    }, [cart, getStock])
 
     return (
         <Sheet>

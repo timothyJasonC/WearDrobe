@@ -1,4 +1,4 @@
-import { MutationTypes, PrismaClient, ProductSize } from "@prisma/client";
+import { MutationStatus, MutationTypes, PrismaClient, ProductSize } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient()
@@ -18,14 +18,14 @@ async function getWarehouseProductId(warehouseID: string, productVariantID: stri
     return warehouseProduct ? warehouseProduct.id : null;
 }
 
-export async function createMutation(warehouseID: string, associatedWarehouseID: string, type: string) {
+export async function createMutation(warehouseID: string, associatedWarehouseID: string, type: string, status: string) {
     const stockMutation = await prisma.stockMutation.create({
         data: {
             id: uuidv4(),
             warehouseID,
             associatedWarehouseID,
             type: type as MutationTypes,
-            status: 'ACCEPTED',
+            status: status as MutationStatus,
             createdAt: new Date(),
         }
     });

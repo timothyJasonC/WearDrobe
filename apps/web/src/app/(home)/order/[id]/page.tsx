@@ -33,7 +33,6 @@ export default function Page({ params: { id } }: OrderDetailProps) {
 
     const getOrder = useCallback(async () => {
         const order = await getOrderById(id)
-        if (order.name === "PrismaClientValidationError" || order.status === "CANCELED") router.push('/404')
         setOrder(order.cart)
         setAddress(order.address.coordinate)
         setWarehouseLoc(order.warehouse.coordinate)

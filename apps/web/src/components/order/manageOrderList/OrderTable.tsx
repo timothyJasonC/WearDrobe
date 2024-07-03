@@ -43,6 +43,11 @@ export default function OrderTable({ orderList, setOrderList, currentPage }: Ord
           <TableRow className="p-2" key={item.id}>
             <TableCell className="font-semibold max-w-44 truncate">{item.id}</TableCell>
             <TableCell className="flex items-center gap-2 text-center">
+              {item.status === "SHIPPED" && (
+                 <div className="flex flex-row gap-2 items-center">
+                 <p>{item.status}</p>
+               </div>
+              )}
               {user && item.status === "SHIPPED" && (
                 <div className="flex flex-row gap-2 items-center">
                   <p>{item.status}</p>

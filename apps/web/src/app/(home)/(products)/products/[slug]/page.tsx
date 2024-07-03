@@ -42,8 +42,6 @@ export default function Page() {
     }
     getData()
     }, [slug])
-    
-    
 
     return (
         <div className="w-full min-h-[100vh] flex justify-center">

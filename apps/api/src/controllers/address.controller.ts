@@ -67,16 +67,16 @@ export class AddressController {
     async getClossestWarehouse(req: Request, res: Response) {
         try {
             const { address } = req.body
-            
+
             const addressUser = await getAddressUserById(address)
             const addressCoordinates = await getAddressCoordinates(`${addressUser?.address}, ${addressUser?.city_name}, ${addressUser?.province}, Indonesia`)
             const allWarehouseAddress = await getAllWarehouseAddress()
-
             const closestWarehouse = await findClosestWarehouse(addressCoordinates, allWarehouseAddress)
-            const warehouseId = Object.keys(closestWarehouse!)
-            const warehouse = await getWarehouseByName(warehouseId[0])
+            if (closestWarehouse) {
+                const warehouse = await getWarehouseByName(closestWarehouse[0].warehouseKey!)
+                res.json(warehouse)
+            }
 
-            res.json(warehouse)
         } catch (err) {
             res.json(err)
         }
@@ -84,7 +84,7 @@ export class AddressController {
 
     async getShippingCost(req: Request, res: Response) {
         try {
-            const {warehouseId, userAddress, shipping} = req.body
+            const { warehouseId, userAddress, shipping } = req.body
             const data = await getShippingCost(warehouseId, userAddress, shipping)
             res.json(data.rajaongkir.results)
         } catch (err) {

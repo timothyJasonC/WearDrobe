@@ -7,6 +7,7 @@ import { IProduct, ISizeSum } from '@/constants';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import { PiShoppingCart } from "react-icons/pi";
+import AddToCartButton from '@/components/cart/AddToCartButton';
 
 interface ICarousel {
     product:IProduct
@@ -23,6 +24,8 @@ export const ProductMenu = ({product, setIndex, index, sizeSum}:ICarousel) => {
     const [size, setSize] = useState(product.oneSize ? 'ONESIZE' : 'S')
     const [stock, setStock] = useState(0)
     const [qty, setQty] = useState(0)
+    console.log({colorID, color, size, stock, qty});
+    
     
     useEffect(() => {
         const getData = async() => {
@@ -43,7 +46,6 @@ export const ProductMenu = ({product, setIndex, index, sizeSum}:ICarousel) => {
                 setSize(nextAvailableSize.size);
             }
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stock, colorID, sizeSum, product.oneSize]);
 
   return (
@@ -112,10 +114,11 @@ export const ProductMenu = ({product, setIndex, index, sizeSum}:ICarousel) => {
                         }
                         }}
                     />  
-                <Button className=' w-full gap-2' disabled={stock == 0 ? true : false}>
+                    <AddToCartButton variantId={colorID} color={color} quantity={qty} size={size} stock={stock}/>
+                {/* <Button className=' w-full gap-2' disabled={stock == 0 ? true : false}>
                     ADD TO CART
                     <PiShoppingCart className='text-xl'/>
-                </Button>
+                </Button> */}
             </div>
             <p className='text-xs text-gray-500'>Stock: {stock}</p>
         </div>

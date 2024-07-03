@@ -10,6 +10,7 @@ const orderDetail = {
             id: true,
             orderId: true,
             productVariantId: true,
+            size: true,
             quantity: true,
             price: true,
             createdAt: true,
@@ -31,7 +32,7 @@ const orderDetail = {
 
 export async function getUserById(userId: string) {
     const user = await prisma.user.findUnique({
-        where: {id: userId}
+        where: { id: userId }
     })
     return user
 }
@@ -64,6 +65,16 @@ export async function getPaymentLink(data: any) {
     return paymentLink
 }
 
+export async function existingTransaction(id: string) {
+    const existOrder = await prisma.order.findUnique({
+        where: {
+            id,
+            paymentStatus: 'PENDING'
+        }
+    })
+    return existOrder
+}
+
 async function updateSuccessStock(items: any, warehouseID: string) {
     for (const item of items) {
         const { productVariantId, quantity, size } = item;
@@ -74,7 +85,7 @@ async function updateSuccessStock(items: any, warehouseID: string) {
             where: { productVariantID: productVariantId, size, warehouseID },
             data: {
                 stock: {
-                    decrement: quantity
+                    increment: -quantity
                 }
             }
         });
@@ -113,21 +124,109 @@ export async function failedOrder(orderId: string) {
     return updateOrder
 }
 
-async function getAllOrder(warehouseId: string | null) {
+async function getAllOrder(warehouseId: string | null, query: string, page: string, limit: string, warehouse: string) {
     if (warehouseId === 'none') return null;
     const order = await prisma.order.findMany({
-        where: warehouseId ? { warehouseId: warehouseId } : {}
+        orderBy: {
+            createdAt: 'desc',
+        },
+        where: warehouseId ? {
+            AND: [
+                { warehouseId: warehouseId }
+            ],
+            OR: [
+                { id: { contains: query } },
+            ]
+
+        } : {
+            OR: [
+                { id: { contains: query } },
+                { warehouseId: warehouse }
+            ]
+        },
+        skip: (+page - 1) * +limit,
+        take: +limit
     });
     return order
 }
 
-export async function getOrderByUser(userId: string) {
+async function totalTransactionByAdmin(warehouseId: string | null, query: string) {
+    if (warehouseId === 'none') return null;
+    const order = await prisma.order.count({
+        where: warehouseId ? {
+            AND: [
+                { warehouseId: warehouseId },
+                {
+                    NOT: {
+                        status: {
+                            in: ['CART', 'CANCELLED'],
+                        },
+                    },
+                },
+            ],
+            OR: [
+                { id: { contains: query } },
+            ]
+
+        } : {
+            AND: [
+                {
+                    NOT: {
+                        status: {
+                            in: ['CART', 'CANCELLED'],
+                        },
+                    },
+                },
+            ],
+            OR: [
+                { id: { contains: query } },
+            ]
+        }
+    });
+    return order
+}
+
+export async function getOrderByUser(userId: string, query: string, page: string, limit: string) {
     const orders = await prisma.order.findMany({
-        where: { userId: userId }
+        orderBy: {
+            createdAt: 'desc',
+        },
+        where: {
+            AND: [
+                { userId: userId },
+                {
+                    NOT: {
+                        status: {
+                            in: ['CART', 'CANCELLED'],
+                        },
+                    },
+                },
+            ],
+            OR: [
+                { id: { contains: query } },
+            ]
+        },
+        skip: (+page - 1) * +limit,
+        take: +limit
     })
     return orders
 }
-export async function getOrderByAdmin(adminId: string) {
+
+export async function getTotalOrderByUser(userId: string, query: string) {
+    const orders = await prisma.order.count({
+        where: {
+            AND: [
+                { userId: userId }
+            ],
+            OR: [
+                { id: { contains: query } },
+            ]
+        }
+    })
+    return orders
+}
+
+export async function getTotalOrderByAdmin(adminId: string, query: string) {
     const admin = await prisma.admin.findUnique({
         where: { id: adminId },
         include: {
@@ -135,11 +234,28 @@ export async function getOrderByAdmin(adminId: string) {
         }
     })
     if (admin?.role === 'superAdm') {
-        const orders = await getAllOrder(null)
+        const totalPages = await totalTransactionByAdmin(null, query)
+        return totalPages
+    }
+    if (admin?.role === 'warAdm') {
+        const totalPages = await totalTransactionByAdmin(admin.Warehouse?.id ? admin.Warehouse.id : 'none', query)
+        return totalPages
+    }
+}
+
+export async function getOrderByAdmin(adminId: string, query: string, page: string, limit: string, warehouse: string) {
+    const admin = await prisma.admin.findUnique({
+        where: { id: adminId },
+        include: {
+            Warehouse: true
+        }
+    })
+    if (admin?.role === 'superAdm') {
+        const orders = await getAllOrder(null, query, page, limit, warehouse)
         return orders
     }
     if (admin?.role === 'warAdm') {
-        const orders = await getAllOrder(admin.Warehouse?.id ? admin.Warehouse.id : 'none')
+        const orders = await getAllOrder(admin.Warehouse?.id ? admin.Warehouse.id : 'none', query, page, limit, warehouse)
         return orders
     }
 }
@@ -189,7 +305,23 @@ export async function updateShipped(orderId: string) {
         const updateOrder = await prisma.order.update({
             where: { id: orderId },
             data: {
-                status: "SHIPPED"
+                status: "SHIPPED",
+                shippedAt: new Date()
+            }
+        })
+        return updateOrder
+    } catch (err) {
+        return null
+    }
+}
+
+export async function updateCompletedOrder(orderId: string) {
+    try {
+        const updateOrder = await prisma.order.update({
+            where: { id: orderId },
+            data: {
+                status: "COMPLETED",
+                shippedAt: new Date()
             }
         })
         return updateOrder

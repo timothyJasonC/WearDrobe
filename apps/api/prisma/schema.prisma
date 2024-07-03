@@ -39,10 +39,10 @@ enum ProductSize {
 
 enum MutationTypes {
   TRANSFER
+  INBOUND
   RESTOCK
   REMOVE
   TRANSACTION
-  INBOUND
   DELETE
 }
 
@@ -121,7 +121,7 @@ model PasswordRequest {
 
 model Warehouse {
   id            String             @id
-  warehouseName String
+  warehouseName String 
   coordinate    String
   address       String
   city_id       String

@@ -73,7 +73,7 @@ export function ForgotPassForm() {
                                 }} className="cursor-pointer" size={'1rem'} />
                             </FormLabel>
                             <FormDescription>
-                                    Fear not. We'll email you instructions to reset your password.
+                                    Fear not. We&apos;ll email you instructions to reset your password.
                             </FormDescription>
                             <FormControl>
                                 <Input className="focus-visible:ring-black/0 focus-visible:border-black/60 duration-200" placeholder="@example: brucewayne@gmail.com" {...field} />

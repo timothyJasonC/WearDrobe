@@ -16,7 +16,7 @@ import { toast } from "sonner";
 export default function UserMenu({ className, user }: { className?: string, user: IUser }) {
     const pathname = usePathname()
     const [file, setFile] = useState<File | null>(null);
-    const [ currentPhotoProfile, setCurrentPhotoProfile ] = useState<any>(user.imgUrl);
+    const [ currentPhotoProfile, setCurrentPhotoProfile ] = useState<any>(user?.imgUrl);
     const { uploadFile } = useStorage()
     
     const profileLinks = [
@@ -114,7 +114,7 @@ export default function UserMenu({ className, user }: { className?: string, user
                     }
                     
                     <div className="absolute right-1 bottom-1 w-auto cursor-pointer">
-                        { !user.accountActive && <ToolTip className='' content={<span>Your account hasn't been verified!</span>} ><PiWarningFill className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'2rem'} /> </ToolTip> }
+                        { !user.accountActive && <ToolTip className='' content={<span>Your account hasn&apos;t been verified!</span>} ><PiWarningFill className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'2rem'} /> </ToolTip> }
                     </div>
                     <div className='text-center'>
                         <h2 className='text-lg font-semibold'>{ user.username }</h2>

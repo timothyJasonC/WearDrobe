@@ -14,6 +14,8 @@ export class StockRouter {
     private initializeRoutes(): void {
         this.router.post('/', this.stockController.createStock)
         this.router.get('/:variant', this.stockController.getStockByVariant)
+        this.router.post('/all', this.stockController.getAllStock)
+        this.router.post('/:slug', this.stockController.getStockSlug)
     }
 
     getRouter() : Router{

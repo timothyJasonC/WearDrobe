@@ -133,6 +133,8 @@ export async function findClosestWarehouse(userLocation: { lat: string; lon: str
     }));
 }
 
+
+
 export async function getWarehouseByName(warehouseName: string) {
     const warehouse = await prisma.warehouse.findFirst({
         where: { warehouseName: warehouseName }

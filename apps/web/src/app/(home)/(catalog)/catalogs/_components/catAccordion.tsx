@@ -39,7 +39,7 @@ export function CatAccordion({gender, activeCat}:{gender:string, activeCat:IActi
           <AccordionContent>
             <div className="flex items-center mb-2">
               <PiDotOutlineFill />
-              <p className="">All Tops Collections</p>
+              <Link href={`/catalogs?g=${gender}&t=tops`} className="">All Tops Collections</Link>
             </div>
             {data?.tops.map((item:ICategory) => {
                 return (
@@ -59,7 +59,7 @@ export function CatAccordion({gender, activeCat}:{gender:string, activeCat:IActi
           <AccordionContent>
             <div className="flex items-center mb-2">
               <PiDotOutlineFill />
-              <p>All Bottoms Collections</p>
+              <Link href={`/catalogs?g=${gender}&t=bottoms`} className="">All Bottoms Collections</Link>
             </div>
             {data?.bottoms.map((item:ICategory) => {
                     return (
@@ -79,7 +79,7 @@ export function CatAccordion({gender, activeCat}:{gender:string, activeCat:IActi
           <AccordionContent>
             <div className="flex items-center mb-2">
               <PiDotOutlineFill />
-              <p>All Accessories Collections</p>
+              <Link href={`/catalogs?g=${gender}&t=accessories`} className="">All Accessories Collections</Link>
             </div>
             {data?.accessories.map((item:ICategory) => {
                     return (

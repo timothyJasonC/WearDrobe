@@ -20,7 +20,7 @@ import { EditProductForm } from "./editProductForm";
     }, [open])
     return (
       <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogTrigger asChild>
+        <AlertDialogTrigger asChild className="overflow-x-hidden">
             <div className={`${isSuper ?'flex' :'hidden'} justify-center items-center gap-1 border-b-2 border-b-transparent hover:cursor-pointer`}>
                 <PiNotePencil className="text-xl hover:border-b-2 hover:border-b-black"/>
             </div>

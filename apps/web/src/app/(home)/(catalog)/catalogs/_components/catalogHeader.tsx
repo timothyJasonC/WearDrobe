@@ -30,7 +30,7 @@ export const CatalogHeader = () => {
       const category = params.get('c') 
       const s = 'newest'
       const q = params.get('q')
-      const product = await getCatalog(gender || '', type || '', category || '', '', s, '1')
+      const product = await getCatalog(gender || '', type || '', category || '', '', s, '1', '9')
       if (product.status == 'ok') {
         if (gender && type && category) {
           getCat(gender, type, category)

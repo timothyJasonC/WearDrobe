@@ -10,18 +10,20 @@ import {
   } from "@/components/ui/table"
 import { IProduct } from "@/constants";
 import { EditProductDialog } from "./editProductDialog";
-import { SubmitAlert } from "../../../../components/submitAlertTemplate";
+import { SubmitAlert } from "../../../../../../components/submitAlertTemplate";
 import { PiTrashFill } from "react-icons/pi";
 import { deleteProduct } from "@/app/action";
 import { toast } from "sonner";
+import { DateConvert } from "@/lib/dateConvert";
 
 interface IProdTable {
   productList: IProduct[]
   action:()=>void
   isSuper: boolean
+  page: number
 }
   
-  export function ProdTable({productList, action, isSuper}:IProdTable) {
+  export function ProdTable({productList, action, isSuper, page}:IProdTable) {
     const handleDelete = async(slug:string) => {
       try {
         const data = await deleteProduct(slug)
@@ -39,7 +41,6 @@ interface IProdTable {
     
     return (
       <Table className="my-7">
-        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]">No.</TableHead>
@@ -47,8 +48,10 @@ interface IProdTable {
             <TableHead className="text-center">Gender</TableHead>
             <TableHead className="text-center">Type</TableHead>
             <TableHead className="text-center">Category</TableHead>
-            <TableHead className="text-center min-w-32">Date created</TableHead>
+            <TableHead className="text-center min-w-32">Created</TableHead>
+            <TableHead className="text-center min-w-32">Updated</TableHead>
             <TableHead className="text-center">Variants</TableHead>
+            <TableHead className="text-center min-w-28">Size</TableHead>
             <TableHead className="text-center">Stock</TableHead>
             <TableHead className="text-center">Sales (IDR)</TableHead>
             <TableHead className="text-center">Price (IDR)</TableHead>
@@ -58,25 +61,56 @@ interface IProdTable {
         <TableBody>
           {productList.length ? 
             productList.map((product, index) => {
-            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-            const dateTime = new Date(product.createdAt)
-            const date = dateTime.getDate()
-            const month = months[dateTime.getMonth()]
-            const year = dateTime.getFullYear()
-            const hours = dateTime.getHours()
-            const minute = dateTime.getMinutes()
+            const date = DateConvert(product.createdAt)
+            let dateU 
+            if (product.updatedAt) {
+              dateU = DateConvert(product.updatedAt)
+            }
             return(
-            <TableRow key={index}>
-              <TableCell>{index+1}</TableCell>
+            <TableRow key={index + ((page - 1) * 10)}>
+              <TableCell>{index +1  + ((page - 1) * 10)}</TableCell>
               <TableCell className="text-pretty font-semibold">{product.name}</TableCell>
               <TableCell className="text-center">{product.category.gender.toLocaleLowerCase()}</TableCell>
               <TableCell className="text-center">{product.category.type.toLocaleLowerCase()}</TableCell>
               <TableCell className="text-center">{product.category.category}</TableCell>
-              <TableCell className="flex flex-wrap items-center justify-center gap-x-1"><p>{date} {month} {year},</p><p>{hours.toString().padStart(2, '0')}.{minute.toString().padStart(2, '0')} WIB</p></TableCell>
-              <TableCell className="text-center">{product.variants.length}</TableCell>
+
+              <TableCell>
+                <div className={`flex-wrap items-center justify-center gap-x-1 text-center`}>
+                  <p>{date.date} {date.month} {date.year},</p>
+                  <p>{date.hours.toString().padStart(2, '0')}.{date.minute.toString().padStart(2, '0')} WIB</p>
+                </div>
+              </TableCell>
+              
+              <TableCell>
+                {product.updatedAt? 
+                  <div className={`flex-wrap items-center justify-center gap-x-1 ${product.updatedAt? "flex" : "hidden"}`}>
+                    <p>{dateU?.date} {dateU?.month} {dateU?.year},</p>
+                    <p>{dateU?.hours.toString().padStart(2, '0')}.{dateU?.minute.toString().padStart(2, '0')} WIB</p>
+                  </div>
+                  :
+                  <div className={`text-center ${product.updatedAt? "hidden" : "block"}`}>-</div>
+                }
+              </TableCell>
+              
+              <TableCell className="text-center text-xs flex flex-wrap gap-1 justify-center">{
+                product.variants.map(item => {
+                  const brightColor = ["D", 'E', 'F']
+                  const textColor = brightColor.includes(item.HEX.slice(1,2).toUpperCase())
+                  const borderColor = (item.HEX.slice(3, 4).toUpperCase() === 'F')
+                  return (
+                    <div 
+                      key={item.id} style={{ background: `${item.HEX}` }} 
+                      className={`flex px-2 ${borderColor? "border-[1px] border-black rounded-full": 'rounded-full'}`} >
+                      <p className={textColor ? "text-black" : 'text-white'}>{item.color}</p>
+                    </div>
+                  )
+                })
+                }
+              </TableCell>
+              <TableCell className="text-center">{product.oneSize ? "One Size" : "S M L XL"}</TableCell>
               <TableCell className="text-center">{product.totalStock}</TableCell>
-              <TableCell className="text-center">{product.sales ? product.sales : 'no data'}</TableCell>
-              <TableCell className="text-center">{new Intl.NumberFormat('en-DE').format(product.price)}</TableCell>
+              <TableCell className="text-center">{product.sales ? product.sales : '-'}</TableCell>
+              <TableCell className="text-center font-semibold">{new Intl.NumberFormat('en-DE').format(product.price)}</TableCell>
               <TableCell className={`${isSuper ? '' : 'hidden'}text-center`}>
                 <div className="flex gap-2">
                   <EditProductDialog 

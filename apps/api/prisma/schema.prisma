@@ -39,10 +39,17 @@ enum ProductSize {
 
 enum MutationTypes {
     TRANSFER
+    INBOUND
     RESTOCK
     REMOVE
     TRANSACTION
-    INBOUND
+    DELETE
+}
+
+enum MutationStatus {
+    WAITING
+    ACCEPTED
+    REJECTED
 }
 
 enum PaymentStatus {
@@ -133,36 +140,40 @@ model Warehouse {
 }
 
 model WarehouseProduct {
-    id               String          @id @default(uuid())
-    warehouseID      String
-    productVariantID String
-    size             ProductSize
-    stock            Int
-    isDeleted        Boolean         @default(false)
-    updatedAt        DateTime        @default(now())
-    warehouse        Warehouse       @relation(fields: [warehouseID], references: [id])
-    productVariant   ProductVariant  @relation(fields: [productVariantID], references: [id])
-    StockMutation    StockMutation[]
+    id                String              @id @default(uuid())
+    warehouseID       String
+    productVariantID  String
+    size              ProductSize
+    stock             Int
+    isDelete          Boolean?            @default(false)
+    updatedAt         DateTime?           @default(now())
+    warehouse         Warehouse           @relation(fields: [warehouseID], references: [id])
+    productVariant    ProductVariant      @relation(fields: [productVariantID], references: [id])
+    StockMutationItem StockMutationItem[]
 }
 
 // FEATURE 2
 model Product {
-    id           String           @id @default(uuid())
-    name         String           @unique
-    slug         String           @unique
-    description  String
-    price        Int
-    oneSize      Boolean          @default(false)
-    categoryID   String
-    thumbnailURL String?
-    createdAt    DateTime         @default(now())
-    images       ProductImage[]
-    variants     ProductVariant[]
-    category     ProductCategory  @relation(fields: [categoryID], references: [id])
+    id             String           @id @default(uuid())
+    name           String           @unique
+    slug           String           @unique
+    description    String           @db.VarChar(500)
+    price          Int
+    oneSize        Boolean          @default(false)
+    categoryID     String
+    isDeleted      Boolean?         @default(false)
+    thumbnailURL   String?
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime?
+    stockUpdatedAt DateTime?
+    images         ProductImage[]
+    variants       ProductVariant[]
+    category       ProductCategory  @relation(fields: [categoryID], references: [id])
 }
 
 model ProductCategory {
-    id       String        @id @default(uuid())
+    id       String        @id
+    slug     String?
     gender   ProductGender
     type     ProductTypes
     category String
@@ -188,30 +199,41 @@ model ProductVariant {
 }
 
 model StockMutation {
-    id                    String           @id @default(uuid())
+    id                    String             @id @default(uuid())
     warehouseID           String
-    associatedWarehouseId String?
+    associatedWarehouseID String?
     type                  MutationTypes
-    warehouseProductID    String
-    size                  ProductSize
-    quantity              Int
-    createdAt             DateTime         @default(now())
-    warehouse             Warehouse        @relation(fields: [warehouseID], references: [id])
-    warehouseProduct      WarehouseProduct @relation(fields: [warehouseProductID], references: [id])
+    status                MutationStatus?
+    createdAt             DateTime            @default(now())
+    updatedAt             DateTime?
+    warehouse             Warehouse           @relation(fields: [warehouseID], references: [id])
+    StockMutationItem     StockMutationItem[]
+}
+
+model StockMutationItem {
+    id                 String           @id
+    quantity           Int
+    warehouseProductID String
+    stockMutationID    String
+    stockMutation      StockMutation    @relation(fields: [stockMutationID], references: [id])
+    WarehouseProduct   WarehouseProduct @relation(fields: [warehouseProductID], references: [id])
 }
 
 // FEATURE 3
 model Order {
-    id            String        @id @default(uuid())
-    userId        String
-    status        OrderStatus   @default(CART)
-    warehouseId   String?
-    totalAmount   Int           @default(0)
-    paymentStatus PaymentStatus
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
-    user          User          @relation(fields: [userId], references: [id])
-    items         OrderItem[]
+    id             String        @id @default(uuid())
+    userId         String
+    status         OrderStatus   @default(CART)
+    warehouseId    String?
+    totalAmount    Int           @default(0)
+    addressID      String?
+    shippingMethod String?
+    shippedAt      DateTime?
+    paymentStatus  PaymentStatus
+    createdAt      DateTime      @default(now())
+    updatedAt      DateTime      @updatedAt
+    user           User          @relation(fields: [userId], references: [id])
+    items          OrderItem[]
 }
 
 model OrderItem {

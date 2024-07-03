@@ -1,21 +1,28 @@
 import { Request, Response } from 'express';
 import prisma from '@/prisma';
-import { Product, ProductGender, ProductTypes } from '@prisma/client'; // Import the enum type
+import { Gender, Product, ProductGender, ProductTypes } from '@prisma/client'; // Import the enum type
 import { v4 as uuidv4 } from 'uuid';
+import { serverResponse } from '@/helpers/apiResponse';
 
 export class CategoryController {
   async getCategory(req: Request, res: Response) {
     const { gender, type } = req.query;
     try {
         await prisma.$transaction(async (tx)=> {
-            if (gender?.length == 0 && type?.length == 0) {
-                const category = await tx.productCategory.findMany()
-                console.log(category);
+            if (!gender && !type) {
+                const category = await tx.productCategory.findMany({
+                  orderBy: {
+                    category: 'asc'
+                  }
+                })
+
+                const totalCategory = await tx.productCategory.count()
                 
                 return res.status(200).send({
                     status: 'ok',
                     message: 'Categories found',
-                    category
+                    category,
+                    totalCategory
                   });
             }
             if (typeof gender === 'string' && !type) {
@@ -26,18 +33,27 @@ export class CategoryController {
                     gender: productGender,
                     type: "TOPS"
                   },
+                  orderBy: {
+                    category: 'asc'
+                  }
                 });
                 const bottoms = await tx.productCategory.findMany({
                     where: {
                       gender: productGender,
                       type: "BOTTOMS"
                     },
+                    orderBy: {
+                      category: 'asc'
+                    }
                 });
                 const accessories = await tx.productCategory.findMany({
                     where: {
                       gender: productGender,
                       type: "ACCESSORIES"
                     },
+                    orderBy: {
+                      category: 'asc'
+                    }
                 });        
                 return res.status(200).send({
                   status: 'ok',
@@ -54,7 +70,10 @@ export class CategoryController {
               const category = await tx.productCategory.findMany({
                   where: {
                       gender: productGender,
-                      type: productTypes
+                      type: productTypes,
+                  },
+                  orderBy: {
+                    category: 'asc'
                   }
               })
               return res.status(200).send({
@@ -73,28 +92,44 @@ export class CategoryController {
 
   }
 
+  async getCategorySlug(req: Request, res: Response) {
+      try {
+        const {gender, type} = req.query
+        const {slug} = req.params
+        if (!gender || !type || !slug) throw "Incomplete query."
+        const category = await prisma.productCategory.findFirst({
+          where: {
+            gender: String(gender!).toUpperCase() as ProductGender,
+            type: String(type!).toUpperCase() as ProductTypes,
+            slug: String(slug)
+          }
+        }) 
+        if (!category) throw 'Product not found.'
+        serverResponse(res, 200, 'ok', 'Category found.', category)
+      } catch (error:any) {
+        serverResponse(res, 400, 'error', error)
+      }
+    }
+
   async createCategory(req: Request, res: Response) {
     try {
-      console.log(req.body);
       const {type, gender, category } = req.body
 
       const existingCategory = await prisma.productCategory.findMany({
         where: {
           gender,
-          type,
         }
       })
 
       const checkDuplicate = existingCategory.find((cat) => cat.category.toLowerCase() === category.toLowerCase())
-      console.log(checkDuplicate);
-      
       
       if (checkDuplicate) throw "Category already exists."
 
       await prisma.productCategory.create({
         data: {
           id: uuidv4(),
-          ...req.body
+          ...req.body,
+          slug: category.toLowerCase().replace(" ", "-")
         }
       })
       res.status(200).send({
@@ -124,7 +159,6 @@ export class CategoryController {
       const existingCategory = await prisma.productCategory.findMany({
         where: {
           gender,
-          type,
         }
       })
 
@@ -144,7 +178,8 @@ export class CategoryController {
           id: toEditCategory?.id
         },
         data: {
-          category: newCategory
+          category: newCategory,
+          slug: newCategory.toLowerCase().replace(' ', '-')
         }
       })
 

@@ -4,8 +4,8 @@ import { Toaster } from 'sonner';
 import { Poppins } from 'next/font/google';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import Loading from './products/loading';
 import { AdminDashboard } from '@/components/sidebar/AdminDashboard';
+import Loading from './loading';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -14,11 +14,14 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
+  title: {
+    template: '%s | Weardrobe',
+    default: 'Weardrobe',
+  },
   description: 'Weardrobe admin dashboard.',
 };
 
-export default function Template({children}: Readonly<{children: React.ReactNode}>) {
+export default function Layout({children}: Readonly<{children: React.ReactNode}>) {
 
   return (
     <StoreProvider>

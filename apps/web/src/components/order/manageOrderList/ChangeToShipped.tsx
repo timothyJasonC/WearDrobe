@@ -3,17 +3,18 @@ import React from 'react'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { cancelOrder, changeToShipped } from '@/lib/order';
 import { IOrder } from '@/constants';
-import { getUserClientSide } from '@/lib/utils';
+import { getAdminClientSide, getUserClientSide } from '@/lib/utils';
 
 type ChangeOrderPorps = {
     orderId: string
     setOrderList: (value: IOrder[] | null) => void
+    currentPage: string | null
 }
-export default function ChangeToShipped({ orderId, setOrderList }: ChangeOrderPorps) {
+export default function ChangeToShipped({ orderId, setOrderList, currentPage }: ChangeOrderPorps) {
 
     const changeStatusToShipped = async () => {
-       const adminId = '1'
-        const result = await changeToShipped(orderId, adminId)
+        const admin =  await getAdminClientSide()
+        const result = await changeToShipped(orderId, admin.id, currentPage)
         setOrderList(result)
     }
     return (

@@ -41,6 +41,14 @@ export async function editAddress(id: string, city: any, address: string, labelA
     return updatedAddress
 }
 
+export async function getAddressById(id: string) {
+    const address = await prisma.addressList.findUnique({
+        where: { id },
+        select: { coordinate: true }
+    })
+    return address
+}
+
 export async function getUserAddressList(userId: string) {
     const addressList = await prisma.addressList.findMany({
         where: {
@@ -101,14 +109,13 @@ export async function getAllWarehouseAddress() {
         }
         return warehouseAddress
     } catch (error) {
-        console.error('Error fetching address coordinates:', error);
         throw new Error('Error fetching address coordinates');
     }
 }
 
 export async function getWarehouseById(warehouseId: string) {
     const warehouse = await prisma.warehouse.findUnique({
-        where: {id: warehouseId}
+        where: { id: warehouseId }
     })
     return warehouse
 }
@@ -129,11 +136,8 @@ function toRadians(degrees: number) {
 
 export async function findClosestWarehouse(userLocation: { lat: string; lon: string; display_name: string } | null, warehouses: { [key: string]: { lat: string; lon: string; display_name: string } | null }) {
     if (!userLocation || !warehouses) return null;
-
-    let closestWarehouseKey = null;
-    let minDistance = Infinity;
-
     const { lat: userLat, lon: userLon } = userLocation;
+    const distances = [];
 
     for (const warehouseKey in warehouses) {
         const warehouse = warehouses[warehouseKey];
@@ -141,15 +145,19 @@ export async function findClosestWarehouse(userLocation: { lat: string; lon: str
 
         const { lat, lon } = warehouse;
         const distance = await haversineDistance(Number(userLat), Number(userLon), Number(lat), Number(lon));
-
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestWarehouseKey = warehouseKey;
-        }
+        distances.push({ warehouseKey, warehouse, distance });
     }
 
-    return closestWarehouseKey ? { [closestWarehouseKey]: warehouses[closestWarehouseKey] } : null
+    distances.sort((a, b) => a.distance - b.distance);
+
+    return distances.map(item => ({
+        warehouseKey: item.warehouseKey,
+        warehouse: item.warehouse,
+        distance: item.distance
+    }));
 }
+
+
 
 export async function getWarehouseByName(warehouseName: string) {
     const warehouse = await prisma.warehouse.findFirst({
@@ -168,12 +176,12 @@ export async function getShippingCost(warehouseId: string, userAddress: string, 
     const formBody = new URLSearchParams();
     formBody.append('origin', `${warehouse?.city_id}`);
     formBody.append('destination', `${address?.city_id}`);
-    formBody.append('weight', '1700');  // Assuming weight is fixed
+    formBody.append('weight', '1700');
     formBody.append('courier', `${shipping}`);
 
     const cost = await fetch('https://api.rajaongkir.com/starter/cost', {
         method: 'POST',
-        headers: { 
+        headers: {
             'key': `${process.env.NEXT_PUBLIC_RAJA_ONGKIR_API_KEY}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         },

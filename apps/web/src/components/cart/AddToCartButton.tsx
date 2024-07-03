@@ -8,18 +8,25 @@ import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { setCart } from '@/lib/redux/features/cart/cartSlice';
 import { getUserClientSide } from '@/lib/utils';
 import { Button } from '../ui/button';
+import { PiShoppingCart } from 'react-icons/pi';
+import { useRouter } from 'next/navigation';
 
-export default function AddToCartButton() {
-    const [quantity, setQuantity] = useState(1);
-    const cart = useAppSelector(state => state.cart.value);
+type AddToCartButtonProps = {
+    variantId: string
+    color: string
+    size: string
+    quantity: number
+    stock: number
+}
+
+export default function AddToCartButton({ variantId, color, size, quantity, stock }: AddToCartButtonProps) {
     const dispatch = useAppDispatch();
+    const router = useRouter()
 
     const handleAddToCart = async () => {
         try {
             const userData = await getUserClientSide()
-            const variantId = '1'
-            const color = 'Black'
-            const size = 'M'
+            if (!userData) router.push('/auth')
             const result = await addToCart(userData.id, variantId, color, size, quantity);
             if (result === 'error') throw new Error('Failed to add item to cart')
             toast.success('Your item has been added to your cart')
@@ -30,13 +37,10 @@ export default function AddToCartButton() {
     };
 
     return (
-        <div className='flex flex-col gap-2 mt-2'>
-            <div className='flex justify-around'>
-                <h1>Quantity: </h1>
-                <QuantityCounter quantity={quantity} setQuantity={setQuantity} />
-            </div>
-            <Button className='rounded-full w-full' size={"lg"} onClick={handleAddToCart}>
-                Add to Cart
+        <div className={`${quantity == 0 ? 'cursor-not-allowed' : ''}`}>
+            <Button className='w-full gap-2 ' onClick={handleAddToCart} disabled={stock == 0 ? true : false || quantity == 0}>
+                ADD TO CART
+                <PiShoppingCart className='text-xl' />
             </Button>
         </div>
     );

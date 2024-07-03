@@ -13,6 +13,7 @@ export class CategoryRouter {
 
     private initializeRoutes(): void {
         this.router.get('/', this.categoryController.getCategory)
+        this.router.get('/:slug', this.categoryController.getCategorySlug)
         this.router.post('/', this.categoryController.createCategory)
         this.router.patch('/', this.categoryController.editCategory)
         this.router.delete('/:id', this.categoryController.deleteCategory)

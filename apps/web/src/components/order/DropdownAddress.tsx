@@ -1,7 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import AddressInputs from "./AddressInput";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { addAddressUser, fetchWarehouse, getAddressList, getCities, getProvinces } from "@/lib/cart";
 import { toast } from "sonner"
 import { Address, City, Province, Warehouse } from "@/constants";
@@ -31,19 +31,19 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
         }
     };
 
-    const fetchAddressList = async () => {
+    const fetchAddressList = useCallback(async () => {
         try {
-            const userData = await getUserClientSide()
+            const userData = await getUserClientSide();
             const data: Address[] = await getAddressList(userData.id);
             setAddressList(data);
             if (data.length > 0) {
                 setAddress(data[0].id);
-                setUserAddress(data[0].id)
+                setUserAddress(data[0].id);
             }
         } catch (err) {
             console.log(err);
         }
-    };
+    }, [setUserAddress]);
 
     const addAddress = async () => {
         const userData = await getUserClientSide()
@@ -70,13 +70,13 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
         setCities(data.rajaongkir.results);
     };
 
-    const fetchWarehouseAddress = async () => {
-        const warehouse = await fetchWarehouse(address)
-        const warehouseId = warehouse.id
-        
-        setWarehouse(warehouse)
-        setWarehouseId(warehouseId)
-    }
+    const fetchWarehouseAddress = useCallback(async () => {
+        const warehouse = await fetchWarehouse(address);
+        const warehouseId = warehouse.id;
+
+        setWarehouse(warehouse);
+        setWarehouseId(warehouseId);
+    }, [address, setWarehouseId]);
 
     useEffect(() => {
         if (selectedProvince) {
@@ -88,12 +88,12 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
         if (address) {
             fetchWarehouseAddress()
         }
-    }, [address])
+    }, [address, fetchWarehouseAddress])
 
     useEffect(() => {
         fetchAddressList();
         fetchProvinces();
-    }, []);
+    }, [fetchAddressList]);
 
     return (
         <div>

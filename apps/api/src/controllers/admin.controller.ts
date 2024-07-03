@@ -58,7 +58,7 @@ export class AdminController {
             const admin = await prisma.admin.update({
                 where: { id: account.id },
                 data : {
-                    fullName, gender,
+                    fullName, gender ,
                     password: hashedPassword,
                     dob: new Date(dob),
                 }

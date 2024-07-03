@@ -15,7 +15,7 @@ import { PiCaretLeftBold, PiCaretRightBold } from "react-icons/pi";
   }
   
   export function PaginationTemplate({setPage, productQty, page}:IPagination) {
-    const [limit, setLimit] = useState(0)
+    const [limit, setLimit] = useState(1)
 
     useEffect(() => {
       const pageLimit = productQty % 10 === 0 ? productQty/10 : Math.floor(productQty/10) + 1
@@ -43,7 +43,7 @@ import { PiCaretLeftBold, PiCaretRightBold } from "react-icons/pi";
               <PaginationLink href={`#${page}`}  className={page + 1 > limit ? "hidden" : 'ml-1'} onClick={() => setPage(page + 1)}>{page + 1}</PaginationLink>
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink href={`#${page}`}  className={page + 2 >= limit  || page - 1 !== 0  ? "hidden" : 'ml-1'} onClick={() => setPage(page + 2)}>{page + 2}</PaginationLink>
+              <PaginationLink href={`#${page}`}  className={page + 1 >= limit  || page - 1 !== 0  ? "hidden" : 'ml-1'} onClick={() => setPage(page + 2)}>{page + 2}</PaginationLink>
             </PaginationItem>
             <PaginationItem>
               <PaginationLink href={`#${page}`}  className={'mr-1'} onClick={() =>{ if (page + 1 < limit+1) setPage(page + 1)}}><PiCaretRightBold /></PaginationLink>

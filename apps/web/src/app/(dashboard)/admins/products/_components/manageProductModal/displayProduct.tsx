@@ -18,16 +18,21 @@ interface IAdminProduct {
 export const AdminProductDisplay = ({page, setPage, getData,productList, productQty,isSuper}:IAdminProduct) => {
 	
 	return (
-		<div>
-			<div className='flex items-center justify-end gap-2'>
+		<div className='w-full'>
+			<div className='flex items-center w-full justify-end gap-2'>
 				<label htmlFor="search"><PiMagnifyingGlass className='text-2xl'/></label>
 				<Input id='search' type="text" placeholder="Search products" className='max-w-60'/>
 			</div>
-			<ProdTable 
-			productList={productList}
-			action={getData}
-			isSuper={isSuper}
-			/>
+			<div className=''>
+				<div className=''>
+				<ProdTable 
+					productList={productList}
+					action={getData}
+					isSuper={isSuper}
+					page={page}
+				/>
+				</div>
+			</div>
 			<PaginationTemplate
 			setPage={setPage}
 			page={page}

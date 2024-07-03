@@ -8,6 +8,7 @@ import { ProductRouter } from './product.router'
 import { StockRouter } from './stock.router'
 import { AddressRouter } from './address.router'
 import { AdminRouter } from './admin.router'
+import { MutationRouter } from './mutation.router'
 
 
 export class ApiRouter {
@@ -21,6 +22,7 @@ export class ApiRouter {
     private productRouter: ProductRouter 
     private stockRouter: StockRouter 
     private addressRouter: AddressRouter
+    private mutationRouter: MutationRouter
 
 
     constructor() {
@@ -35,6 +37,7 @@ export class ApiRouter {
         this.productRouter = new ProductRouter()
         this.stockRouter = new StockRouter()
         this.addressRouter = new AddressRouter()
+        this.mutationRouter = new MutationRouter()
         this.initializeRoutes();
     }
 
@@ -48,6 +51,7 @@ export class ApiRouter {
         this.router.use('/products', this.productRouter.getRouter())
         this.router.use('/stocks', this.stockRouter.getRouter())
         this.router.use('/address', this.addressRouter.getRouter())
+        this.router.use('/mutations', this.mutationRouter.getRouter())
     }
 
     getRouter(): Router {

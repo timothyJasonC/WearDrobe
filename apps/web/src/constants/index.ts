@@ -77,8 +77,9 @@ export interface IImageFieldProps {
     color: string;
     HEX: string;
     image: string;
-    warehouseProduct: any[];
+    warehouseProduct: IWarehouseProduct[];
     totalStock: number;
+    product?: IProduct
   }
   
   export interface ICategory {
@@ -93,9 +94,10 @@ export interface IImageFieldProps {
     id: string;
     name: string;
     slug: string;
-    stockUpdatedAt: Date
+    stockUpdatedAt?: string
     description: string;
     thumbnailURL: string; 
+    updatedAt?: string
     price: number;
     oneSize: boolean;
     categoryID: string;
@@ -105,7 +107,46 @@ export interface IImageFieldProps {
     category: ICategory;
     totalStock: number;
     sales: number
+    stockIn:{_sum:{quantity:number}}
+    stockOut:{_sum:{quantity:number}}
+    toDateStock:number
   }
+
+export interface IWarehouseProduct {
+    id: string;
+    warehouseID: string;
+    productVariantID: string;
+    size: string;
+    stock: number;
+    isDelete: boolean;
+    updatedAt: string;
+    productVariant: IProductVariant;
+    warehouse?: IWarehouse
+}
+
+export interface IStockMutationItem {
+    id: string;
+    quantity: number;
+    warehouseProductID: string;
+    stockMutationID: string;
+    WarehouseProduct: IWarehouseProduct;
+    stockMutation?: IMutation
+    associatedWH?: IWarehouse
+}
+
+export interface IMutation {
+    id: string;
+    warehouseID: string;
+    associatedWarehouseID: string;
+    type: string;
+    status: string;
+    createdAt: string;
+    updatedAt?: string;
+    associatedWarehouseName: string
+    requestingWarehouse?: string
+    StockMutationItem: IStockMutationItem[];
+}
+
 
   export interface IProductList {
     productList: IProduct[]
@@ -141,8 +182,9 @@ export interface IImageFieldProps {
     adminID?:string,
   }
 
-
-
+  export interface mutationList {
+    
+  }
 
   
 export interface Province {

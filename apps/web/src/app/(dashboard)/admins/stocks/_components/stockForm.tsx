@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Selector } from '../manageProductModal/selector'
+import { Selector } from '../../products/_components/manageProductModal/selector'
 import { IProduct, IWarehouse } from '@/constants'
 import { Label } from '@radix-ui/react-label'
 import { changeStock, getProductName, getProductSlug } from '@/app/action'
@@ -86,10 +86,9 @@ export const StockForm = ({selectedWH, warehouseList, setOpen}:IDropdown) => {
   }, [product, warehouse, size])
 
   return (
-    <div>
-
-    <div className='mt-7 flex max-sm:flex-col gap-5'>
-      <div className='sm:w-[250px] w-full bg-gray-100 rounded-sm p-4 items-center justify-between max-sm:hidden'>
+    <div className='overflow-x-hidden'>
+    <div className='mt-7 flex max-md:flex-col gap-5 w-full'>
+      <div className='sm:w-[250px] w-full bg-gray-100 rounded-sm p-4 items-center justify-between max-md:hidden'>
         <div>
           <Label className="font-bold text-base block mb-2">Select Product</Label>
           <Selector 
@@ -109,7 +108,7 @@ export const StockForm = ({selectedWH, warehouseList, setOpen}:IDropdown) => {
       />
       </div>
       <ScrollArea className="flex max-md:h-[65vh] md:h-[500px] w-full">
-          <div className='sm:w-[250px] w-full bg-gray-100 rounded-sm p-4 max-sm:flex items-center justify-between sm:hidden'>
+          <div className='w-full bg-gray-100 rounded-sm p-4 max-md:flex items-center justify-between md:hidden'>
             <div>
               <Label className="font-bold text-base block mb-2">Select Product</Label>
               <Selector 
@@ -161,18 +160,20 @@ export const StockForm = ({selectedWH, warehouseList, setOpen}:IDropdown) => {
             </SelectContent>
           </Select>
 
-          <EditStockTable 
-            setStockArray={setStockArray}
-            stockArray={stockArray}
-            productData={productData!}
-            updateType={updateType}
-            isValid={isValid}
-            setIsValid={setIsValid}
-            size={size}
-            setSize={setSize}
-            warehouse={warehouse}
-            warehouseList={warehouseList}
-          />
+    <div className=''>
+                <EditStockTable 
+                  setStockArray={setStockArray}
+                  stockArray={stockArray}
+                  productData={productData!}
+                  updateType={updateType}
+                  isValid={isValid}
+                  setIsValid={setIsValid}
+                  size={size}
+                  setSize={setSize}
+                  warehouse={warehouse}
+                  warehouseList={warehouseList}
+                />
+    </div>
       </ScrollArea>
     </div>
       <div className="flex gap-2 justify-end">

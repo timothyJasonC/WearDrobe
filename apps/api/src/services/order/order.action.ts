@@ -68,6 +68,8 @@ async function updateSuccessStock(items: any, warehouseID: string) {
     for (const item of items) {
         const { productVariantId, quantity, size } = item;
 
+        
+
         await prisma.warehouseProduct.updateMany({
             where: { productVariantID: productVariantId, size, warehouseID },
             data: {

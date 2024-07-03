@@ -19,7 +19,7 @@ type CheckoutProps = {
     }
 }
 
-export default function page({ params: { id } }: CheckoutProps) {
+export default function Page({ params: { id } }: CheckoutProps) {
     const cart = useAppSelector(state => state.cart.value);
     const [totalAmount, setTotalAmount] = useState(0);
     const [warehouseId, setWarehouseId] = useState<string | null>(null);

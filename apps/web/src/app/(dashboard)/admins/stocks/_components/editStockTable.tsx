@@ -61,13 +61,13 @@ interface IStock {
     }
 
     return (
-      <div className="mt-4 border-[1px] rounded">
-        <Table className="">
+      <div className="mt-4 border-[1px] rounded w-full">
+        <Table className="w-full">
           <TableHeader>
             <TableRow className="bg-secondary">
-              <TableHead className="text-center w-40">Variants</TableHead>
-              <TableHead className="text-center w-28">Size</TableHead>
-              <TableHead className="text-center w-28">Qty</TableHead>
+              <TableHead className="text-center">Variants</TableHead>
+              <TableHead className="text-center">Size</TableHead>
+              <TableHead className="text-center">Qty</TableHead>
               <TableHead className="text-center">Stock</TableHead>
               <TableHead className="text-center"></TableHead>
             </TableRow>

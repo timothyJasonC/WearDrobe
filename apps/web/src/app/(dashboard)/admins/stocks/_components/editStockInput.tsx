@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { TableCell, TableRow} from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { Selector } from '../manageProductModal/selector';
+import { Selector } from '../../products/_components/manageProductModal/selector';
 import { PiArrowRightBold, PiTrashFill } from 'react-icons/pi';
 import { toast } from 'sonner';
 import { IProduct, IWarehouse } from '@/constants';

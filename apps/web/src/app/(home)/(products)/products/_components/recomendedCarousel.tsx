@@ -25,7 +25,7 @@ export function RecommendedCarousel({gender, type}:IRecommendedCarousel) {
     
     useEffect(() => {
         const getData = async() => {
-          const product = await getCatalog(gender, type,'', '',  'newest',  '1')
+          const product = await getCatalog(gender, type,'', '',  'newest',  '1', '5')
           if (product.status == 'ok') {
             setProductList(product.productList)
           }

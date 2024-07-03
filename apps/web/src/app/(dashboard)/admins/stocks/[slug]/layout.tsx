@@ -1,8 +1,7 @@
-import '../../../globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Admin Mutation Dashboard',
+  title: 'Product Stock Dashboard',
   description: 'Weardrobe admin stock dashboard.',
 };
 

@@ -4,8 +4,8 @@ import { WarehouseDropdown } from '@/app/(dashboard)/_components/warehouseDropdo
 import React, { useEffect, useState } from 'react'
 import { getCategory, getProduct, getWarehouse } from '@/app/action'
 import { ManageCategoryDialog } from '@/app/(dashboard)/_components/manageCategoryModal/categoryDialog'
-import { CreateProductDialog } from '@/app/(dashboard)/_components/manageProductModal/createProductDialog'
-import { AdminProductDisplay } from '@/app/(dashboard)/_components/manageProductModal/displayProduct'
+import { CreateProductDialog } from '@/app/(dashboard)/admins/products/_components/manageProductModal/createProductDialog'
+import { AdminProductDisplay } from '@/app/(dashboard)/admins/products/_components/manageProductModal/displayProduct'
 import { IProduct, IWarehouse } from '@/constants'
 import { getAdminClientSide } from '@/lib/utils'
 
@@ -36,7 +36,7 @@ const getAdmWH = async() => {
 }
 
 const getData = async(wh:string) => {
-    const product = await getProduct(wh, page)
+    const product = await getProduct(wh, page, 10)
     const category = await getCategory("", "")
     setProductList(product.productList)
     setProductQty(product.totalProduct)
@@ -81,8 +81,7 @@ const getData = async(wh:string) => {
             />
         </div>
       </div>
-
-      <div>
+      <div className='w-full'>
         <AdminProductDisplay 
         page={page}
         setPage={setPage}

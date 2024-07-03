@@ -25,7 +25,7 @@ export function StockDialog({selectedWH, setSelectedWH, warehouseList, setOpen, 
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogTrigger asChild>
+        <AlertDialogTrigger asChild className="overflow-x-hidden">
             <Button>
                 <div className='flex items-center gap-1 max-sm:text-xs'>
                     <p>Update Stock</p>
@@ -41,8 +41,7 @@ export function StockDialog({selectedWH, setSelectedWH, warehouseList, setOpen, 
             </AlertDialogDescription>
             </AlertDialogHeader>
             
-            <div>
-            
+            <div className="overflow-x-hidden">
             <StockForm 
                 selectedWH={selectedWH}
                 warehouseList={warehouseList}

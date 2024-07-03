@@ -118,7 +118,6 @@ export class CategoryController {
       const existingCategory = await prisma.productCategory.findMany({
         where: {
           gender,
-          type,
         }
       })
 
@@ -160,7 +159,6 @@ export class CategoryController {
       const existingCategory = await prisma.productCategory.findMany({
         where: {
           gender,
-          type,
         }
       })
 

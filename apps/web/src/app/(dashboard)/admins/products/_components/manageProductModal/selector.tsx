@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator";
 
 export function Selector({label, state, defValue, setState, disabled, width}:{label:string, state:any, defValue?:string, setState:any, disabled?:boolean, width?:string}) {   
   return (
@@ -17,17 +18,21 @@ export function Selector({label, state, defValue, setState, disabled, width}:{la
         <SelectValue placeholder={label}/>
       </SelectTrigger>
       <SelectContent>
+        
           {state.map((item:any, index:number) => {
             return (
-            <SelectItem key={index} 
-            value={item.category ? item.category : item.warehouseName ? item.warehouseName : item.name? item.name : item} 
-            >
-              <div className="flex items-center gap-2">
-                <PiGlobeHemisphereWestDuotone className={`${item == "All Warehouse" ? "flex" : "hidden"}`}/>
-                <PiWarehouseDuotone className={`${item !== "All Warehouse"  && label == "Warehouse" ? "flex" : "hidden"}`}/>
-                <p>{item.category ? item.category : item.warehouseName ? item.warehouseName : item.name? item.name : item}</p>
+              <div key={index}>
+                <SelectItem  
+                value={item.category ? item.category : item.warehouseName ? item.warehouseName : item.name? item.name : item} 
+                >
+                  <div className="flex items-center gap-2">
+                    <PiGlobeHemisphereWestDuotone className={`${item == "All Warehouse" ? "flex" : "hidden"}`}/>
+                    <PiWarehouseDuotone className={`${item !== "All Warehouse"  && label == "Warehouse" ? "flex" : "hidden"}`}/>
+                    <p>{item.category ? item.category : item.warehouseName ? item.warehouseName : item.name? item.name : item}</p>
+                  </div>
+                </SelectItem>
+                <Separator className={item == 'Select All' ? '' : 'hidden'}/>
               </div>
-            </SelectItem>
             )
           })}
       </SelectContent>

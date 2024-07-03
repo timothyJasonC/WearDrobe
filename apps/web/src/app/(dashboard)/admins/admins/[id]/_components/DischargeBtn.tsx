@@ -56,7 +56,7 @@ export default function DischargeBtn({ admin }: { admin: IAdmin }) {
                         Are you sure you want to discharge { admin.fullName }
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete { admin.fullName }'s account
+                        This action cannot be undone. This will permanently delete { admin.fullName }&apos;s account
                         and remove the data from the database.
                     </AlertDialogDescription>
                 </AlertDialogHeader>

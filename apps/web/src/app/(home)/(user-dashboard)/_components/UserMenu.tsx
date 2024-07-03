@@ -155,7 +155,7 @@ export default function UserMenu({ className, user }: { className?: string, user
                     }
                     
                     <div className="absolute -right-0 -bottom-0 w-auto cursor-pointer">
-                        { !user?.accountActive && <ToolTip className='' content={<span>Your account hasn't been verified!</span>} ><PiWarningCircle className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'1.2rem'} /> </ToolTip> }
+                        { !user?.accountActive && <ToolTip className='' content={<span>Your account hasn&apos;t been verified!</span>} ><PiWarningCircle className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'1.2rem'} /> </ToolTip> }
                     </div>
                     <div onMouseEnter={showDeleteBtn} onMouseLeave={hideDeleteBtn} id="trash-icon" className="absolute right-12 bottom-[12rem] w-auto cursor-pointer duration-200 opacity-0">
                             <AlertDialog open={open}>

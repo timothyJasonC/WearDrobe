@@ -90,7 +90,7 @@ export default function Page() {
                                 <Spinner size={`small`} />
                                 <h3 className="font-bold text-xl">Please wait..</h3>
                             </div>
-                            <span className="text-black/60">We're verifying your account</span>
+                            <span className="text-black/60">We&apos;re verifying your account</span>
                         </div>
                 :
                 <SetupAccountDialog className="absolute" title={"Welcome new candidates!"} form={<SetupAdminAccountForm />} optionalText="Please fill in the data below to verify your account." />

@@ -2,10 +2,10 @@ import { getRequest } from "@/lib/fetchRequests"
 import React from "react"
 import DashboardWrapper from "../_components/DashboardWrapper";
 import { TableUser } from "./_components/TableUser";
-import { StatisticsCard } from "@/components/admDashboard/statisticsCard";
 import { Input } from "@/components/ui/input";
 import { ExpTable } from "../_components/ExpTable";
 import columns from "./_components/columns";
+import { StatisticsCard } from "../../_components/statisticsCard";
 
 export default async function Page() {
     

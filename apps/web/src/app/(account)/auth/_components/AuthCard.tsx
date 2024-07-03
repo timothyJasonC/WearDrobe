@@ -222,7 +222,7 @@ export function AuthCard() {
                     <CardHeader>
                         <CardTitle>Register</CardTitle>
                         <CardDescription>
-                            Join WearDrobe with your email for personalized shopping, exclusive sales, seamless checkout, and the latest trends. Dont' miss out!
+                            Join WearDrobe with your email for personalized shopping, exclusive sales, seamless checkout, and the latest trends. Don&apos;t miss out!
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2">

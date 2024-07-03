@@ -2,9 +2,9 @@ import React from "react"
 import DashboardWrapper from "../_components/DashboardWrapper"
 import { DialogWarehouse } from "./_components/DialogWarehouse"
 import { ExpTable } from "../_components/ExpTable"
-import { StatisticsCard } from "@/components/admDashboard/statisticsCard"
 import { getRequest } from "@/lib/fetchRequests"
 import columns from "./_components/columns"
+import { StatisticsCard } from "../../_components/statisticsCard"
 
 export default async function Page() {
 

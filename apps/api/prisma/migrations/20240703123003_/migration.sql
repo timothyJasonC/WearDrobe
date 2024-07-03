@@ -19,6 +19,7 @@ CREATE TABLE `User` (
 CREATE TABLE `AddressList` (
     `id` VARCHAR(191) NOT NULL,
     `address` VARCHAR(191) NOT NULL,
+    `labelAddress` VARCHAR(191) NOT NULL,
     `coordinate` VARCHAR(191) NOT NULL,
     `userID` VARCHAR(191) NOT NULL,
     `city_id` VARCHAR(191) NOT NULL,
@@ -42,6 +43,7 @@ CREATE TABLE `Admin` (
     `password` VARCHAR(191) NULL,
     `gender` ENUM('MALE', 'FEMALE') NULL,
     `dob` DATETIME(3) NULL,
+    `imgUrl` LONGTEXT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `Admin_email_key`(`email`),
@@ -74,8 +76,9 @@ CREATE TABLE `Warehouse` (
     `city_name` VARCHAR(191) NOT NULL,
     `postal_code` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `adminID` VARCHAR(191) NOT NULL,
+    `adminID` VARCHAR(191) NULL,
 
+    UNIQUE INDEX `Warehouse_warehouseName_key`(`warehouseName`),
     UNIQUE INDEX `Warehouse_adminID_key`(`adminID`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -140,7 +143,6 @@ CREATE TABLE `ProductVariant` (
     `productID` VARCHAR(191) NOT NULL,
     `color` VARCHAR(191) NOT NULL,
     `HEX` VARCHAR(191) NOT NULL,
-    `isDeleted` BOOLEAN NULL DEFAULT false,
     `image` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `ProductVariant_image_key`(`image`),
@@ -152,8 +154,10 @@ CREATE TABLE `StockMutation` (
     `id` VARCHAR(191) NOT NULL,
     `warehouseID` VARCHAR(191) NOT NULL,
     `associatedWarehouseID` VARCHAR(191) NULL,
-    `type` ENUM('TRANSFER', 'RESTOCK', 'REMOVE', 'TRANSACTION', 'INBOUND') NOT NULL,
+    `type` ENUM('TRANSFER', 'INBOUND', 'RESTOCK', 'REMOVE', 'TRANSACTION', 'DELETE') NOT NULL,
+    `status` ENUM('WAITING', 'ACCEPTED', 'REJECTED') NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -175,6 +179,9 @@ CREATE TABLE `Order` (
     `status` ENUM('CART', 'PENDING_PAYMENT', 'PROCESSED', 'SHIPPED', 'COMPLETED', 'CANCELLED') NOT NULL DEFAULT 'CART',
     `warehouseId` VARCHAR(191) NULL,
     `totalAmount` INTEGER NOT NULL DEFAULT 0,
+    `addressID` VARCHAR(191) NULL,
+    `shippingMethod` VARCHAR(191) NULL,
+    `shippedAt` DATETIME(3) NULL,
     `paymentStatus` ENUM('PENDING', 'COMPLETED', 'FAILED') NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -202,7 +209,7 @@ CREATE TABLE `OrderItem` (
 ALTER TABLE `AddressList` ADD CONSTRAINT `AddressList_userID_fkey` FOREIGN KEY (`userID`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Warehouse` ADD CONSTRAINT `Warehouse_adminID_fkey` FOREIGN KEY (`adminID`) REFERENCES `Admin`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Warehouse` ADD CONSTRAINT `Warehouse_adminID_fkey` FOREIGN KEY (`adminID`) REFERENCES `Admin`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `WarehouseProduct` ADD CONSTRAINT `WarehouseProduct_warehouseID_fkey` FOREIGN KEY (`warehouseID`) REFERENCES `Warehouse`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

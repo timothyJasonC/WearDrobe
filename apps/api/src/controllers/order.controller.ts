@@ -1,12 +1,13 @@
-import { addOrUpdateCartItem, deleteCart, deleteCartItem, getCartItem, getCartItemsWithTotal, getNewCartItem, getOrCreateCart, updateCartItem, updateToOrder } from "@/services/cart/cart.action";
-import { cancelOrder, failedOrder, getOrderByAdmin, getOrderById, getOrderByUser, getPaymentLink, getTotalOrderByAdmin, getTotalOrderByUser, getUserById, successOrder, updateShipped } from "@/services/order/order.action";
+import { addOrUpdateCartItem, deleteCart, deleteCartItem, getCartItem, getCartItemsByOrderId, getCartItemsWithTotal, getOrCreateCart, getStock, getStockByWarehouse, updateCartItem, updateToOrder } from "@/services/cart/cart.action";
+import { cancelOrder, existingTransaction, failedOrder, getOrderByAdmin, getOrderById, getOrderByUser, getPaymentLink, getTotalOrderByAdmin, getTotalOrderByUser, getUserById, successOrder, updateCompletedOrder, updateShipped } from "@/services/order/order.action";
 import { Request, Response } from "express";
 import fs from "fs"
 import handlebars from "handlebars"
 import path from "path";
 import { transporter } from '@/helpers/nodemailer';
-import { getWarehouseById, getWarehouseByName } from "@/services/address/address.action";
+import { findClosestWarehouse, getAddressById, getAddressCoordinates, getAllWarehouseAddress, getWarehouseById, getWarehouseByName } from "@/services/address/address.action";
 import { generateInvoicePdf } from "@/helpers/pdf";
+import { addStockWarehouse, createMutation, createMutationItem, reduceStockWarehouse } from "@/services/stock/stock.action";
 
 export class OrderController {
 
@@ -74,9 +75,13 @@ export class OrderController {
         try {
             const { orderId } = req.body
             const cart = await getOrderById(orderId)
-            if (cart !== null) {
-                res.json(cart)
+            if (cart?.addressID !== null && cart) {
+                const address = await getAddressById(cart?.addressID!)
+                const warehouse = await getWarehouseById(cart?.warehouseId!)
+                const shippingCost = cart?.totalAmount - cart?.items.reduce((acc, item) => acc + item.quantity * item.price, 0)
+                res.json({ cart, address, warehouse: { coordinate: warehouse?.coordinate! }, shippingCost })
             } else {
+                if (cart !== null) res.json(cart)
                 res.json({ message: 'no cart' })
             }
         } catch (error) {
@@ -84,10 +89,69 @@ export class OrderController {
         }
     }
 
+    async checkStock(req: Request, res: Response) {
+        try {
+            const { orderId } = req.body
+            const stock = await getStock(orderId)
+
+            res.json(stock)
+        } catch (err) {
+            res.json(err)
+        }
+    }
+
     async createOrder(req: Request, res: Response) {
         try {
-            const { orderId, shippingCost, subTotal, warehouseId } = req.body
-            const order = await updateToOrder(orderId, shippingCost, subTotal, warehouseId)
+            const { orderId, shippingCost, subTotal, warehouseId, userAddress, shipping, selectedShipping } = req.body
+            const stockData = await getStock(orderId);
+            const stockDataWarehouse = await getStockByWarehouse(orderId, warehouseId)
+            const warehouse = await getWarehouseById(warehouseId)
+
+            const outOfStockItems = stockData.filter(item => item.totalStock < item.orderedQuantity);
+
+            if (outOfStockItems.length > 0) res.status(400).json({
+                message: "Some items are out of stock",
+            })
+
+            const itemsToMutate = []
+            for (const item of stockDataWarehouse) {
+                if (item.totalStock < item.orderedQuantity) {
+                    const warehouseAddress = await getAddressCoordinates(`${warehouse?.address}, ${warehouse?.city_name}, ${warehouse?.province}, Indonesia`)
+                    const warehouses = await getAllWarehouseAddress()
+                    const closestWarehouse = await findClosestWarehouse(warehouseAddress, warehouses)
+
+                    for (const closest of closestWarehouse!) {
+                        const closestWarehouseId = await getWarehouseByName(closest.warehouseKey)
+                        const closestStockData = await getStockByWarehouse(orderId, closestWarehouseId?.id!)
+                        const closestStock = closestStockData.find(stock => stock.productVariantId === item.productVariantId && stock.size === item.size)
+
+                        if (closestStock && closestStock.totalStock >= item.orderedQuantity - item.totalStock) {
+                            itemsToMutate.push({
+                                productVariantId: item.productVariantId,
+                                size: item.size,
+                                quantity: item.orderedQuantity - item.totalStock,
+                                fromWarehouse: closestWarehouseId,
+                                toWarehouse: warehouseId
+                            });
+
+                            item.totalStock = item.orderedQuantity;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (const mutation of itemsToMutate) {
+                const createMutationSender = await createMutation(mutation.fromWarehouse?.id!, mutation.toWarehouse!, 'TRANSFER')
+                await createMutationItem(createMutationSender, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
+                const createMutationInbound = await createMutation(mutation.toWarehouse!, mutation.fromWarehouse?.id!, 'INBOUND')
+                await createMutationItem(createMutationInbound, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
+
+                await reduceStockWarehouse(mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size, mutation.quantity)
+                await addStockWarehouse(mutation.toWarehouse, mutation.productVariantId, mutation.size, mutation.quantity)
+            }
+
+            const order = await updateToOrder(orderId, shippingCost, subTotal, warehouseId, userAddress, shipping, selectedShipping.service, selectedShipping.description, selectedShipping.cost[0].etd)
             if (order) {
                 let data = {
                     transaction_details: {
@@ -110,36 +174,44 @@ export class OrderController {
     async checkStatus(req: Request, res: Response) {
         try {
             if (req.body.transaction_status === 'settlement') {
-                const updateOrder = await successOrder(req.body.order_id)
-                const user = await getUserById(updateOrder.userId)
-                const warehouse = await getWarehouseById(updateOrder.warehouseId!)
+                const existTransaction = await existingTransaction(req.body.order_id)
+                if (existTransaction) {
+                    const updateOrder = await successOrder(req.body.order_id)
+                    const user = await getUserById(updateOrder?.userId!)
+                    const warehouse = await getWarehouseById(updateOrder?.warehouseId!)
+                    const shippingCost = updateOrder?.totalAmount! - updateOrder?.items.reduce((acc, item) => acc + item.quantity * item.price, 0)!
+                    const address = await getAddressById(updateOrder?.addressID!)
 
-                const templatePath = path.join(__dirname, "../templates", "invoice.html")
-                const templateSource = fs.readFileSync(templatePath, 'utf-8')
-                const compiledTemplate = handlebars.compile(templateSource)
+                    const templatePath = path.join(__dirname, "../templates", "invoice.html")
+                    const templateSource = fs.readFileSync(templatePath, 'utf-8')
+                    const compiledTemplate = handlebars.compile(templateSource)
 
-                const inputData = {
-                    name: user?.username,
-                    status: updateOrder.status,
-                    paymentStatus: updateOrder.paymentStatus,
-                    orderItem: updateOrder.items,
-                    totalAmount: updateOrder.totalAmount,
-                    createdAt: updateOrder.createdAt,
-                    warehouse: warehouse?.warehouseName
+                    const inputData = {
+                        orderId: updateOrder.id,
+                        name: user?.username,
+                        status: updateOrder?.status,
+                        paymentStatus: updateOrder?.paymentStatus,
+                        orderItem: updateOrder?.items,
+                        totalAmount: updateOrder?.totalAmount,
+                        createdAt: updateOrder?.createdAt,
+                        warehouse: warehouse?.warehouseName,
+                        warehouseLoc: warehouse?.coordinate,
+                        shippingCost: shippingCost,
+                        address: address?.coordinate,
+                        qrData: process.env.CLIENT_URL + `/order/${updateOrder?.id}`
+                    }
+
+                    const html = compiledTemplate(inputData)
+
+                    const pdf = await generateInvoicePdf(inputData)
+                    await transporter.sendMail({
+                        from: process.env.MAIL_USER,
+                        to: user?.email,
+                        subject: `Your Order Details on WearDrobe`,
+                        html,
+                        attachments: [{ path: pdf }]
+                    })
                 }
-
-                const html = compiledTemplate(inputData)
-
-                const pdf = await generateInvoicePdf(inputData)
-                await transporter.sendMail({
-                    from: process.env.MAIL_USER,
-                    to: user?.email,
-                    subject: `Your Order Details on WearDrobe`,
-                    html,
-                    attachments: [{ path: pdf }]
-
-                })
-
             } else if (req.body.transaction_status === 'failed') {
                 await failedOrder(req.body.order_id);
             } else {
@@ -219,11 +291,28 @@ export class OrderController {
             if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
 
             const updateToShipped = await updateShipped(orderId)
-            const warehouse = await getWarehouseByName(w)
-
-
             if (updateToShipped) {
+                const warehouse = await getWarehouseByName(w)
                 const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!)
+                res.json(orderList)
+            }
+        } catch (err) {
+            res.json(err)
+        }
+    }
+
+    async confirmOrder(req: Request, res: Response) {
+        try {
+            const { orderId, userId } = req.body
+            let { q: query, page, limit, w } = req.query;
+            if (typeof query !== "string") throw 'Invalid request'
+            if (typeof w !== "string") throw 'Invalid request'
+            if (typeof page !== "string" || isNaN(+page)) page = '1';
+            if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
+
+            const updateToCompleted = await updateCompletedOrder(orderId)
+            if (updateToCompleted) {
+                const orderList = await getOrderByUser(userId, query, page, limit)
                 res.json(orderList)
             }
         } catch (err) {

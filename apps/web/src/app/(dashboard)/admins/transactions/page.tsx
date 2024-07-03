@@ -7,7 +7,7 @@ import { getAdminClientSide } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { WarehouseDropdown } from '../../_components/warehouseDropdown'
 
-export default function page() {
+export default function Page() {
   const [selectedWH, setSelectedWH] = useState('All Warehouses')
   const [warehouseList, setWarehouseList] = useState<IWarehouse[]>([])
   const [isSuper, setIsSuper] = useState(false)

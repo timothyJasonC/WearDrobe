@@ -86,11 +86,11 @@ export const getCities = async (provinceId: string) => {
     return data;
 };
 
-export const addAddressUser = async (selectedCity: string, address: string, userId: string) => {
+export const addAddressUser = async (selectedCity: string, address: string, userId: string, labelAddress: string) => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}address/`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({selectedCity, address, userId: userId })
+        body: JSON.stringify({ selectedCity, address, userId, labelAddress })
     });
     const data = await response.json();
     return data;

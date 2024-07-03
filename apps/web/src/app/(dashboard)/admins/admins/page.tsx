@@ -1,30 +1,27 @@
 import React from "react"
 import { DialogCreateAdmin } from "./_components/DialogCreateAdmin"
+import DashboardWrapper from "../_components/DashboardWrapper"
+import { StatisticsCard } from "@/components/admDashboard/statisticsCard"
+import { getRequest } from "@/lib/fetchRequests"
+import columns from "./_components/columns"
+import { ExpTable } from "../_components/ExpTable"
 
-export default function Page() {
+export default async function Page() {
+
+    const res = await (await getRequest('/admin/')).json()
+    const admins = res.data;
+    // NOTE: assign warehouse
+
     return (
-        <div className=" w-full py-10 px-10 md:px-20">
-            
-            <div className='flex w-full mb-7 flex-col-reverse xl:flex-row'>
-                <div className='flex gap-5 md:gap-10 max-md:flex-wrap'>
-                {/* <StatisticsCard 
-                    title='Products'
-                    number={product.productList.length}
-                    modalElement={<CreateProductDialog />}
-                /> */}
-                {/* <StatisticsCard 
-                    title='Categories'
-                    number={category.category.length}
-                    modalElement={<ManageCategoryDialog />}
-                /> */}
-                </div>
-                <div className='flex flex-col w-full items-end mb-7'>
-                    <DialogCreateAdmin />
+        <DashboardWrapper>
+            <div className="mb-[6rem] flex justify-between">
+                <div className="w-72">
+                    <StatisticsCard  title='Total Admin(s)' number={admins.length}/>
                 </div>
             </div>
-
+            <ExpTable accounts={admins} columns={columns} optionalComp={<DialogCreateAdmin />} />
+        </DashboardWrapper>
             
-        </div>
     )
 };
 

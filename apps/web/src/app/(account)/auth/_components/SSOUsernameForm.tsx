@@ -35,7 +35,7 @@ export function SSOUsernameForm({ SSOUserData, router }: { SSOUserData: any, rou
                     Cookies.set('role', data.data.role, { expires: 1 })
                     Cookies.set('token', data.data.token, { expires: 1 })
                     dispatch(setCurrentAccount(data.data.user))
-                    toast.success(`Hello ${userData.username}`, { description: 'Welcome to WearDrobe!' })
+                    toast.success(`Hello, ${userData.username}`, { description: 'Welcome to WearDrobe!' })
                     setTimeout(() => { router.push('/') }, 2000);
                 } else if (res.status == 409) {
                     toast.error("Username has been taken")

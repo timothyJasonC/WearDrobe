@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import useStorage from "@/hooks/useStorage";
 import { deleteRequest, getRequest, patchRequest } from "@/lib/fetchRequests";
 import { toast } from "sonner";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { getUserClientSide } from "@/lib/utils";
 
 export default function UserMenu({ className, user }: { className?: string, user: IUser }) {
@@ -21,7 +21,7 @@ export default function UserMenu({ className, user }: { className?: string, user
     const [ isLoading, setIsloading ] = useState(false)
     const [ open, setOpen ] = useState(false)
     const [ currentUser, setCurrentUser ] = useState(user)
-    const [ currentPhotoProfile, setCurrentPhotoProfile ] = useState<any>(user.imgUrl);
+    const [ currentPhotoProfile, setCurrentPhotoProfile ] = useState<any>(user?.imgUrl);
     const { uploadFile } = useStorage()
     
     const profileLinks = [
@@ -38,14 +38,11 @@ export default function UserMenu({ className, user }: { className?: string, user
             href: '/user/change-password'
         },
     ]
+
     const shoppingLinks = [
         {
             text: 'Wishlist',
             href: '/user/wishlist'
-        },
-        {
-            text: 'Cart',
-            href: '/user/cart'
         },
         {
             text: 'Order History',
@@ -102,11 +99,27 @@ export default function UserMenu({ className, user }: { className?: string, user
         refreshUser()
     }, [ currentPhotoProfile ])
 
+    function showDeleteBtn() {
+        const trashIcon = document.getElementById('trash-icon') as HTMLElement;
+        trashIcon?.classList.add('right-2')
+        trashIcon?.classList.add('opacity-100')
+        trashIcon?.classList.remove('right-12')
+        trashIcon?.classList.remove('opacity-0')
+    }
+
+    function hideDeleteBtn() {
+        const trashIcon = document.getElementById('trash-icon') as HTMLElement;
+        trashIcon?.classList.remove('right-2')
+        trashIcon?.classList.remove('opacity-100')
+        trashIcon?.classList.add('right-12')
+        trashIcon?.classList.add('opacity-0')
+    }
+
     return (
         <div className={`${className}`}>
             <div className="flex justify-center">
                 <div className='flex items-center flex-col gap-2 relative w-fit'>
-                    <div className='group w-40 h-40 rounded-full flex justify-center items-center relative overflow-hidden'>
+                    <div onMouseEnter={showDeleteBtn} onMouseLeave={hideDeleteBtn} className='group w-40 h-40 rounded-full flex justify-center items-center relative overflow-hidden'>
                         {
                             user && currentUser.imgUrl ? 
                                 file ? 
@@ -142,11 +155,11 @@ export default function UserMenu({ className, user }: { className?: string, user
                     }
                     
                     <div className="absolute -right-0 -bottom-0 w-auto cursor-pointer">
-                        { !user.accountActive && <ToolTip className='' content={<span>Your account hasn't been verified!</span>} ><PiWarningCircle className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'1.2rem'} /> </ToolTip> }
+                        { !user?.accountActive && <ToolTip className='' content={<span>Your account hasn't been verified!</span>} ><PiWarningCircle className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'1.2rem'} /> </ToolTip> }
                     </div>
-                    <div className="absolute right-4 bottom-[12rem] w-auto cursor-pointer">
+                    <div onMouseEnter={showDeleteBtn} onMouseLeave={hideDeleteBtn} id="trash-icon" className="absolute right-12 bottom-[12rem] w-auto cursor-pointer duration-200 opacity-0">
                             <AlertDialog open={open}>
-                                <AlertDialogTrigger asChild onClick={() => setOpen(true)}>
+                                <AlertDialogTrigger asChild onClick={() => {setOpen(true); hideDeleteBtn() }}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="w-[1rem] fill-black/60" viewBox="0 0 16 16">
                                         <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
                                         <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
@@ -162,19 +175,16 @@ export default function UserMenu({ className, user }: { className?: string, user
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel onClick={() => setOpen(false)}>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={handleRemovePhotoProfile} className="bg-red-500">
+                                        <LoadingButton loading={ isLoading ? true : false } onClick={handleRemovePhotoProfile} className="bg-red-500">
                                             Delete Photo Profile
-                                        </AlertDialogAction>
-                                        {/* <LoadingButton loading={ isLoading ? true : false } onClick={handleRemovePhotoProfile} className="bg-red-500">
-                                            Delete Photo Profile
-                                        </LoadingButton> */}
+                                        </LoadingButton>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
                     </div>
                     <div className='text-center'>
-                        <h2 className='text-lg font-semibold'>{ user.username }</h2>
-                        <p className='text-black/60'>{ user.email }</p>
+                        <h2 className='text-lg font-semibold'>{ user?.username }</h2>
+                        <p className='text-black/60'>{ user?.email }</p>
                     </div>
                 </div>
             </div>

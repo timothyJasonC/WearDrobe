@@ -163,7 +163,7 @@ export interface Warehouse {
     city_name: string;
     postal_code: string;
     createdAt: string;
-    adminID: string;
+    adminID: string | null;
 }
 
 export interface ShippingCostResponse {
@@ -214,7 +214,7 @@ export interface Warehouse {
     city_name: string;
     postal_code: string;
     createdAt: string;
-    adminID: string;
+    adminID: string | null;
 }
 
 export interface ShippingCostResponse {

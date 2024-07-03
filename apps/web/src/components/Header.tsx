@@ -4,7 +4,7 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import Cookies from "js-cookie";
 import { isTokenExp } from "@/lib/utils";
-import { PiFireSimple, PiHeart, PiMagnifyingGlass, PiUser } from "react-icons/pi";
+import { PiFireSimple, PiMagnifyingGlass } from "react-icons/pi";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 import { Input } from "@/components/ui/input"
 import { HeaderDropdown } from "../app/(home)/_components/HeaderDropdown";

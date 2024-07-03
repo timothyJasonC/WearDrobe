@@ -36,7 +36,7 @@ export async function getRequest(segment: string) {
     const res = await fetch(`http://localhost:8000/api${segment}`, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         }
     })
     return res;

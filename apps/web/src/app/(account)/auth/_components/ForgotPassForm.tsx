@@ -3,8 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
-import { Button } from "@/components/ui/button"
 import {
   Form, FormControl, FormDescription,
   FormField, FormItem,
@@ -83,7 +81,7 @@ export function ForgotPassForm() {
                         </FormItem>
                     )}
                     />
-                    <LoadingButton loading={isLoading ? true: false} type="submit" className="flex gap-2">Reset Password<PiEnvelopeSimple size={'1.1rem'} /></LoadingButton>
+                    <LoadingButton loading={isLoading} type="submit" className="flex gap-2">Reset Password<PiEnvelopeSimple size={'1.1rem'} /></LoadingButton>
                 </form>
             </Form>
         </div>

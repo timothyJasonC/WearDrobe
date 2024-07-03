@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE `Admin` ADD COLUMN `imgUrl` LONGTEXT NULL;
+
+-- AlterTable
+ALTER TABLE `WarehouseProduct` ADD COLUMN `isDeleted` BOOLEAN NOT NULL DEFAULT false,
+    ADD COLUMN `updatedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3);

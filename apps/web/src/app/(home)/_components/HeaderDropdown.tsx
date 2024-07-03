@@ -4,7 +4,7 @@ import {
     DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator,
     DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiShoppingCartSimple, PiSignIn, PiSignOut, PiUser } from "react-icons/pi"
+import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiMapPinSimple, PiPassword, PiReceipt, PiShoppingCartSimple, PiSignIn, PiSignOut, PiUser } from "react-icons/pi"
 import { Input } from "../../../components/ui/input"
 import Cart from "@/components/cart/Cart"
 import { handleLogout } from "@/lib/utils"
@@ -73,10 +73,6 @@ export function HeaderDropdown({ userLogged, router }: { userLogged: boolean, ro
                     userLogged &&
                     <>
                         <DropdownMenuGroup>
-                            <DropdownMenuItem className="flex gap-2" onClick={() => { router.push('/user/edit-profile') } }>
-                                <PiUser size={`16px`} />
-                                <span>Profile</span>
-                            </DropdownMenuItem>
                             <DropdownMenuItem className="flex gap-2" onClick={() => { router.push('/user/wishlist') } }>
                                 <PiHeart size={`16px`} />
                                 <span>Wishlist</span>
@@ -84,7 +80,10 @@ export function HeaderDropdown({ userLogged, router }: { userLogged: boolean, ro
                                     <span className="text-white text-xs flex justify-center items-center font-light scale-[92%]">99+</span>
                                 </div> */}
                             </DropdownMenuItem>
-                            
+                            <DropdownMenuItem className="flex gap-2" onClick={() => { router.push('/user/transaction') } }>
+                                <PiReceipt size={`16px`} />
+                                <span>Order History</span>
+                            </DropdownMenuItem>
                             <DropdownMenuItem className="flex gap-2">
                                 <PiShoppingCartSimple size={`16px`} />
                                 <span>Cart</span>
@@ -92,6 +91,20 @@ export function HeaderDropdown({ userLogged, router }: { userLogged: boolean, ro
                                     <Cart />
                                 </div>
                             </DropdownMenuItem>
+                            <DropdownMenuSeparator/>
+                            <DropdownMenuItem className="flex gap-2" onClick={() => { router.push('/user/edit-profile') } }>
+                                <PiUser size={`16px`} />
+                                <span>Edit Profile</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="flex gap-2" onClick={() => { router.push('/user/manage-address') } }>
+                                <PiMapPinSimple size={`16px`} />
+                                <span>Manage Address</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="flex gap-2" onClick={() => { router.push('/user/change-password') } }>
+                                <PiPassword size={`16px`} />
+                                <span>Change Password</span>
+                            </DropdownMenuItem>
+
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                     </>

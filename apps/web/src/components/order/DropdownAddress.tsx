@@ -20,6 +20,7 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
     const [address, setAddress] = useState<string>('');
     const [addressList, setAddressList] = useState<Address[]>([]);
     const [warehouse, setWarehouse] = useState<Warehouse | null>(null)
+    const [ labelAddress, setLabelAddress ] = useState('');
 
     const fetchProvinces = async () => {
         try {
@@ -46,7 +47,7 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
 
     const addAddress = async () => {
         const userData = await getUserClientSide()
-        const data = await addAddressUser(selectedCity, address, userData.id);
+        const data = await addAddressUser(selectedCity, address, userData.id, labelAddress);
         if (data.message === 'add address successfull') {
             setAddressList((prevState) => [...prevState, data.addressUser]);
             toast.success('Your address has been added to your address list')
@@ -121,7 +122,7 @@ export default function DropdownAddress({setUserAddress, setWarehouseId} : Dropd
                                         setSelectedProvince={setSelectedProvince}
                                         address={address}
                                         setAddress={setAddress}
-                                    />
+                                        fetchCities={fetchCities} labelAddress={labelAddress} setLabelAddress={setLabelAddress} forWarehouse={false}                                    />
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter className={`${!address || !selectedCity ? 'cursor-not-allowed' : ''}`}>

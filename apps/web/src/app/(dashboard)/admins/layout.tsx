@@ -1,11 +1,11 @@
 import '../../globals.css';
-import { AdminSideBar } from "@/components/sidebar/adminSideBar";
 import { StoreProvider } from '@/app/storeProvider';
 import { Toaster } from 'sonner';
 import { Poppins } from 'next/font/google';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Loading from './products/loading';
+import { AdminDashboard } from '@/components/sidebar/AdminDashboard';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,12 +24,12 @@ export default function Template({children}: Readonly<{children: React.ReactNode
     <StoreProvider>
         <html lang="en">
           <body className={poppins.className}>
-            <AdminSideBar>
+            <AdminDashboard>
                 <Suspense fallback={<Loading/>}>
                     <Toaster position="top-center" expand={true} richColors/>
                     {children}
                 </Suspense>
-            </AdminSideBar>
+            </AdminDashboard>
           </body>
         </html>
     </StoreProvider>

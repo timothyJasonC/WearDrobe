@@ -101,6 +101,24 @@ export class UserController {
         }
     }
 
+    async getUsers(req: Request, res: Response) {
+        try {
+            const users = await prisma.user.findMany({
+                select: {
+                    id: true,
+                    username: true,
+                    email: true,
+                    accountActive: true,
+                    gender: true,
+                    dob: true
+                }
+            })
+            serverResponse(res, 200, 'ok', 'user found!', users)
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
     async getUserById(req: Request, res: Response) {
         try {
             const user = await prisma.user.findFirst({ where: { id: req.params.id } })

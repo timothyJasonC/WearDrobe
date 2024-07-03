@@ -11,6 +11,7 @@ export function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
     const tokenCookie = req.cookies.get('token');
     const token = tokenCookie ? tokenCookie.value : null;
+    const superAdmPath = ['/admins/admins', '/admins/warehouses', '/admins/users'];
     
     if (!token) {
         if (pathname.startsWith('/admins') || pathname.startsWith('/user')) {
@@ -35,10 +36,10 @@ export function middleware(req: NextRequest) {
                     return NextResponse.redirect(new URL('/', req.url));
                 }
                 
-                if (pathname.startsWith('/admins')) {
-                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
+                if (superAdmPath.some(path => pathname.startsWith(path))) {
+                    if (decoded.role === 'superAdm') {
                         return NextResponse.next();
-                    }
+                    } else if (decoded.role == 'warAdm') return NextResponse.redirect(new URL('/admins/overview', req.url));
                     return NextResponse.redirect(new URL('/', req.url));
                 } else if (pathname.startsWith('/user')) {
                     if (decoded.role === 'user') {
@@ -49,9 +50,9 @@ export function middleware(req: NextRequest) {
                     }
                     return NextResponse.redirect(new URL('/auth', req.url));
                 } else if (pathname === '/') {
-                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
-                        return NextResponse.redirect(new URL('/admins/overview', req.url));
-                    }
+                    // if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
+                    //     return NextResponse.redirect(new URL('/admins/overview', req.url));
+                    // }
                     return NextResponse.next();
                 } else if (pathname.startsWith('/catalog')) {
                     if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {

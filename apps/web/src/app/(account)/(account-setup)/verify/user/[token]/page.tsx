@@ -6,9 +6,8 @@ import { getUserServerSide, isTokenExp } from "@/lib/utils";
 import { PiCheckBold, PiCheckCircleBold } from "react-icons/pi";
 import { getRequest, getRequestToken, postRequestToken, refreshToken } from "@/lib/fetchRequests";
 import { Spinner } from "@/components/ui/spinner";
-import { useParams, usePathname } from "next/navigation";
-import { JwtPayload, jwtDecode } from "jwt-decode";
-import { CustomJwtPayload } from "@/middleware";
+import { useParams } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 import { IUser } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm";
 import { toast } from "sonner";
 

@@ -220,19 +220,19 @@ export interface Address {
 }
 
 export interface Warehouse {
-  id: string;
-  warehouseName: string;
-  city: string;
-  coordinate: string;
-  address: string;
-  city_id: string;
-  province_id: string;
-  province: string;
-  type: string;
-  city_name: string;
-  postal_code: string;
-  createdAt: string;
-  adminID: string;
+    id: string;
+    warehouseName: string;
+    city: string;
+    coordinate: string;
+    address: string;
+    city_id: string;
+    province_id: string;
+    province: string;
+    type: string;
+    city_name: string;
+    postal_code: string;
+    createdAt: string;
+    adminID: string | null;
 }
 
 export interface ShippingCostResponse {
@@ -271,19 +271,19 @@ export interface Address {
 }
 
 export interface Warehouse {
-  id: string;
-  warehouseName: string;
-  city: string;
-  coordinate: string;
-  address: string;
-  city_id: string;
-  province_id: string;
-  province: string;
-  type: string;
-  city_name: string;
-  postal_code: string;
-  createdAt: string;
-  adminID: string;
+    id: string;
+    warehouseName: string;
+    city: string;
+    coordinate: string;
+    address: string;
+    city_id: string;
+    province_id: string;
+    province: string;
+    type: string;
+    city_name: string;
+    postal_code: string;
+    createdAt: string;
+    adminID: string | null;
 }
 
 export interface ShippingCostResponse {

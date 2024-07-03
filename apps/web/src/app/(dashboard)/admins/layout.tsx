@@ -1,10 +1,10 @@
 import '../../globals.css';
-import { AdminSideBar } from "@/components/sidebar/adminSideBar";
 import { StoreProvider } from '@/app/storeProvider';
 import { Toaster } from 'sonner';
 import { Poppins } from 'next/font/google';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import { AdminDashboard } from '@/components/sidebar/AdminDashboard';
 import Loading from './loading';
 
 const poppins = Poppins({
@@ -27,12 +27,12 @@ export default function Layout({children}: Readonly<{children: React.ReactNode}>
     <StoreProvider>
         <html lang="en">
           <body className={poppins.className}>
-            <AdminSideBar>
+            <AdminDashboard>
                 <Suspense fallback={<Loading/>}>
                     <Toaster position="top-center" expand={true} richColors/>
                     {children}
                 </Suspense>
-            </AdminSideBar>
+            </AdminDashboard>
           </body>
         </html>
     </StoreProvider>

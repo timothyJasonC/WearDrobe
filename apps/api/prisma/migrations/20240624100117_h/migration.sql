@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `stockmutation` MODIFY `type` ENUM('TRANSFER', 'RESTOCK', 'REMOVE', 'TRANSACTION', 'INBOUND', 'DELETE') NOT NULL;

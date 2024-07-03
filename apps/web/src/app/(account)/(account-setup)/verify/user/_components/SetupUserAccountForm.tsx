@@ -1,5 +1,4 @@
 'use client'
-import { Button } from "@/components/ui/button"
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
@@ -24,7 +23,7 @@ export default function SetupUserAccountForm() {
     const router = useRouter();
 
     const setupAccountSchema = z.object({
-        username: z.string().trim().min(6, "username must at least contain 6 characters"),
+        username: z.string().trim().min(6, "username must at least contain 6 characters").max(20, "maximum 20 characters"),
         password: z.string().min(8, "password must at least contain 8 characters"),
         confirmPassword: z.string().min(8, "password must at least contain 8 characters"),
         dob: z.date({ required_error: "A date of birth is required." }),
@@ -190,7 +189,7 @@ export default function SetupUserAccountForm() {
                         }}
                     />
                     
-                    <LoadingButton loading={isLoading ? true: false} className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></LoadingButton>
+                    <LoadingButton loading={isLoading} className="px-10 flex gap-2" type="submit">Save & Verify Account<PiArrowRight /></LoadingButton>
                 </form>
             </Form>
         </div>

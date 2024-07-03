@@ -25,7 +25,7 @@ export default function AlertDialogResetPass({ confirmText, cancelText }: { conf
             } else if (res.status == 400) {
                 toast.error("Email is not registered", { description: 'please sign-up first' })
             } else if (res.status == 401) {
-                toast.warning("Password reset is unavailable for your account", { description: 'please login using Google or Facebook' })
+                toast.warning("Password reset is unavailable for your account", { description: 'since your account is linked to Google or Facebook.' })
             } 
         } catch (error) {
             toast.error('Server might be down')
@@ -35,7 +35,7 @@ export default function AlertDialogResetPass({ confirmText, cancelText }: { conf
     return (
         <>
             <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
-                <AlertDialogTrigger className="bg-black px-10 py-2 text-white rounded-lg hover:bg-black/80 font-light">Reset Password</AlertDialogTrigger>
+                <AlertDialogTrigger className="bg-black px-10 py-2 text-white rounded-md hover:bg-black/80 font-light">Reset Password</AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure you want to reset your password?</AlertDialogTitle>
@@ -45,7 +45,7 @@ export default function AlertDialogResetPass({ confirmText, cancelText }: { conf
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel >{ cancelText }</AlertDialogCancel>
-                        <LoadingButton loading={isLoading ? true: false} onClick={handleResetPasswordRequest} >{ confirmText }</LoadingButton>
+                        <LoadingButton loading={isLoading} onClick={handleResetPasswordRequest} >{ confirmText }</LoadingButton>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

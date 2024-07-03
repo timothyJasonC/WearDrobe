@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE `order` ADD COLUMN `addressID` VARCHAR(191) NULL;
-
--- AlterTable
-ALTER TABLE `stockmutation` MODIFY `type` ENUM('TRANSFER', 'INBOUND', 'RESTOCK', 'REMOVE', 'TRANSACTION', 'DELETE') NOT NULL;

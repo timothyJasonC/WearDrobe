@@ -78,7 +78,8 @@ export class OrderController {
             if (cart?.addressID !== null && cart) {
                 const address = await getAddressById(cart?.addressID!)
                 const warehouse = await getWarehouseById(cart?.warehouseId!)
-                const shippingCost = cart?.totalAmount - cart?.items.reduce((acc, item) => acc + item.quantity * item.price, 0)
+                const shippingCost = cart?.totalAmount - cart?.items.reduce((acc, item) => acc + item.price, 0)
+                
                 res.json({ cart, address, warehouse: { coordinate: warehouse?.coordinate! }, shippingCost })
             } else {
                 if (cart !== null) res.json(cart)
@@ -142,9 +143,9 @@ export class OrderController {
             }
 
             for (const mutation of itemsToMutate) {
-                const createMutationSender = await createMutation(mutation.fromWarehouse?.id!, mutation.toWarehouse!, 'TRANSFER')
+                const createMutationSender = await createMutation(mutation.fromWarehouse?.id!, mutation.toWarehouse!, 'TRANSFER', 'ACCEPTED')
                 await createMutationItem(createMutationSender, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
-                const createMutationInbound = await createMutation(mutation.toWarehouse!, mutation.fromWarehouse?.id!, 'INBOUND')
+                const createMutationInbound = await createMutation(mutation.toWarehouse!, mutation.fromWarehouse?.id!, 'INBOUND', 'ACCEPTED')
                 await createMutationItem(createMutationInbound, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
 
                 await reduceStockWarehouse(mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size, mutation.quantity)
@@ -179,7 +180,7 @@ export class OrderController {
                     const updateOrder = await successOrder(req.body.order_id)
                     const user = await getUserById(updateOrder?.userId!)
                     const warehouse = await getWarehouseById(updateOrder?.warehouseId!)
-                    const shippingCost = updateOrder?.totalAmount! - updateOrder?.items.reduce((acc, item) => acc + item.quantity * item.price, 0)!
+                    const shippingCost = updateOrder?.totalAmount! - updateOrder?.items.reduce((acc, item) => acc + item.price, 0)!
                     const address = await getAddressById(updateOrder?.addressID!)
 
                     const templatePath = path.join(__dirname, "../templates", "invoice.html")
@@ -233,6 +234,7 @@ export class OrderController {
             if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
 
             const warehouse = await getWarehouseByName(w)
+            console.log(query);
 
             if (userId) {
                 const orderList = await getOrderByUser(userId, query, page, limit)

@@ -83,7 +83,7 @@ async function updateSuccessStock(items: any, warehouseID: string) {
             where: { productVariantID: productVariantId, size, warehouseID },
             data: {
                 stock: {
-                    increment: -quantity * 0.5
+                    increment: -quantity
                 }
             }
         });
@@ -153,13 +153,29 @@ async function totalTransactionByAdmin(warehouseId: string | null, query: string
     const order = await prisma.order.count({
         where: warehouseId ? {
             AND: [
-                { warehouseId: warehouseId }
+                { warehouseId: warehouseId },
+                {
+                    NOT: {
+                        status: {
+                            in: ['CART', 'CANCELLED'],
+                        },
+                    },
+                },
             ],
             OR: [
                 { id: { contains: query } },
             ]
 
         } : {
+            AND: [
+                {
+                    NOT: {
+                        status: {
+                            in: ['CART', 'CANCELLED'],
+                        },
+                    },
+                },
+            ],
             OR: [
                 { id: { contains: query } },
             ]
@@ -175,7 +191,14 @@ export async function getOrderByUser(userId: string, query: string, page: string
         },
         where: {
             AND: [
-                { userId: userId }
+                { userId: userId },
+                {
+                    NOT: {
+                        status: {
+                            in: ['CART', 'CANCELLED'],
+                        },
+                    },
+                },
             ],
             OR: [
                 { id: { contains: query } },

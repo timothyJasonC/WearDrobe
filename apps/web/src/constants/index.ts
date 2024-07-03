@@ -80,6 +80,17 @@ export interface IColorVariant {
     type: string;
     category: string;
   }
+
+  export interface IProductDataSet {
+    name: string,
+    description: string,
+    price: number,
+    oneSize: Boolean,
+    colorVariant: IColorVariant[],
+    additionalURL: string[],
+    thumbnailURL: string,
+    categoryData: ICategory
+  }
   
   export interface IProduct {
     id: string;

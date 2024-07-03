@@ -17,7 +17,7 @@ export default function Banner() {
                 
             </div>
             <div className="z-[1] absolute bottom-10 flex flex-col items-center w-full gap-6 lg:gap-8">
-                <p className="text-yellow-400 font-semibold italic lg:text-3xl text-2xl h-5 flex items-center">Casual Men's Wear</p>
+                <p className="text-yellow-400 font-semibold italic lg:text-3xl text-2xl h-5 flex items-center">Casual Men&apos;s Wear</p>
                 <Button className="px-8 bg-white text-black hover:text-white font-light">Check Collection</Button>
             </div>
         </div>

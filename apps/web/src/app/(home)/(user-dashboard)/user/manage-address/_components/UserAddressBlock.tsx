@@ -45,7 +45,7 @@ export default function UserAddressBlock({ userId }: { userId: string }) {
                         <Skeleton className="h-[10rem] rounded-md" />
                     </div>
                 :
-                <p className="text-black/60">You don't have any address yet</p>
+                <p className="text-black/60">You don&apos;t have any address yet</p>
             }
         </div>
     )

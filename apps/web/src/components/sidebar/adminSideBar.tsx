@@ -6,7 +6,7 @@ import { PiListBold } from 'react-icons/pi';
 import { IAdmin } from '@/app/(dashboard)/admins/_components/ExpTable';
 import AdminDashboardContent from './AdminDashboardContent';
 
-export const AdminSideBar = ({ admin }: { admin: IAdmin }) => {
+export const AdminSideBar = ({ admin }: { admin: IAdmin | null }) => {
     const pathname = usePathname()
     const [activeButton, setActiveButton] = useState('overviews')
 
@@ -19,7 +19,7 @@ export const AdminSideBar = ({ admin }: { admin: IAdmin }) => {
     return (
         <>
         <div className='hidden p-6 lg:flex w-80 flex-col justify-between border-r-2'>
-            <AdminDashboardContent admin={admin} activeButton={activeButton} />
+            <AdminDashboardContent admin={admin && admin} activeButton={activeButton} />
         </div>
         <div className='lg:hidden'>
             <Sheet>
@@ -27,7 +27,7 @@ export const AdminSideBar = ({ admin }: { admin: IAdmin }) => {
                     <PiListBold size={`1.5rem`} />
                 </SheetTrigger>
                 <SheetContent className='lg:hidden flex flex-col justify-between rounded-tl-2xl rounded-bl-2xl' side={'right'}>
-                    <AdminDashboardContent admin={admin} activeButton={activeButton} />
+                    <AdminDashboardContent admin={admin && admin} activeButton={activeButton} />
                 </SheetContent>
             </Sheet>
         </div>

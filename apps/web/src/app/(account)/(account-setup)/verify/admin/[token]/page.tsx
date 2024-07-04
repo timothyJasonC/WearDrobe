@@ -17,7 +17,7 @@ export default function Page() {
     const [ verified, setVerified ] = useState(false);
     const [ activeToken, setActiveToken ] = useState<string>('')
     const [ decodedToken, setDecodedToken ] = useState<{ exp: number, iat: number, id: string, role: string } | undefined>()
-    const [ admin, setAdmin ] = useState<IAdmin>();
+    const [ admin, setAdmin ] = useState<IAdmin | null>();
 
     useEffect(() => {
         const token = params.token.toString();
@@ -90,7 +90,7 @@ export default function Page() {
                                 <Spinner size={`small`} />
                                 <h3 className="font-bold text-xl">Please wait..</h3>
                             </div>
-                            <span className="text-black/60">We're verifying your account</span>
+                            <span className="text-black/60">We&apos;re verifying your account</span>
                         </div>
                 :
                 <SetupAccountDialog className="absolute" title={"Welcome new candidates!"} form={<SetupAdminAccountForm />} optionalText="Please fill in the data below to verify your account." />

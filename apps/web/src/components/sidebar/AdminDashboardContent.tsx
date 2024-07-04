@@ -7,7 +7,7 @@ import { IAdmin } from "@/app/(dashboard)/admins/_components/ExpTable"
 import ActiveIndicator from "./ActiveIndicator"
 import { useRouter } from "next/navigation"
 
-export default function AdminDashboardContent({ admin, activeButton }: { admin: IAdmin, activeButton: string }) {
+export default function AdminDashboardContent({ admin, activeButton }: { admin: IAdmin | null, activeButton: string }) {
     const router = useRouter()
     return (
         <>
@@ -30,13 +30,13 @@ export default function AdminDashboardContent({ admin, activeButton }: { admin: 
                 </DropdownMenu>
                 <div>
                     <div className="flex items-center gap-2">
-                        <ActiveIndicator isActive={admin.accountActive} activeText={`Your account is verified`} nonActiveText={"Your account is not verified"} />
-                        <span className='text-base text-gray-500 truncate'>{ admin.role == 'warAdm' ? 'Warehouse Admin' : 'Super Admin' }</span>
+                        <ActiveIndicator isActive={admin && admin.accountActive ? true : false} activeText={`Your account is verified`} nonActiveText={"Your account is not verified"} />
+                        <span className='text-base text-gray-500 truncate'>{ admin && admin?.role == 'warAdm' ? 'Warehouse Admin' : 'Super Admin' }</span>
                     </div>
-                    <p className='text-xl truncate font-bold'>{ admin.fullName }</p>
+                    <p className='text-xl truncate font-bold'>{ admin && admin?.fullName }</p>
                 </div>
             </div>
-            <AdminMenu role={admin.role} activeButton={activeButton} />
+            <AdminMenu role={admin && admin.role} activeButton={activeButton} />
             <div className='flex gap-2 items-center'>
                 <PiHeadsetBold/>Help Center
             </div>

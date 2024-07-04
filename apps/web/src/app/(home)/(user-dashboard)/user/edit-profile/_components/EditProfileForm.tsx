@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button"
 export enum Gender { MALE = 'MALE', FEMALE = 'FEMALE' }
 
 export interface IUser {
-    id: string; accountActive: boolean;
+    id: string; accountActive: boolean | null;
     username?: string | null | undefined; email: string; password?: string | null | undefined;
     gender?: Gender | null | undefined; dob?: Date | null | undefined;
     createdAt: Date; imgUrl?: string | null | undefined;
@@ -33,7 +33,7 @@ type FormValues = {
     gender: string;
 };
 
-export default function EditProfileForm({ user } : { user: IUser }) {
+export default function EditProfileForm({ user } : { user: IUser | null }) {
     const [ isLoading, setIsLoading ] = useState(false)
     const [ isDisabled, setIsDisabled ] = useState(true)
     const [ openDialog, setOpenDialog ] = useState(false)
@@ -49,48 +49,50 @@ export default function EditProfileForm({ user } : { user: IUser }) {
     const userProfileForm = useForm<z.infer<typeof userProfileSchema>>({
         resolver: zodResolver(userProfileSchema),
         defaultValues: {
-            username: user.username ?? undefined, 
-            email: user.email ?? undefined, 
-            dob: user.dob ? new Date(user.dob) : undefined, 
-            gender: user.gender ?? undefined
+            username: user?.username ?? '', 
+            email: user?.email ?? '', 
+            dob: user?.dob ? new Date(user?.dob) : new Date(), 
+            gender: user?.gender ?? (Gender.FEMALE || Gender.MALE)
         }
     });
 
     async function handleUserProfile(values: z.infer<typeof userProfileSchema>) {
-        setIsLoading(true)
-        const currentData = { username: user.username, email: user.email, gender: user.gender, dob: user.dob }
-        const newData = { username: values.username, email: values.email, gender: values.gender, dob: values.dob instanceof Date ? values.dob.toISOString() : values.dob }
-        const keys: (keyof typeof currentData)[] = ["username", "email", "gender", "dob"]
-        type UserDataKeys = "username" | "email" | "dob" | "gender";
-        const changedData: Partial<Record<UserDataKeys, any>> = {};
-        keys.forEach(key => {
-            if (currentData[key] !== newData[key]) {
-                changedData[key] = newData[key];
-            }
-        });
-
-        try {
-            if ((changedData.dob || changedData.username) || (changedData.gender || changedData.email)) {
-                const res = await patchRequest(changedData, `/user/personal/${user.id}`)
-                if (res) setIsLoading(false)
-                const data = await res.json()
-                if (res.ok) {
-                    toast.success(data.message)
-                    if (changedData.email) {
-                        setTimeout(() => {
-                            toast("We've sent a verification email to your new email address", { description: "Please check your inbox to re-verify your account." })
-                        }, 2500);
+        if (user) {
+            setIsLoading(true)
+            const currentData = { username: user.username, email: user.email, gender: user.gender, dob: user.dob }
+            const newData = { username: values.username, email: values.email, gender: values.gender, dob: values.dob instanceof Date ? values.dob.toISOString() : values.dob }
+            const keys: (keyof typeof currentData)[] = ["username", "email", "gender", "dob"]
+            type UserDataKeys = "username" | "email" | "dob" | "gender";
+            const changedData: Partial<Record<UserDataKeys, any>> = {};
+            keys.forEach(key => {
+                if (currentData[key] !== newData[key]) {
+                    changedData[key] = newData[key];
+                }
+            });
+    
+            try {
+                if ((changedData.dob || changedData.username) || (changedData.gender || changedData.email)) {
+                    const res = await patchRequest(changedData, `/user/personal/${user.id}`)
+                    if (res) setIsLoading(false)
+                    const data = await res.json()
+                    if (res.ok) {
+                        toast.success(data.message)
+                        if (changedData.email) {
+                            setTimeout(() => {
+                                toast("We've sent a verification email to your new email address", { description: "Please check your inbox to re-verify your account." })
+                            }, 2500);
+                        }
+                    } else {
+                        toast.error(data.message)
                     }
                 } else {
-                    toast.error(data.message)
+                    setIsLoading(false)
+                    toast.warning("You haven't made any change")
                 }
-            } else {
+            } catch (error) {
                 setIsLoading(false)
-                toast.warning("You haven't made any change")
+                toast.warning("Something went wrong", { description: "server might be down" })
             }
-        } catch (error) {
-            setIsLoading(false)
-            toast.warning("Something went wrong", { description: "server might be down" })
         }
     }
 

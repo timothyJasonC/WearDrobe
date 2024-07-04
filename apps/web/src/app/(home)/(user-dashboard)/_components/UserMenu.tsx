@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { getUserClientSide } from "@/lib/utils";
 
-export default function UserMenu({ className, user }: { className?: string, user: IUser }) {
+export default function UserMenu({ className, user }: { className?: string, user: IUser | null }) {
     const pathname = usePathname()
     const [file, setFile] = useState<File | null>(null);
     const [ isLoading, setIsloading ] = useState(false)
@@ -51,44 +51,48 @@ export default function UserMenu({ className, user }: { className?: string, user
     ]
 
     async function handleChangePhoto() {
-        setIsloading(true)
-        try {
-            let imgUrl: string = ''
-            if (file) imgUrl = await uploadFile(file, 'profile')
-            const res = await patchRequest({ imgUrl: imgUrl }, `/user/${user.id}`)
-            const data = await res.json()
-            if (res) setIsloading(false)
-            if (res.ok) {
-                setFile(null)
-                toast.success('Photo profile has been updated')
-                const res = await (await getRequest(`/user/${user.id}`)).json()
-                const currentUser = res.data
-                setCurrentPhotoProfile(currentUser.imgUrl)
-            } else if (res.status == 404) {
-                toast.error('User not found!')
-            } else toast.error(data.message)
-        } catch (error) {
-            toast.error('Server error')
+        if (user) {
+            setIsloading(true)
+            try {
+                let imgUrl: string = ''
+                if (file) imgUrl = await uploadFile(file, 'profile')
+                const res = await patchRequest({ imgUrl: imgUrl }, `/user/${user.id}`)
+                const data = await res.json()
+                if (res) setIsloading(false)
+                if (res.ok) {
+                    setFile(null)
+                    toast.success('Photo profile has been updated')
+                    const res = await (await getRequest(`/user/${user.id}`)).json()
+                    const currentUser = res.data
+                    setCurrentPhotoProfile(currentUser.imgUrl)
+                } else if (res.status == 404) {
+                    toast.error('User not found!')
+                } else toast.error(data.message)
+            } catch (error) {
+                toast.error('Server error')
+            }
         }
     }
 
     async function handleRemovePhotoProfile(){
-        setIsloading(true)
-        const res = await (await deleteRequest(`/user/${user.id}`)).json()
-        try {
-            if (res) setIsloading(false)
-            if (res.status == 'ok') {
-                toast.success(res.message)
-                const response = await (await getRequest(`/user/${user.id}`)).json()
-                const currentUser = response.data
-                setCurrentPhotoProfile(currentUser.imgUrl)
-                setOpen(false)
-            } else {
+        if (user) {
+            setIsloading(true)
+            const res = await (await deleteRequest(`/user/${user.id}`)).json()
+            try {
+                if (res) setIsloading(false)
+                if (res.status == 'ok') {
+                    toast.success(res.message)
+                    const response = await (await getRequest(`/user/${user.id}`)).json()
+                    const currentUser = response.data
+                    setCurrentPhotoProfile(currentUser.imgUrl)
+                    setOpen(false)
+                } else {
+                    toast.error(res.message)
+                }
+            } catch (error) {
+                setIsloading(false)
                 toast.error(res.message)
             }
-        } catch (error) {
-            setIsloading(false)
-            toast.error(res.message)
         }
     }
 
@@ -121,7 +125,7 @@ export default function UserMenu({ className, user }: { className?: string, user
                 <div className='flex items-center flex-col gap-2 relative w-fit'>
                     <div onMouseEnter={showDeleteBtn} onMouseLeave={hideDeleteBtn} className='group w-40 h-40 rounded-full flex justify-center items-center relative overflow-hidden'>
                         {
-                            user && currentUser.imgUrl ? 
+                            user && currentUser?.imgUrl ? 
                                 file ? 
                                 <div className="">
                                     <Image priority className='object-cover object-top rounded-full h-[160px] w-[160px]' width={400} height={400} src={URL.createObjectURL(file)} alt={''} />
@@ -155,7 +159,7 @@ export default function UserMenu({ className, user }: { className?: string, user
                     }
                     
                     <div className="absolute -right-0 -bottom-0 w-auto cursor-pointer">
-                        { !user?.accountActive && <ToolTip className='' content={<span>Your account hasn&apos;t been verified!</span>} ><PiWarningCircle className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'1.2rem'} /> </ToolTip> }
+                        { user && !user?.accountActive && <ToolTip className='' content={<span>Your account hasn&apos;t been verified!</span>} ><PiWarningCircle className='fill-yellow-400 z-10 absolute bottom-14 right-8' size={'1.2rem'} /> </ToolTip> }
                     </div>
                     <div onMouseEnter={showDeleteBtn} onMouseLeave={hideDeleteBtn} id="trash-icon" className="absolute right-12 bottom-[12rem] w-auto cursor-pointer duration-200 opacity-0">
                             <AlertDialog open={open}>

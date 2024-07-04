@@ -8,20 +8,27 @@ import { StatisticsCard } from "../../_components/statisticsCard"
 
 export default async function Page() {
 
-    const warehouses = await (await getRequest('/warehouses')).json()
-    console.log(warehouses)
+    let warehouses = []
+    try {
+        const res =  await (await getRequest('/warehouses')).json()
+        warehouses = res.data;
+    } catch (error) {
+        return 
+    }
 
     return (
         <DashboardWrapper>
-            {/* <div className='flex flex-col w-full items-end mb-7'>
-                <DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} />
-            </div> */}
             <div className="mb-[6rem] flex justify-between">
                 <div className="w-72">
-                    <StatisticsCard  title='Total Warehouse(s)' number={warehouses.length}/>
+                    <StatisticsCard  title='Total Warehouse(s)' number={warehouses && warehouses?.length > 0 ? warehouses?.length : 0}/>
                 </div>
             </div>
-            <ExpTable accounts={warehouses} columns={columns} optionalComp={<DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} />} />
+            {
+                warehouses.length > 0 ?
+                    <ExpTable accounts={warehouses} columns={columns} optionalComp={<DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} />} />
+                    :
+                    <div>Warehouse not found</div>
+            }
         </DashboardWrapper>
     )
 };

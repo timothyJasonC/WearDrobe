@@ -72,12 +72,10 @@ export default async function Page({ params }: { params: { id: string } }) {
                 admin ?
                     <div className=" h-full flex flex-col gap-20">
 
-                        {/* profile */}
                         <div className="flex justify-between p-4 gradient rounded-lg border-2 relative">
 
                             <div className="flex flex-col lg:flex-row gap-10 items-start w-full">
 
-                                {/* photo */}
                                 <div className="lg:w-52 w-40 h-40 rounded-lg overflow-hidden flex items-center">
                                     
                                     {
@@ -98,21 +96,19 @@ export default async function Page({ params }: { params: { id: string } }) {
                                         <PiUserCircleThin className='w-full h-full bg-[#dadde2] fill-white' />
                                     }
                                 </div>
-
-                                {/* info */}
                                 <div className="flex flex-col gap-[2rem] w-full ">
                                     <div className="">
                                         <div className="text-black/60 flex items-center gap-2">
-                                            <ActiveIndicator isActive={admin.accountActive} activeText={"Admin is verified"} nonActiveText={"Admin is NOT verified"} />
+                                            <ActiveIndicator isActive={admin && admin.accountActive ? true : false} activeText={"Admin is verified"} nonActiveText={"Admin is NOT verified"} />
                                             Warehouse Admin
                                         </div>
                                         <div className="flex gap-1">
                                             <EditableInput 
                                                 hoverText="Full Name"
-                                                data={admin} defValue={admin.fullName} 
+                                                data={admin && admin} defValue={admin && admin.fullName ? admin.fullName : ''} 
                                                 inputType={"text"} handleFunc={handleFullName}                                        
                                             >
-                                                <h3 className="font-bold text-3xl cursor-pointer select-none">{admin.fullName}</h3>
+                                                <h3 className="font-bold text-3xl cursor-pointer select-none">{admin ? admin.fullName : ''}</h3>
                                             </EditableInput>
                                             {
                                                 admin.gender == 'MALE' ?
@@ -180,9 +176,6 @@ export default async function Page({ params }: { params: { id: string } }) {
                                 <DischargeBtn admin={admin} />
                             </div>
                         </div>
-
-                        {/* table */}
-                        {/* <div className="w-full h-72 border-2 border-red-300">Table</div> */}
 
                     </div>
                 :

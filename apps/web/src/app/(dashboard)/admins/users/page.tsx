@@ -1,7 +1,6 @@
 import { getRequest } from "@/lib/fetchRequests"
 import React from "react"
 import DashboardWrapper from "../_components/DashboardWrapper";
-import { TableUser } from "./_components/TableUser";
 import { Input } from "@/components/ui/input";
 import { ExpTable } from "../_components/ExpTable";
 import columns from "./_components/columns";
@@ -9,28 +8,26 @@ import { StatisticsCard } from "../../_components/statisticsCard";
 
 export default async function Page() {
     
-    const res = await (await getRequest('/user')).json()
-    const users = res.data;
-    console.log(users)  
-
+    let users = []
+    try {
+        const res =  await (await getRequest('/user')).json()
+        users = res.data;
+    } catch (error) {
+        return 
+    }
 
     return (
         <DashboardWrapper >
-            {/* <h3 className="font-bold text-3xl mb-7">Users</h3> */}
+            <h3 className="font-bold text-3xl mb-7">Users</h3>
             <div className="w-72 mb-7">
-                <StatisticsCard  title='Total User(s)' number={users.length}/>
+                <StatisticsCard  title='Total User(s)' number={users && users?.length ? users?.length : 0}/>
             </div>
-            {/* <Input
-                placeholder="Filter emails..."
-                value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-                onChange={(event) =>
-                    table.getColumn("email")?.setFilterValue(event.target.value)
-                }
-                className="max-w-sm"
-            /> */}
-            <ExpTable accounts={users} columns={columns} />
-            {/* <TableUser heads={heads} data={users} /> */}
-            
+            {
+                users.length > 0 ?
+                    <ExpTable accounts={users} columns={columns} />
+                    :
+                    <div>Users not found</div>
+            }
         </DashboardWrapper>
     )
 };

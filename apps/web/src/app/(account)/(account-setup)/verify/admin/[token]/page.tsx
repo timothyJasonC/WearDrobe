@@ -17,7 +17,7 @@ export default function Page() {
     const [ verified, setVerified ] = useState(false);
     const [ activeToken, setActiveToken ] = useState<string>('')
     const [ decodedToken, setDecodedToken ] = useState<{ exp: number, iat: number, id: string, role: string } | undefined>()
-    const [ admin, setAdmin ] = useState<IAdmin>();
+    const [ admin, setAdmin ] = useState<IAdmin | null>();
 
     useEffect(() => {
         const token = params.token.toString();

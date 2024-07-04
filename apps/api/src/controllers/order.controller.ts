@@ -7,7 +7,7 @@ import path from "path";
 import { transporter } from '@/helpers/nodemailer';
 import { findClosestWarehouse, getAddressById, getAddressCoordinates, getAllWarehouseAddress, getWarehouseById, getWarehouseByName } from "@/services/address/address.action";
 import { generateInvoicePdf } from "@/helpers/pdf";
-import { addStockWarehouse, createMutation, createMutationItem, reduceStockWarehouse } from "@/services/stock/stock.action";
+import { addStockWarehouse, createMutation, createMutationItem, createMutationTransfer, reduceStockWarehouse } from "@/services/stock/stock.action";
 
 export class OrderController {
 
@@ -147,6 +147,8 @@ export class OrderController {
                 await createMutationItem(createMutationSender, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
                 const createMutationInbound = await createMutation(mutation.toWarehouse!, mutation.fromWarehouse?.id!, 'INBOUND', 'ACCEPTED')
                 await createMutationItem(createMutationInbound, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
+                const createMutationTransaction = await createMutationTransfer(mutation.fromWarehouse?.id!, 'TRANSACTION', 'ACCEPTED')
+                await createMutationItem(createMutationTransaction, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
 
                 await reduceStockWarehouse(mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size, mutation.quantity)
                 await addStockWarehouse(mutation.toWarehouse, mutation.productVariantId, mutation.size, mutation.quantity)

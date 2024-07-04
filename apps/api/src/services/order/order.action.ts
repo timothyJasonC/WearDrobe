@@ -135,8 +135,10 @@ async function getAllOrder(warehouseId: string | null, query: string, page: stri
             OR: [
                 { id: { contains: query } },
             ]
-
         } : {
+            AND: [
+                { warehouseId: warehouse }
+            ],
             OR: [
                 { id: { contains: query } },
                 { warehouseId: warehouse }
@@ -161,6 +163,7 @@ async function totalTransactionByAdmin(warehouseId: string | null, query: string
                         },
                     },
                 },
+
             ],
             OR: [
                 { id: { contains: query } },
@@ -171,7 +174,7 @@ async function totalTransactionByAdmin(warehouseId: string | null, query: string
                 {
                     NOT: {
                         status: {
-                            in: ['CART', 'CANCELLED'],
+                            in: ['CART'],
                         },
                     },
                 },
@@ -195,7 +198,7 @@ export async function getOrderByUser(userId: string, query: string, page: string
                 {
                     NOT: {
                         status: {
-                            in: ['CART', 'CANCELLED'],
+                            in: ['CART'],
                         },
                     },
                 },

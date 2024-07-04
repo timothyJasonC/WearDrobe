@@ -26,7 +26,18 @@ export async function createMutation(warehouseID: string, associatedWarehouseID:
             associatedWarehouseID,
             type: type as MutationTypes,
             status: status as MutationStatus,
-            createdAt: new Date(),
+        }
+    });
+    return stockMutation.id!
+}
+
+export async function createMutationTransfer(warehouseID: string, type: string, status: string) {
+    const stockMutation = await prisma.stockMutation.create({
+        data: {
+            id: uuidv4(),
+            warehouseID,
+            type: type as MutationTypes,
+            status: status as MutationStatus,
         }
     });
     return stockMutation.id!

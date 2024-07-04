@@ -18,12 +18,11 @@ export default async function Page() {
 
     return (
         <DashboardWrapper >
-            <h3 className="font-bold text-3xl mb-7">Users</h3>
             <div className="w-72 mb-7">
                 <StatisticsCard  title='Total User(s)' number={users && users?.length ? users?.length : 0}/>
             </div>
             {
-                users.length > 0 ?
+                users?.length > 0 ?
                     <ExpTable accounts={users} columns={columns} />
                     :
                     <div>Users not found</div>

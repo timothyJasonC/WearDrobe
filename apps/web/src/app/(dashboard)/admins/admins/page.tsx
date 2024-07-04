@@ -10,7 +10,7 @@ export default async function Page() {
 
     let admins = []
     try {
-        const res =  await (await getRequest('/admin')).json()
+        const res =  await (await getRequest('/admin/')).json()
         admins = res.data;
     } catch (error) {
         return 
@@ -24,7 +24,7 @@ export default async function Page() {
                 </div>
             </div>
             {
-                admins.length > 0 ?
+                admins?.length > 0 ?
                     <ExpTable accounts={admins} columns={columns} optionalComp={<DialogCreateAdmin />} />
                     :
                     <div>Admins not found</div>

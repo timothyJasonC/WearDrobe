@@ -37,7 +37,8 @@ export async function getRequest(segment: string) {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-        }
+        },
+        cache: 'no-cache'
     })
     return res;
 }

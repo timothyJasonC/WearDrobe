@@ -27,8 +27,8 @@ export default function UserAddressBlock({ userId }: { userId: string }) {
 
     return (
         <div className="flex flex-col gap-4 lg:max-h-[30rem] max-h-96 overflow-y-scroll">
-            {   currentUserAddressList.length > 0 ?
-                    !isLoading ?
+            {   !isLoading ?
+                    currentUserAddressList.length > 0 ?
                     currentUserAddressList.map((address: CustomAddressList) => {
                         return <div key={address.id}>
                             <AddressCard 
@@ -39,13 +39,14 @@ export default function UserAddressBlock({ userId }: { userId: string }) {
                         </div>
                     })
                     :
-                    <div className="flex flex-col space-y-3">
-                        <Skeleton className="h-[10rem] rounded-md" />
-                        <Skeleton className="h-[10rem] rounded-md" />
-                        <Skeleton className="h-[10rem] rounded-md" />
-                    </div>
+                    <p className="text-black/60">You don&apos;t have any address yet</p>    
                 :
-                <p className="text-black/60">You don&apos;t have any address yet</p>
+                <div className="flex flex-col space-y-3">
+                    <Skeleton className="h-[10rem] rounded-md" />
+                    <Skeleton className="h-[10rem] rounded-md" />
+                    <Skeleton className="h-[10rem] rounded-md" />
+                </div>
+                
             }
         </div>
     )

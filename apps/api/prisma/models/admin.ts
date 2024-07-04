@@ -1,12 +1,18 @@
-import { Gender } from '@prisma/client';
 import { hash } from 'bcrypt';
-import { Role } from 'prisma/types';
-import { v4 as uuid } from 'uuid';
+
+enum Gender {
+    MALE = 'MALE',
+    FEMALE = 'FEMALE',
+}
+  
+enum Role {
+    warAdm = 'warAdm',
+    superAdm = 'superAdm',
+}
 
 export async function listAdmin() {
     return [
         {
-            id: uuid(),
             role: Role.superAdm,
             accountActive: true,
             fullName: 'Jane Admin',
@@ -17,7 +23,6 @@ export async function listAdmin() {
             createdAt: new Date(),
         },
         {
-            id: uuid(),
             role: Role.warAdm,
             accountActive: true,
             fullName: 'John Smith',

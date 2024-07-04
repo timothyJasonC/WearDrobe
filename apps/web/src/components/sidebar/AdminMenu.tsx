@@ -3,7 +3,7 @@ import Link from "next/link"
 import { PiArrowsLeftRight, PiBriefcase, PiLego, PiNewspaper, PiTShirt, PiUsers, PiWarehouse } from "react-icons/pi"
 import { Separator } from "../ui/separator"
 
-export default function AdminMenu({ role, activeButton }: { role: string, activeButton: string }) {
+export default function AdminMenu({ role, activeButton }: { role: string | null, activeButton: string }) {
 
     return (
         <ul className='flex flex-col gap-10'>

@@ -10,7 +10,7 @@ import { deleteRequest } from "@/lib/fetchRequests"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
-export default function DischargeBtn({ admin }: { admin: IAdmin }) {
+export default function DischargeBtn({ admin }: { admin: IAdmin | null }) {
 
     const [ dialogOpen, setDialogOpen ] = useState(false)
     const [ dropdownOpen, setDropdownOpen ] = useState(false)
@@ -20,7 +20,7 @@ export default function DischargeBtn({ admin }: { admin: IAdmin }) {
     async function handleDischarge() {
         setIsloading(true)
         try {
-            const res = await deleteRequest(`/admin/${admin.id}`)
+            const res = await deleteRequest(`/admin/${admin ? admin?.id : ''}`)
             const data = await res.json();
             if (res.ok) {
                 toast.success(data.message)
@@ -53,17 +53,17 @@ export default function DischargeBtn({ admin }: { admin: IAdmin }) {
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        Are you sure you want to discharge { admin.fullName }
+                        Are you sure you want to discharge { admin ? admin?.fullName : '' }
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete { admin.fullName }'s account
+                        This action cannot be undone. This will permanently delete { admin ? admin?.fullName : '' }&apos;s account
                         and remove the data from the database.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <LoadingButton loading={ isLoading? true: false } onClick={handleDischarge}>
-                    Yes, discharge { admin.fullName }
+                    Yes, discharge { admin ? admin?.fullName : '' }
                     </LoadingButton >
                 </AlertDialogFooter>
             </AlertDialogContent>

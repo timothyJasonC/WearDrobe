@@ -38,6 +38,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Gender, IUser } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm"
+import { Warehouse } from "@/constants"
 
 export enum Role {
     WarAdm = "warAdm",
@@ -47,7 +48,7 @@ export enum Role {
 export interface IAdmin {
     id: string;
     role: Role;
-    accountActive: boolean;
+    accountActive: boolean | null;
     fullName?: string;
     email: string;
     password?: string;
@@ -56,8 +57,8 @@ export interface IAdmin {
     createdAt: Date;
 }
 
-export function ExpTable({ accounts, columns, optionalComp }: { accounts: IUser[] | IAdmin[], columns: any, optionalComp?:any }) {
-    const data: IUser[] = accounts
+export function ExpTable({ accounts, columns, optionalComp }: { accounts: IUser[] | IAdmin[] , columns: any, optionalComp?:any }) {
+    const data = accounts
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})

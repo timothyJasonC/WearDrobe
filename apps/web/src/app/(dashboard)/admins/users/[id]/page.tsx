@@ -8,13 +8,13 @@ import ActiveIndicator from "@/components/sidebar/ActiveIndicator"
 
 export default async function Page({ params }: { params: { id: string } }) {
 
-    const res = await (await getRequest(`/user/${params.id}`)).json()
-    const user = res.data
-    console.log(user)
+    // const res = await (await getRequest(`/user/${params.id}`)).json()
+    // const user = res.data
 
     return (
         <DashboardWrapper>
-            <Link href={`/admins/users`} className="mb-8 flex gap-2 items-center text-black/60 hover:text-black duration-200 w-fit">
+            user slug
+            {/* <Link href={`/admins/users`} className="mb-8 flex gap-2 items-center text-black/60 hover:text-black duration-200 w-fit">
                 <PiArrowLeft className="cursor-pointer hover:fill-black" size={`1.2rem`} />
                 Back to user page
             </Link>
@@ -68,10 +68,9 @@ export default async function Page({ params }: { params: { id: string } }) {
                     </div>
                 </div>
 
-                {/* table */}
                 <div className="w-full h-72 border-2 border-red-300">Table</div>
 
-            </div>
+            </div> */}
         </DashboardWrapper>
     )
 };

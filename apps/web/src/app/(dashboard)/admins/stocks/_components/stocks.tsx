@@ -93,7 +93,7 @@ export const Stocks = () => {
         <div className='flex items-center flex-wrap gap-y-10 justify-between'>
           <div className='flex gap-2 max-sm:justify-center flex-1 w-full'>
 
-            <div className={`${productList ? "" : 'hidden'}`}>
+            <div className={`${productList.length > 0 ? "" : 'hidden'}`}>
               <StockDialog 
                 selectedWH={selectedWH} 
                 setSelectedWH={setSelectedWH} 
@@ -103,7 +103,7 @@ export const Stocks = () => {
               />
             </div>
 
-            <Link href={'/admins/stocks/mutations'} className={isSuper ? 'hidden' : ''}>
+            <Link href={'/admins/stocks/mutations'} className={productList.length > 0 ? isSuper? 'hidden' : '' : 'hidden'}>
               <Button variant={'outline'} className='flex items-center gap-1 max-sm:text-xs'><p>Manage Mutation</p><PiArrowSquareOut className="text-xl"/> </Button>
             </Link>
 

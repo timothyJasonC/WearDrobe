@@ -92,20 +92,23 @@ interface IProdTable {
                 }
               </TableCell>
               
-              <TableCell className="text-center text-xs flex flex-wrap gap-1 justify-center">{
-                product.variants.map(item => {
-                  const brightColor = ["D", 'E', 'F']
-                  const textColor = brightColor.includes(item.HEX.slice(1,2).toUpperCase())
-                  const borderColor = (item.HEX.slice(3, 4).toUpperCase() === 'F')
-                  return (
-                    <div 
-                      key={item.id} style={{ background: `${item.HEX}` }} 
-                      className={`flex px-2 ${borderColor? "border-[1px] border-black rounded-full": 'rounded-full'}`} >
-                      <p className={textColor ? "text-black" : 'text-white'}>{item.color}</p>
-                    </div>
-                  )
-                })
-                }
+              <TableCell className="">
+                <div className=" flex flex-wrap gap-1 text-center text-xs justify-center items-center">  
+                  {
+                  product.variants.map(item => {
+                    const brightColor = ["D", 'E', 'F']
+                    const textColor = brightColor.includes(item.HEX.slice(1,2).toUpperCase())
+                    const borderColor = (item.HEX.slice(3, 4).toUpperCase() === 'F')
+                    return (
+                      <div 
+                        key={item.id} style={{ background: `${item.HEX}` }} 
+                        className={`flex px-2 ${borderColor? "border-[1px] border-black rounded-full": 'rounded-full'}`} >
+                        <p className={textColor ? "text-black" : 'text-white'}>{item.color}</p>
+                      </div>
+                    )
+                  })
+                  }
+                </div>
               </TableCell>
               <TableCell className="text-center">{product.oneSize ? "One Size" : "S M L XL"}</TableCell>
               <TableCell className="text-center">{product.totalStock}</TableCell>
@@ -130,7 +133,7 @@ interface IProdTable {
           )})
         : 
         <TableRow>
-            <TableCell className="font-medium text-center" colSpan={11} >Data will appear here.</TableCell>
+            <TableCell className="text-center" colSpan={13} >No results.</TableCell>
         </TableRow>
         }
         </TableBody>

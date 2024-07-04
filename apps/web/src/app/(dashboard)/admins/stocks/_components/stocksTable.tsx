@@ -73,7 +73,7 @@ interface IStockTable {
             })
             :
             <TableRow>
-              <TableCell className="font-medium text-center" colSpan={8} >Data will appear here.</TableCell>
+              <TableCell className="text-center" colSpan={11} >No results.</TableCell>
             </TableRow>
           } 
           </TableBody>

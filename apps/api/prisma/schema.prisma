@@ -192,6 +192,7 @@ model ProductVariant {
     productID        String
     color            String
     HEX              String
+    isDeleted        Boolean            @default(false)
     image            String             @unique
     product          Product            @relation(fields: [productID], references: [id])
     warehouseProduct WarehouseProduct[]
@@ -199,7 +200,7 @@ model ProductVariant {
 }
 
 model StockMutation {
-    id                    String             @id @default(uuid())
+    id                    String              @id @default(uuid())
     warehouseID           String
     associatedWarehouseID String?
     type                  MutationTypes

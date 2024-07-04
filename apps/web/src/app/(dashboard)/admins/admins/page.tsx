@@ -1,10 +1,10 @@
 import React from "react"
 import { DialogCreateAdmin } from "./_components/DialogCreateAdmin"
 import DashboardWrapper from "../_components/DashboardWrapper"
-import { StatisticsCard } from "@/components/admDashboard/statisticsCard"
 import { getRequest } from "@/lib/fetchRequests"
 import columns from "./_components/columns"
 import { ExpTable } from "../_components/ExpTable"
+import { StatisticsCard } from "../../_components/statisticsCard"
 
 export default async function Page() {
 

@@ -7,6 +7,7 @@ import { formatDateTime, formatToIDR, getAdminClientSide, getUserClientSide } fr
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import NotFound from "@/components/notFound";
 
 type OrderDetailProps = {
     params: {
@@ -20,19 +21,22 @@ export default function Page({ params: { id } }: OrderDetailProps) {
     const [warehouseLoc, setWarehouseLoc] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [shipingCost, setShippingCost] = useState<number>(0)
+    const [notFound, setNotFound] = useState(false)
     const router = useRouter()
     const shipping = order?.shippingMethod?.split(',')
 
     const validateUser = useCallback(async () => {
         const order = await getOrderById(id)
+        if (order.message) { setIsLoading(false); setNotFound(true) }
         const user = await getUserClientSide()
         const admin = await getAdminClientSide()
         if (!user && !admin) router.push('/auth')
-        if (user && user.id !== order.cart.userId && !admin) router.push('/auth')
+        if (user && user.id !== order.cart?.userId && !admin) setNotFound(true)
     }, [id, router])
 
     const getOrder = useCallback(async () => {
         const order = await getOrderById(id)
+        if (order.message) { setIsLoading(false); setNotFound(true) }
         setOrder(order.cart)
         setAddress(order.address.coordinate)
         setWarehouseLoc(order.warehouse.coordinate)
@@ -44,11 +48,14 @@ export default function Page({ params: { id } }: OrderDetailProps) {
         validateUser()
         getOrder()
     }, [validateUser, getOrder])
-    
+
     if (isLoading) {
         return <Loading />
     }
 
+    if (notFound) {
+        return <NotFound />
+    }
     return (
         <section className="bg-gray-200 min-h-screen py-10 md:px-0 px-2">
             <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6">

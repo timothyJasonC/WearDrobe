@@ -101,6 +101,24 @@ export class UserController {
         }
     }
 
+    async getUsers(req: Request, res: Response) {
+        try {
+            const users = await prisma.user.findMany({
+                select: {
+                    id: true,
+                    username: true,
+                    email: true,
+                    accountActive: true,
+                    gender: true,
+                    dob: true
+                }
+            })
+            serverResponse(res, 200, 'ok', 'user found!', users)
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
     async getUserById(req: Request, res: Response) {
         try {
             const user = await prisma.user.findFirst({ where: { id: req.params.id } })
@@ -117,6 +135,19 @@ export class UserController {
                 await prisma.user.update({ where: { id: user.id }, data: { imgUrl: req.body.imgUrl  } })
             } else return serverResponse(res, 404, 'error', 'user not found!')
             serverResponse(res, 200, 'ok', 'photo profile has been updated')
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async removePhoto(req: Request, res: Response) {
+        try { 
+            const user = await prisma.user.findFirst({ where : { id: req.params.id }})
+            if (user) {
+                if (user.imgUrl == null) return serverResponse(res, 400, 'error', 'You have no photo profile')
+                await prisma.user.update({ where: { id: user.id }, data: { imgUrl: null  } })
+            } else return serverResponse(res, 404, 'error', 'user not found!')
+            serverResponse(res, 200, 'ok', 'Photo profile has deleted!')
         } catch (error: any) {
             serverResponse(res, 400, 'error', error)
         }
@@ -170,4 +201,5 @@ export class UserController {
             serverResponse(res, 400, 'error', error)
         }
     }
+
 }

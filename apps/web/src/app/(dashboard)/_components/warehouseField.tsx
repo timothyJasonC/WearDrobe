@@ -8,7 +8,7 @@ import {
   } from "@/components/ui/form"
 
 import { WarehouseDialog } from './WarehouseDialog'
-import { WarehouseTable } from './manageProductModal/warehouseTable'
+import { WarehouseTable } from '../admins/products/_components/manageProductModal/warehouseTable'
 
 export const WarehouseField = ({form, color, isOneSize, setWarehouse, assignWarehouse, warehouse, warehouseList, setAssignWarehouse}:{form:any, isOneSize:Boolean, color:any, assignWarehouse:any, warehouse:any, setWarehouse:any, warehouseList:any, setAssignWarehouse:any}) => {
   return (

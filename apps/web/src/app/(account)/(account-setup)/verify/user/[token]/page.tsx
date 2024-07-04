@@ -6,9 +6,8 @@ import { getUserServerSide, isTokenExp } from "@/lib/utils";
 import { PiCheckBold, PiCheckCircleBold } from "react-icons/pi";
 import { getRequest, getRequestToken, postRequestToken, refreshToken } from "@/lib/fetchRequests";
 import { Spinner } from "@/components/ui/spinner";
-import { useParams, usePathname } from "next/navigation";
-import { JwtPayload, jwtDecode } from "jwt-decode";
-import { CustomJwtPayload } from "@/middleware";
+import { useParams } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 import { IUser } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm";
 import { toast } from "sonner";
 
@@ -18,7 +17,7 @@ export default function Page() {
     const [ verified, setVerified ] = useState(false);
     const [ decodedToken, setDecodedToken ] = useState<{ exp: number, iat: number, id: string, role: string } | undefined>()
     const [ activeToken, setActiveToken ] = useState<string>('')
-    const [ user, setUser ] = useState<IUser>();
+    const [ user, setUser ] = useState<IUser | null>();
 
     useEffect(() => {
         const token = params.token.toString();
@@ -90,7 +89,7 @@ export default function Page() {
                                 <Spinner size={`small`} />
                                 <h3 className="font-bold text-xl">Please wait..</h3>
                             </div>
-                            <span className="text-black/60">We're verifying your account</span>
+                            <span className="text-black/60">We&apos;re verifying your account</span>
                         </div>
                 :
                 <SetupAccountDialog className="absolute" title={"Just a few more steps.."} form={<SetupUserAccountForm />}  />

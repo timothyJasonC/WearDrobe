@@ -3,11 +3,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient()
 
-export async function createAddress(city: any, address: string, userId: string) {
+export async function createAddress(city: any, address: string, userId: string,labelAddress: string) {
     const newAddress = await prisma.addressList.create({
         data: {
             id: uuidv4(),
             address: address,
+            labelAddress: labelAddress,
             city_id: city.city_id,
             province_id: city.province_id,
             province: city.province,
@@ -20,6 +21,24 @@ export async function createAddress(city: any, address: string, userId: string) 
         }
     })
     return newAddress
+}
+
+export async function editAddress(id: string, city: any, address: string, labelAddress: string) {
+    const updatedAddress = await prisma.addressList.update({
+        where: { id: id },
+        data: {
+            address: address,
+            labelAddress: labelAddress,
+            city_id: city.city_id,
+            province_id: city.province_id,
+            province: city.province,
+            type: city.type,
+            city_name: city.city_name,
+            postal_code: city.postal_code,
+            coordinate: `${address}, ${city.type} ${city.city_name}, ${city.province}, Indonesia`,
+        }
+    })
+    return updatedAddress
 }
 
 export async function getAddressById(id: string) {
@@ -38,7 +57,12 @@ export async function getUserAddressList(userId: string) {
         select: {
             id: true,
             coordinate: true,
-            mainAddress: true
+            mainAddress: true,
+            labelAddress: true,
+            province: true,
+            type: true,
+            city_name: true,
+            postal_code: true,
         }
     })
     return addressList
@@ -132,6 +156,8 @@ export async function findClosestWarehouse(userLocation: { lat: string; lon: str
         distance: item.distance
     }));
 }
+
+
 
 export async function getWarehouseByName(warehouseName: string) {
     const warehouse = await prisma.warehouse.findFirst({

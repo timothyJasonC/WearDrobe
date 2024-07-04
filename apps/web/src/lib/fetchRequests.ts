@@ -36,6 +36,16 @@ export async function getRequest(segment: string) {
     const res = await fetch(`http://localhost:8000/api${segment}`, {
         method: 'GET',
         headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    return res;
+}
+
+export async function deleteRequest(segment: string) {
+    const res = await fetch(`http://localhost:8000/api${segment}`, {
+        method: 'DELETE',
+        headers: {
             'Content-Type': 'application/json'
         }
     })

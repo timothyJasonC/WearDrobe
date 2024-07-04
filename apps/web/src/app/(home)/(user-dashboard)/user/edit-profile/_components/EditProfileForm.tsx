@@ -6,30 +6,42 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { DatePicker } from "@/app/(account)/(account-setup)/verify/_components/DatePicker"
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
-import { PiFloppyDiskBold } from "react-icons/pi"
-import { SelectGroup, SelectLabel } from "@/components/ui/select"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { PiFloppyDiskBold, PiX } from "react-icons/pi"
+import { SelectGroup } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { toast } from "sonner"
 import { patchRequest } from "@/lib/fetchRequests"
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import EditedData from "./EditedData"
+import { parseDate } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 export enum Gender { MALE = 'MALE', FEMALE = 'FEMALE' }
 
 export interface IUser {
-    id: string; accountActive: boolean;
+    id: string; accountActive: boolean | null;
     username?: string | null | undefined; email: string; password?: string | null | undefined;
     gender?: Gender | null | undefined; dob?: Date | null | undefined;
     createdAt: Date; imgUrl?: string | null | undefined;
 }
 
-export default function EditProfileForm({ user } : { user: IUser }) {
+type FormValues = {
+    username: string;
+    email: string;
+    dob: string;
+    gender: string;
+};
+
+export default function EditProfileForm({ user } : { user: IUser | null }) {
     const [ isLoading, setIsLoading ] = useState(false)
     const [ isDisabled, setIsDisabled ] = useState(true)
+    const [ openDialog, setOpenDialog ] = useState(false)
+    const [changedDataState, setChangedDataState] = useState<string[]>([]); 
 
     const userProfileSchema = z.object({
-        username: z.string().trim().min(6, "username must at least contain 6 characters"),
-        email: z.string().trim(),
+        username: z.string().trim().min(6, "username must at least contain 6 characters").max(20, "maximum 20 characters"),
+        email: z.string().email(),
         dob: z.date({ required_error: "A date of birth is required." }).optional(),
         gender: z.enum([Gender.MALE, Gender.FEMALE], {required_error: "Gender is required"}).optional(),
     });
@@ -37,49 +49,50 @@ export default function EditProfileForm({ user } : { user: IUser }) {
     const userProfileForm = useForm<z.infer<typeof userProfileSchema>>({
         resolver: zodResolver(userProfileSchema),
         defaultValues: {
-            username: user.username ?? undefined, 
-            email: user.email ?? undefined, 
-            dob: user.dob ? new Date(user.dob) : undefined, 
-            gender: user.gender ?? undefined
+            username: user?.username ?? '', 
+            email: user?.email ?? '', 
+            dob: user?.dob ? new Date(user?.dob) : new Date(), 
+            gender: user?.gender ?? (Gender.FEMALE || Gender.MALE)
         }
     });
 
     async function handleUserProfile(values: z.infer<typeof userProfileSchema>) {
-        setIsLoading(true)
-        
-        const currentData = { username: user.username, email: user.email, gender: user.gender, dob: user.dob }
-        const newData = { username: values.username, email: values.email, gender: values.gender, dob: values.dob instanceof Date ? values.dob.toISOString() : values.dob }
-        const keys: (keyof typeof currentData)[] = ["username", "email", "gender", "dob"]
-        type UserDataKeys = "username" | "email" | "dob" | "gender";
-        const changedData: Partial<Record<UserDataKeys, any>> = {};
-        keys.forEach(key => {
-            if (currentData[key] !== newData[key]) {
-                changedData[key] = newData[key];
-            }
-        });
-
-        try {
-            if ((changedData.dob || changedData.username) || (changedData.gender || changedData.email)) {
-                const res = await patchRequest(changedData, `/user/personal/${user.id}`)
-                if (res) setIsLoading(false)
-                const data = await res.json()
-                if (res.ok) {
-                    toast.success(data.message)
-                    if (changedData.email) {
-                        setTimeout(() => {
-                            toast("We've sent a verification email to your new email address", { description: "Please check your inbox to re-verify your account." })
-                        }, 2500);
+        if (user) {
+            setIsLoading(true)
+            const currentData = { username: user.username, email: user.email, gender: user.gender, dob: user.dob }
+            const newData = { username: values.username, email: values.email, gender: values.gender, dob: values.dob instanceof Date ? values.dob.toISOString() : values.dob }
+            const keys: (keyof typeof currentData)[] = ["username", "email", "gender", "dob"]
+            type UserDataKeys = "username" | "email" | "dob" | "gender";
+            const changedData: Partial<Record<UserDataKeys, any>> = {};
+            keys.forEach(key => {
+                if (currentData[key] !== newData[key]) {
+                    changedData[key] = newData[key];
+                }
+            });
+    
+            try {
+                if ((changedData.dob || changedData.username) || (changedData.gender || changedData.email)) {
+                    const res = await patchRequest(changedData, `/user/personal/${user.id}`)
+                    if (res) setIsLoading(false)
+                    const data = await res.json()
+                    if (res.ok) {
+                        toast.success(data.message)
+                        if (changedData.email) {
+                            setTimeout(() => {
+                                toast("We've sent a verification email to your new email address", { description: "Please check your inbox to re-verify your account." })
+                            }, 2500);
+                        }
+                    } else {
+                        toast.error(data.message)
                     }
                 } else {
-                    toast.error(data.message)
+                    setIsLoading(false)
+                    toast.warning("You haven't made any change")
                 }
-            } else {
+            } catch (error) {
                 setIsLoading(false)
-                toast.warning("You haven't made any change")
+                toast.warning("Something went wrong", { description: "server might be down" })
             }
-        } catch (error) {
-            setIsLoading(false)
-            toast.warning("Something went wrong", { description: "server might be down" })
         }
     }
 
@@ -111,7 +124,7 @@ export default function EditProfileForm({ user } : { user: IUser }) {
                                 )
                             }}
                         />
-                        <FormField disabled={user && !user.password ? true : false}
+                        <FormField
                             control={userProfileForm.control}
                             name="email"
                             render={({ field }) => {
@@ -125,6 +138,7 @@ export default function EditProfileForm({ user } : { user: IUser }) {
                                                     style={{marginTop: '0'}}
                                                     placeholder="@example: brucewayne@gmail.com"
                                                     type="email"
+                                                    disabled={user && !user.password ? true : false}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -179,23 +193,35 @@ export default function EditProfileForm({ user } : { user: IUser }) {
                     </div>
 
                     <span className="text-black/60 text-xs">*Changing your email will be required you to re-verify your account</span>
+                    <LoadingButton type="submit" loading={isLoading} className="px-10 flex items-center gap-2 w-fit max-sm:w-full">Save Change<PiFloppyDiskBold size={`1rem`}/></LoadingButton>
                     
-                    <div className="flex sm:justify-end justify-center">
-                        <LoadingButton loading={isLoading ? true: false} className="px-10 flex items-center gap-2 w-fit" type="submit">Save Change<PiFloppyDiskBold size={`1rem`}/></LoadingButton>
-                        {/* <AlertDialog>
-                            <AlertDialogTrigger disabled={isDisabled ? true: false} className={`${ isDisabled ? 'cursor-not-allowed' : 'cursor-default' } bg-black px-10 py-2 text-white rounded-lg hover:bg-black/80 font-medium flex items-center gap-2`}>Save Change<PiFloppyDiskBold size={`1rem`}/>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you sure you want to update your personal information?</AlertDialogTitle>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <LoadingButton loading={isLoading ? true: false} className="px-10 flex items-center gap-2 w-fit" type="submit">Save Change</LoadingButton>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog> */}
-                    </div>
+                    {/* <AlertDialog open={openDialog}>
+                        <AlertDialogTrigger asChild onClick={() => { user.username != userProfileForm.getValues('username') || user.email != userProfileForm.getValues('email') || user.gender != userProfileForm.getValues('gender') || user.dob != userProfileForm.getValues('dob')?.toISOString() ? setOpenDialog(true) : toast.warning("You haven't made any change") } }>
+                            <div className="flex justify-end w-full">
+                                <LoadingButton type="submit" loading={isLoading} className="px-10 flex items-center gap-2 w-fit max-sm:w-full">Proceed<PiFloppyDiskBold size={`1rem`}/></LoadingButton>
+                                <Button type="button" className="px-10 flex items-center gap-2 w-fit">Save Change</Button>
+                            </div>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="lg:max-w-[50rem]">
+                            <AlertDialogTitle>
+                                <div className="flex items-start">
+                                    Are you sure you want to update your profile information?
+                                    <PiX className="sm:hidden" onClick={() => setOpenDialog(false)}/>
+                                </div>
+                            </AlertDialogTitle>
+                            <p className="text-black/60">You're about to change</p>
+                            <div className="flex flex-col gap-2">
+                                <EditedData labelText="Username" data={user.username} newData={userProfileForm.getValues('username')}/>
+                                <EditedData labelText="Email" data={user.email} newData={userProfileForm.getValues('email')}/>
+                                <EditedData labelText="Gender" data={user.gender} newData={userProfileForm.getValues('gender')}/>
+                                <EditedData labelText="Date of Birth" data={parseDate(user.dob)} newData={parseDate(userProfileForm.getValues('dob'))}/>
+                            </div>
+                            <AlertDialogFooter className="flex flex-col">
+                                <AlertDialogCancel className="max-sm:hidden" onClick={() => setOpenDialog(false)}>Cancel</AlertDialogCancel>
+                                <LoadingButton type="submit" loading={isLoading} className="px-10 flex items-center gap-2 w-fit max-sm:w-full">Proceed<PiFloppyDiskBold size={`1rem`}/></LoadingButton>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog> */}
                 </form>
             </Form>
         </div>

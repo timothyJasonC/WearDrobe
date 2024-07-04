@@ -29,7 +29,7 @@ export const ProductMenu = ({product, setIndex, index, sizeSum}:ICarousel) => {
     
     useEffect(() => {
         const getData = async() => {
-            const res = await getVariantStock(colorID, size.toLowerCase())
+            const res = await getVariantStock(colorID, '', size.toLowerCase())
             if (res.status == 'ok') {
                 setStock(res.data.stock)
             }

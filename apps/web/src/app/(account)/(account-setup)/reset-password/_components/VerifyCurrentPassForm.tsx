@@ -3,8 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
-import { Button } from "@/components/ui/button"
 import {
   Form, FormControl, FormDescription,
   FormField, FormItem,
@@ -108,7 +106,7 @@ export function VerifyCurrentPassForm({ className } : { className: string }) {
                         </FormItem>
                     )}
                     />
-                    <LoadingButton loading={isLoading ? true: false} type="submit" className="flex gap-2">Next<PiArrowRight /></LoadingButton>
+                    <LoadingButton loading={isLoading} type="submit" className="flex gap-2">Next<PiArrowRight /></LoadingButton>
                 </form>
             </Form>
         </div>

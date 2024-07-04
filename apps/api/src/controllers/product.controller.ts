@@ -37,7 +37,7 @@ export class ProductController {
                     take: 6
                 })
             } else {
-                productNameList = await prisma.product.findMany({select: {name:true, slug:true}, orderBy: {name:'asc'}})
+                productNameList = await prisma.product.findMany({select: {name:true, slug:true}, orderBy: {name:'asc'}, where: {isDeleted: false}})
             }
             serverResponse(res, 200, 'ok', 'product name found.', productNameList)
         } catch (error:any) {
@@ -47,8 +47,9 @@ export class ProductController {
 
     async getProduct(req: Request, res: Response) {
         try {
-            const {w, s, p} = req.query
+            const {w, p, l} = req.query
             await prisma.$transaction(async (tx)=> {
+                let limit = l ? l : 10
                 const totalProduct = await tx.product.count()
                 if (w === 'All Warehouses' || !w) {
                         const products = await tx.product.findMany({
@@ -73,8 +74,8 @@ export class ProductController {
                                 },
                                 category: true,
                             },
-                            take: 10,
-                            skip: (Number(p) - 1) * 10
+                            take: +limit, 
+                            skip: (+p! - 1) * +limit
                         })
                         const productsWithStock = products.map(product => ({
                             ...product,
@@ -84,12 +85,41 @@ export class ProductController {
                             }))
                         }));
                     
-                        const productList = productsWithStock.map(product => ({
+                        const productData = productsWithStock.map(product => ({
                             ...product,
                             totalStock: product.variants.reduce((total, variant) => {
                             return total + variant.warehouseProduct.reduce((variantTotal, wp) => variantTotal + wp.stock, 0);
                             }, 0)
                         }));
+
+                        const productList = productData.map(product => ({
+                            ...product,
+                            stockIn: prisma.stockMutationItem.aggregate({
+                                _sum: {
+                                    quantity: true,
+                                },
+                                where: {
+                                    WarehouseProduct: {
+                                        productVariant: {
+                                            product: {
+                                                id: product.id
+                                            }
+                                        }
+                                    },
+                                    stockMutation: {
+                                        AND: [
+                                            {OR: [
+                                                {type: 'INBOUND'},
+                                                {type: 'RESTOCK'},
+                                            ]},
+                                            {
+                                                status: 'ACCEPTED'
+                                            }
+                                        ] 
+                                    },
+                                },
+                            })
+                        }))
     
                         const totalStock = await tx.warehouseProduct.aggregate({
                             _sum: {
@@ -132,8 +162,8 @@ export class ProductController {
                             },
                             category: true
                         },
-                        take: 10,
-                        skip: (Number(p) - 1) * 10
+                        take: +limit, 
+                        skip: (+p! - 1) * +limit
                     })
                     const productsWithStock = products.map(product => ({
                         ...product,
@@ -177,7 +207,7 @@ export class ProductController {
     async getProductBySlug(req: Request, res: Response) {
         try {
             const {slug} = req.params
-            const {w, s, v} = req.query
+            const {w, s} = req.query
             await prisma.$transaction(async (tx)=> {
                 if (w === "All Warehouses" || w === '') {
                     if (s) {
@@ -465,7 +495,8 @@ export class ProductController {
 
     async getProductByQuery(req: Request, res:Response) {
         try {
-            const {g, t, c, p, s, q} = req.query
+            const {g, t, c, p, l, s, q} = req.query            
+            let limit = l ? l : 10            
             let sort = 'createdAt'
             let direction = 'desc'
             if (s == 'low-to-high') {
@@ -502,8 +533,8 @@ export class ProductController {
                             },
                             category: true
                         }, 
-                        take: 10,
-                        skip: (Number(p) - 1) * 10,
+                        take: +limit,
+                        skip: (+p! - 1) * +limit,
                         orderBy: {
                             [sort] : direction
                         }
@@ -580,8 +611,8 @@ export class ProductController {
                             },
                             category: true
                         }, 
-                        take: 10,
-                        skip: (Number(p) - 1) * 10,
+                        take: +limit, 
+                        skip: (+p! - 1) * +limit, 
                         orderBy: {
                             [sort] : direction
                         }
@@ -660,8 +691,8 @@ export class ProductController {
                             },
                             category: true
                         },
-                        take: 10,
-                        skip: (Number(p) - 1) * 10,
+                        take: +limit, 
+                        skip: (+p! - 1) * +limit, 
                         orderBy: {
                             [sort] : direction
                         }
@@ -740,8 +771,8 @@ export class ProductController {
                             },
                             category: true
                         },
-                        take: 10,
-                        skip: (Number(p) - 1) * 10,
+                        take: +limit, 
+                        skip: (+p! - 1) * +limit, 
                         orderBy: {
                             [sort] : direction
                         }
@@ -813,8 +844,8 @@ export class ProductController {
                             },
                             category: true,
                         },
-                        take: 10,
-                        skip: (Number(p) - 1) * 10,
+                        take: +limit, 
+                        skip: (+p! - 1) * +limit, 
                         orderBy: {
                             [sort] : direction
                         }

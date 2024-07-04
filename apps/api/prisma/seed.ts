@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { listUsers } from "./models/users";
 import { listAdmin } from "./models/admin";
+import { listWarehouse } from "./models/warehouse";
 
 const prisma = new PrismaClient();
 
@@ -16,6 +17,12 @@ async function main() {
     data: admin,
     skipDuplicates: true
   });
+
+  const warehouse = await listWarehouse();
+  await prisma.warehouse.createMany({
+    data: warehouse,
+    skipDuplicates: true
+  })
 }
 
 main()

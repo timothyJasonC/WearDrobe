@@ -1,4 +1,3 @@
-
 export async function listWarehouse() {
     return [
         {
@@ -13,6 +12,7 @@ export async function listWarehouse() {
             postal_code: '20228',
             createdAt: new Date('2024-07-04 09:17:40.484'),
             adminID: null,
+            isActive: true
         },
         {
             warehouseName: 'Pangkalan Ujung',
@@ -26,6 +26,7 @@ export async function listWarehouse() {
             postal_code: '25112',
             createdAt: new Date('2024-07-04 11:11:00.746'),
             adminID: null,
+            isActive: true,
         },
         {
             warehouseName: 'Jantung Indonesia',
@@ -39,6 +40,7 @@ export async function listWarehouse() {
             postal_code: '10540',
             createdAt: new Date('2024-07-04 09:48:40.216'),
             adminID: null,
+            isActive: true,
         },
         {
             warehouseName: 'Wong Kito',
@@ -52,6 +54,7 @@ export async function listWarehouse() {
             postal_code: '30111',
             createdAt: new Date('2024-07-04 11:08:31.808'),
             adminID: null,
+            isActive: true,
         },
         {
             warehouseName: 'Jaya Abadi',
@@ -65,6 +68,7 @@ export async function listWarehouse() {
             postal_code: '50511',
             createdAt: new Date('2024-07-04 11:09:41.242'),
             adminID: null,
+            isActive: true,
         },
         {
             warehouseName: 'Paradise Breeze',
@@ -78,6 +82,7 @@ export async function listWarehouse() {
             postal_code: '80351',
             createdAt: new Date('2024-07-04 09:41:17.174'),
             adminID: null,
+            isActive: true,
         },
         {
             warehouseName: 'Paling Kiri',
@@ -91,6 +96,7 @@ export async function listWarehouse() {
             postal_code: '23238',
             createdAt: new Date('2024-07-04 11:12:24.203'),
             adminID: null,
+            isActive: true,
         },
         {
             warehouseName: 'Budi Pekerti',
@@ -104,6 +110,7 @@ export async function listWarehouse() {
             postal_code: '55715',
             createdAt: new Date('2024-07-04 11:07:44.657'),
             adminID: null,
+            isActive: true,
         },
         {
             warehouseName: 'Pemuda Jawa Timur',
@@ -117,6 +124,7 @@ export async function listWarehouse() {
             postal_code: '60119',
             createdAt: new Date('2024-07-04 11:10:25.319'),
             adminID: null,
+            isActive: true,
         },
         {
             warehouseName: 'Digital Tech Asri',
@@ -130,6 +138,7 @@ export async function listWarehouse() {
             postal_code: '40111',
             createdAt: new Date('2024-07-04 09:43:15.795'),
             adminID: null,
+            isActive: true,
         },
         {
             warehouseName: 'Sulawesi Punya',
@@ -143,6 +152,8 @@ export async function listWarehouse() {
             postal_code: '90111',
             createdAt: new Date('2024-07-04 11:11:43.502'),
             adminID: null,
+            isActive: true,
         },
     ];
 }
+

@@ -134,6 +134,7 @@ model Warehouse {
     postal_code   String
     createdAt     DateTime           @default(now())
     adminID       String?            @unique
+    isActive      Boolean            @default(true)
     admin         Admin?             @relation(fields: [adminID], references: [id])
     products      WarehouseProduct[]
     mutations     StockMutation[]

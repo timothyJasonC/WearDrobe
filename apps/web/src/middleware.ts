@@ -11,7 +11,8 @@ export function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
     const tokenCookie = req.cookies.get('token');
     const token = tokenCookie ? tokenCookie.value : null;
-    const superAdmPath = ['/admins/admins', '/admins/warehouses', '/admins/users'];
+    const warAdmPath = ['/admins/products', '/admins/stocks', '/admins/transactions', '/admins/overview', '/admins/edit-profile', '/admins/change-password']
+    const superAdmPath = [ ...warAdmPath, '/admins/admins', '/admins/warehouses', '/admins/users'];
     
     if (!token) {
         if (pathname.startsWith('/admins') || pathname.startsWith('/user')) {
@@ -36,11 +37,16 @@ export function middleware(req: NextRequest) {
                     return NextResponse.redirect(new URL('/', req.url));
                 }
                 
-                if (superAdmPath.some(path => pathname.startsWith(path))) {
-                    if (decoded.role === 'superAdm') {
+                if (warAdmPath.some(path => pathname.startsWith(path))) {
+                    if (decoded.role == 'superAdm' || decoded.role == 'warAdm') {
                         return NextResponse.next();
-                    } else if (decoded.role == 'warAdm') return NextResponse.redirect(new URL('/admins/overview', req.url));
-                    return NextResponse.redirect(new URL('/', req.url));
+                    } else return NextResponse.redirect(new URL('/', req.url));
+                } else if (superAdmPath.some(path => pathname.startsWith(path))) {
+                    if (decoded.role == 'superAdm') {
+                        return NextResponse.next();
+                    } else if (decoded.role == 'warAdm') {
+                        return NextResponse.redirect(new URL('/admins/overview', req.url));    
+                    } else return NextResponse.redirect(new URL('/', req.url));
                 } else if (pathname.startsWith('/user')) {
                     if (decoded.role === 'user') {
                         return NextResponse.next();

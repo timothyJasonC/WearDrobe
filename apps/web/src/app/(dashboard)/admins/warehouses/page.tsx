@@ -10,7 +10,7 @@ export default async function Page() {
 
     let warehouses = []
     try {
-        const res =  await (await getRequest('/warehouses')).json()
+        const res =  await (await getRequest('/warehouses/all/')).json()
         warehouses = res.data;
     } catch (error) {
         return 
@@ -22,10 +22,11 @@ export default async function Page() {
                 <div className="w-72">
                     <StatisticsCard  title='Total Warehouse(s)' number={warehouses && warehouses?.length > 0 ? warehouses?.length : 0}/>
                 </div>
+                <DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} />
             </div>
             {
-                warehouses.length > 0 ?
-                    <ExpTable accounts={warehouses} columns={columns} optionalComp={<DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} />} />
+                warehouses?.length > 0 ?
+                    <ExpTable accounts={warehouses} columns={columns} optionalComp={<DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={true} />} />
                     :
                     <div>Warehouse not found</div>
             }

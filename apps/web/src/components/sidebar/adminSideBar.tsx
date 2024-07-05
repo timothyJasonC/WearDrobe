@@ -18,7 +18,7 @@ export const AdminSideBar = ({ admin }: { admin: IAdmin | null }) => {
 
     return (
         <>
-        <div className='hidden p-6 lg:flex w-80 flex-col justify-between border-r-2'>
+        <div className='hidden p-6 lg:flex w-80 flex-col justify-between border-r-2 h-screen'>
             <AdminDashboardContent admin={admin && admin} activeButton={activeButton} />
         </div>
         <div className='lg:hidden'>

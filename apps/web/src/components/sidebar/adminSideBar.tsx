@@ -3,8 +3,8 @@ import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { PiListBold } from 'react-icons/pi';
-import { IAdmin } from '@/app/(dashboard)/admins/_components/ExpTable';
 import AdminDashboardContent from './AdminDashboardContent';
+import { IAdmin } from '@/app/(dashboard)/admins/admins/_components/columns';
 
 export const AdminSideBar = ({ admin }: { admin: IAdmin | null }) => {
     const pathname = usePathname()

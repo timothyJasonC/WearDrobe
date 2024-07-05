@@ -5,6 +5,8 @@ import { getRequest } from "@/lib/fetchRequests"
 import columns from "./_components/columns"
 import { ExpTable } from "../_components/ExpTable"
 import { StatisticsCard } from "../../_components/statisticsCard"
+import { Button } from "@/components/ui/button"
+import ExcelButton from "../_components/ExcelButton"
 
 export default async function Page() {
 
@@ -25,7 +27,7 @@ export default async function Page() {
             </div>
             {
                 admins?.length > 0 ?
-                    <ExpTable accounts={admins} columns={columns} optionalComp={<DialogCreateAdmin />} />
+                    <ExpTable admins={admins} accounts={admins} columns={columns} optionalComp={<DialogCreateAdmin />} />
                     :
                     <div>Admins not found</div>
             }

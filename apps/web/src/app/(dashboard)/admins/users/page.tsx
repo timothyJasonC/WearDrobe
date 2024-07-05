@@ -5,16 +5,34 @@ import { Input } from "@/components/ui/input";
 import { ExpTable } from "../_components/ExpTable";
 import columns from "./_components/columns";
 import { StatisticsCard } from "../../_components/statisticsCard";
+import { Button } from "@/components/ui/button";
+import ExcelButton from "../_components/ExcelButton";
+import xlsx, { IJsonSheet, IContent } from "json-as-xlsx";
+import { Gender } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm";
+// import { IUser } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm";
+
+
+export interface IUser {
+    id: string;
+    accountActive: boolean | null;
+    username?: string | null | undefined;
+    email: string;
+    password?: string | null | undefined;
+    gender?: Gender | null | undefined;
+    dob?: Date | null | undefined;
+    createdAt: Date;
+    imgUrl?: string | null | undefined;
+}
 
 export default async function Page() {
     
-    let users = []
+    let users: IUser[] = []
     try {
         const res =  await (await getRequest('/user')).json()
         users = res.data;
     } catch (error) {
         return 
-    }
+    }    
 
     return (
         <DashboardWrapper >
@@ -23,7 +41,7 @@ export default async function Page() {
             </div>
             {
                 users?.length > 0 ?
-                    <ExpTable accounts={users} columns={columns} />
+                    <ExpTable users={users} accounts={users} columns={columns} />
                     :
                     <div>Users not found</div>
             }

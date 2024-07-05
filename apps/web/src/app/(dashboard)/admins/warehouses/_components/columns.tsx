@@ -1,118 +1,218 @@
 'use client'
-import { ToolTip } from "@/components/Tooltip"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, Row } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
-import { PiDotsThreeVerticalBold, PiPencilBold, PiXCircleBold } from "react-icons/pi"
+import { PiDotsThreeVerticalBold, PiLightningFill, PiPencilBold, PiXCircleBold } from "react-icons/pi"
 import { getRequest } from "@/lib/fetchRequests"
-import { Warehouse } from "@/constants"
-import { IAdmin } from "../../_components/ExpTable"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { DialogWarehouse } from "./DialogWarehouse"
+import { ToolTip } from "@/components/Tooltip"
+import { Gender } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm"
+import { Role } from "../../_components/ExpTable"
+import { toast } from "sonner"
+import { Checkbox } from "@/components/ui/checkbox"
 
-const AssignedAdminCell = ({ adminID }: { adminID: string }) => {
-  const [currentAdmin, setCurrentAdmin] = useState<IAdmin | null>();
+interface IAdmin {
+    id: string;
+    role: Role;
+    accountActive: boolean | null;
+    fullName?: string;
+    email: string;
+    password?: string;
+    gender?: Gender;
+    dob?: Date;
+    createdAt: Date;
+}
 
-  useEffect(() => {
-    async function getAssignedAdmin() {
-      const res = await (await getRequest(`/admin/${adminID}`)).json();
-      const admin = res.data;
-      setCurrentAdmin(admin);
-    }
-    getAssignedAdmin();
-  }, [adminID]);
+export interface IWarehouse {
+    id: string;
+    warehouseName: string;
+    city: string;
+    coordinate: string;
+    address: string;
+    city_id: string;
+    province_id: string;
+    province: string;
+    type: string;
+    city_name: string;
+    postal_code: string;
+    createdAt: string;
+    adminID: string | null;
+    isActive: boolean;
+}
 
-  return (
-    <ToolTip content={currentAdmin && currentAdmin?.fullName ? `Click to see ${currentAdmin && currentAdmin?.fullName}` : 'No admin is assigned, yet'}>
-      <Link href={`/admins/admins/${currentAdmin && currentAdmin?.id}`}>
-        <div className="lowercase">{currentAdmin && currentAdmin?.fullName ? currentAdmin && currentAdmin?.fullName : '-'}</div>
-      </Link>
-    </ToolTip>
-  );
+const AssignedAdminCell = ({ adminID }: { adminID: string | null }) => {
+    const [currentAdmin, setCurrentAdmin] = useState<IAdmin | null>(null);
+
+    useEffect(() => {
+        if (adminID) {
+            async function getAssignedAdmin() {
+                const res = await (await getRequest(`/admin/${adminID}`)).json();
+                const admin = res.data;
+                setCurrentAdmin(admin);
+            }
+            getAssignedAdmin();
+        }
+    }, []);
+
+    return (
+        <ToolTip content={currentAdmin && currentAdmin?.fullName ? `Click to see ${currentAdmin && currentAdmin?.fullName}` : 'No admin is assigned, yet'}>
+            <Link href={`/admins/admins/${currentAdmin && currentAdmin?.id}`}>
+                <div className="lowercase">{currentAdmin && currentAdmin?.fullName ? currentAdmin?.fullName : '-'}</div>
+            </Link>
+        </ToolTip>
+    );
 };
 
-const ActionsCell = ({ row }: { row: any }) => {
-  const [openDropdown, setOpenDropdown] = useState(false);
-  const [deleteDialog, setDeleteDialog] = useState(false);
-  const [editDialog, setEditDialog] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
+    const [openDropdown, setOpenDropdown] = useState(false);
+    const [deleteDialog, setDeleteDialog] = useState(false);
+    const [editDialog, setEditDialog] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const isActive = row.original.isActive;
 
-  async function handleDeleteWarehouse() {
-    // setIsLoading(true)
-    // try {
-    //     const res = await deleteRequest(`/admin/${admin.id}`)
-    //     const data = await res.json();
-    //     if (res.ok) {
-    //         toast.success(data.message)
-    //         router.push('/admins/admins')
-    //     } else {
-    //         toast.error(data.message)
-    //     }
-    //     setDialogOpen(false)
-    // } catch (error) {
-    //     catchError(error)
-    // }
-    // setIsLoading(false)
-  }
+    async function handleDeactivate () {
+        // setIsLoading(true)
+        // try {
+        //     const res = await deleteRequest(`/admin/${admin.id}`)
+        //     const data = await res.json();
+        //     if (res.ok) {
+        //         toast.success(data.message)
+        //         router.push('/admins/admins')
+        //     } else {
+        //         toast.error(data.message)
+        //     }
+        //     setDialogOpen(false)
+        // } catch (error) {
+        //     catchError(error)
+        // }
+        // setIsLoading(false)
+    }
 
-  function exitEditDialog() {
-    setEditDialog(false);
-    setDeleteDialog(false);
-  }
+    async function handleReactivate() {
+
+    }
+
+    function exitEditDialog() {
+        setEditDialog(false);
+        setDeleteDialog(false);
+    }
+
+    useEffect(() => {
+        if (!("isActive" in row.original)) {
+            toast.error("isActive field is missing in row data.")
+        }
+    }, [row]);
 
   return (
     <>
       <AlertDialog open={editDialog == true ? false : deleteDialog} onOpenChange={setDeleteDialog}>
-        <DropdownMenu>
-          <DropdownMenuTrigger onClick={() => setOpenDropdown(true)} className="rounded-md drop-shadow-2xl p-1 h-fit cursor-pointer">
-            <PiDotsThreeVerticalBold size={`1.5rem`} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>
-              <AlertDialogTrigger onClick={() => setEditDialog(true)} className="flex gap-1 items-center cursor-pointer">
-                <PiPencilBold size={`1.2rem`} />
-                Edit <span className="font-semibold">{row.getValue('warehouseName')}</span> warehouse
-              </AlertDialogTrigger>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <AlertDialogTrigger onClick={() => setDeleteDialog(true)} className="flex gap-1 items-center cursor-pointer">
-                <PiXCircleBold className="fill-red-400" size={`1.2rem`} />
-                Delete <span className="font-semibold">{row.getValue('warehouseName')}</span> warehouse
-              </AlertDialogTrigger>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Are you sure you want to delete {row.getValue('warehouseName')} warehouse?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete {row.getValue('warehouseName')} warehouse
-              and remove the data from the database.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <LoadingButton loading={isLoading} onClick={handleDeleteWarehouse}>
-              Yes, delete {row.getValue('warehouseName')}
-            </LoadingButton>
-          </AlertDialogFooter>
-        </AlertDialogContent>
+            <DropdownMenu>
+                <DropdownMenuTrigger onClick={() => setOpenDropdown(true)} className="rounded-md drop-shadow-2xl p-1 h-fit cursor-pointer">
+                    <PiDotsThreeVerticalBold size={`1.5rem`} />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem>
+                    <AlertDialogTrigger onClick={() => setEditDialog(true)} className="flex gap-1 items-center cursor-pointer">
+                        <PiPencilBold size={`1.2rem`} />
+                        Edit <span className="font-semibold">{row.getValue('warehouseName')}</span> warehouse
+                    </AlertDialogTrigger>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        {
+                            isActive ?
+                                <ToolTip content={`Deactivating warehouse does not delete its data`}>
+                                    <AlertDialogTrigger onClick={() => setDeleteDialog(true)} className="flex gap-1 items-center cursor-pointer">
+                                        <PiXCircleBold className="fill-red-400" size={`1.2rem`} />
+                                        Deactivate <span className="font-semibold">{row.getValue('warehouseName')}</span> warehouse
+                                    </AlertDialogTrigger>
+                                </ToolTip>
+                            :
+                                <ToolTip content={`Reactivating warehouse restores its data`}>
+                                    <AlertDialogTrigger onClick={() => setDeleteDialog(true)} className="flex gap-1 items-center cursor-pointer">
+                                        <PiLightningFill className="fill-yellow-400" size={`1.2rem`} />
+                                        Reactivate <span className="font-semibold">{row.getValue('warehouseName')}</span> warehouse
+                                    </AlertDialogTrigger>
+                                </ToolTip>
+                        }
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>
+                        {
+                            isActive ?
+                            `Are you sure you want to deactivate ${row.getValue('warehouseName')} warehouse?`
+                            :
+                            `Are you sure you want to reactivate ${row.getValue('warehouseName')} warehouse?`
+                        }
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                        {
+                            isActive ?
+                            `This action will deactivate ${row.getValue('warehouseName')} warehouse. The deactivated warehouse will not operate. However, the related data will not be deleted from the database.`
+                            :
+                            `This action will reactivate ${row.getValue('warehouseName')} warehouse. Warehouse will soon start operating and the related data will be restored.`
+                        }
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <LoadingButton loading={isLoading} onClick={isActive ? handleDeactivate : handleReactivate}>
+                        {
+                            isActive ?
+                            `Yes, deactivate ${row.getValue('warehouseName')}`
+                            :
+                            `Yes, reactivate ${row.getValue('warehouseName')}`
+                        }
+                    </LoadingButton>
+                </AlertDialogFooter>
+            </AlertDialogContent>
       </AlertDialog>
       <DialogWarehouse btnText={"Update Warehouse"} editWarehouse={true} setEditDialog={setEditDialog} editDialog={editDialog} optionalCancleFunc={exitEditDialog} />
     </>
   );
 };
 
-export const columns: ColumnDef<Warehouse>[] = [
+export const columns: ColumnDef<IWarehouse>[] = [
+    {
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+            checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
   {
     accessorKey: 'id',
-    header: "No",
+    header: ({ column }) => {
+        return (
+          <Button variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+            No
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+    },
     cell: ({ row }) => (
       <div className="capitalize">{row.index + 1}</div>
     ),
@@ -149,7 +249,7 @@ export const columns: ColumnDef<Warehouse>[] = [
   },
   {
     accessorKey: "adminID",
-    header: "Assigned Admin",
+    header: () => <span className="truncate">Assigned Admin</span>,
     cell: ({ row }) => <AssignedAdminCell adminID={row.getValue("adminID")} />,
   },
   {

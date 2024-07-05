@@ -10,8 +10,8 @@ import AddressInputs from "@/components/order/AddressInput"
 import { Address, City, Province } from "@/constants"
 import { getCities, getProvinces } from "@/lib/cart"
 import { getRequest, postRequest } from "@/lib/fetchRequests"
-import { IAdmin } from "../../_components/ExpTable"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { IAdmin } from "../../admins/_components/columns"
 
 export function DialogWarehouse({ btnText, editWarehouse, editDialog, setEditDialog, optionalCancleFunc, warehouseProvince, warehouseCity, warehouseAddress, WarehouseName, assignedWarehouseAdmin }
 : { btnText: string, editWarehouse: boolean, editDialog?: any, setEditDialog?:any, optionalCancleFunc?: any, warehouseProvince?: string, warehouseCity?: string, warehouseAddress?: string, WarehouseName?: string, assignedWarehouseAdmin?: string }) {

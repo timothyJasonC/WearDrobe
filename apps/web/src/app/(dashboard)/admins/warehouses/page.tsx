@@ -15,6 +15,7 @@ export default async function Page() {
     } catch (error) {
         return 
     }
+    console.log(warehouses)
 
     return (
         <DashboardWrapper>
@@ -26,7 +27,7 @@ export default async function Page() {
             </div>
             {
                 warehouses?.length > 0 ?
-                    <ExpTable accounts={warehouses} columns={columns} optionalComp={<DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={true} />} />
+                    <ExpTable warehouses={warehouses} accounts={warehouses} columns={columns} optionalComp={<DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={true} />} />
                     :
                     <div>Warehouse not found</div>
             }

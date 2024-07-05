@@ -13,9 +13,9 @@ import ActiveIndicator from "@/components/sidebar/ActiveIndicator"
 
 export default async function Page({ params }: { params: { id: string } }) {
 
-    const res = await (await getRequest(`/admin/${params.id}`)).json()
+    const res = await (await getRequest(`/admin/${params?.id}`)).json()
     const admin = res.data
-    const warehouseRes = await (await getRequest(`/warehouses/assigned-warehouse/${admin.id}`)).json();
+    const warehouseRes = await (await getRequest(`/warehouses/assigned-warehouse/${admin?.id}`)).json();
     const assignedWarehouse = warehouseRes.data;
     
     async function handleEmail(email: string) {

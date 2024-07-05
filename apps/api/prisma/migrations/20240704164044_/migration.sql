@@ -77,6 +77,7 @@ CREATE TABLE `Warehouse` (
     `postal_code` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `adminID` VARCHAR(191) NULL,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
 
     UNIQUE INDEX `Warehouse_warehouseName_key`(`warehouseName`),
     UNIQUE INDEX `Warehouse_adminID_key`(`adminID`),
@@ -143,6 +144,7 @@ CREATE TABLE `ProductVariant` (
     `productID` VARCHAR(191) NOT NULL,
     `color` VARCHAR(191) NOT NULL,
     `HEX` VARCHAR(191) NOT NULL,
+    `isDeleted` BOOLEAN NULL DEFAULT false,
     `image` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `ProductVariant_image_key`(`image`),

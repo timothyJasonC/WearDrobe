@@ -7,9 +7,9 @@ import { Spinner } from "@/components/ui/spinner";
 import { useParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { getRequest, getRequestToken, refreshToken } from "@/lib/fetchRequests";
-import { IAdmin } from "@/app/(dashboard)/admins/_components/ExpTable";
 import { isTokenExp } from "@/lib/utils";
 import { toast } from "sonner";
+import { IAdmin } from "@/app/(dashboard)/admins/admins/_components/columns";
 
 export default function Page() {
     const params = useParams()

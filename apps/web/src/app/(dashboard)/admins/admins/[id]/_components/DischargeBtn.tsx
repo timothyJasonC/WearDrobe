@@ -3,12 +3,12 @@ import { AlertDialogHeader, AlertDialogFooter, AlertDialog, AlertDialogAction, A
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import React, { useState } from "react"
 import { PiDotsThreeVerticalBold, PiXCircleBold } from "react-icons/pi"
-import { IAdmin } from "../../../_components/ExpTable"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { catchError } from "@/lib/utils"
 import { deleteRequest } from "@/lib/fetchRequests"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { IAdmin } from "../../_components/columns"
 
 export default function DischargeBtn({ admin }: { admin: IAdmin | null }) {
 

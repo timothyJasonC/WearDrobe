@@ -37,15 +37,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Gender, IUser } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm"
-import { Warehouse } from "@/constants"
+import { Gender } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm"
+import ExcelButton from "./ExcelButton"
+import xlsx, { IContent, IJsonSheet } from "json-as-xlsx"
+import { downloadAdminsToExcel, downloadUsersToExcel, downloadWarehousesToExcel } from "@/lib/utils"
+import { IWarehouse } from "../warehouses/_components/columns"
 
 export enum Role {
     WarAdm = "warAdm",
     SuperAdm = "superAdm"
 }
 
-export interface IAdmin {
+interface ITableData {
+
+}
+
+interface IAdmin extends ITableData {
     id: string;
     role: Role;
     accountActive: boolean | null;
@@ -57,7 +64,31 @@ export interface IAdmin {
     createdAt: Date;
 }
 
-export function ExpTable({ accounts, columns, optionalComp }: { accounts: IUser[] | IAdmin[] , columns: any, optionalComp?:any }) {
+interface IUser extends ITableData {
+    id: string; accountActive: boolean | null;
+    username?: string | null | undefined; email: string; password?: string | null | undefined;
+    gender?: Gender | null | undefined; dob?: Date | null | undefined;
+    createdAt: Date; imgUrl?: string | null | undefined;
+}
+
+interface Warehouse extends ITableData {
+    id: string;
+    warehouseName: string;
+    city: string;
+    coordinate: string;
+    address: string;
+    city_id: string;
+    province_id: string;
+    province: string;
+    type: string;
+    city_name: string;
+    postal_code: string;
+    createdAt: string;
+    adminID: string | null;
+    isActive: boolean;
+}
+
+export function ExpTable({ accounts, columns, optionalComp, users, admins, warehouses }: { accounts: ITableData[] , columns: any, optionalComp?:any, users?: IUser[], admins?: IAdmin[], warehouses?: IWarehouse[] }) {
     const data = accounts
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -65,7 +96,6 @@ export function ExpTable({ accounts, columns, optionalComp }: { accounts: IUser[
     const [rowSelection, setRowSelection] = React.useState({})
     const [ columnFilterValue, setColumnFilterValue ] = React.useState<any>()
     const [ globalFilter, setGlobalFilter ] = React.useState('') 
-    // const columnFilterValue = column.getFilterValue()
 
     const table = useReactTable({
         data,
@@ -90,22 +120,6 @@ export function ExpTable({ accounts, columns, optionalComp }: { accounts: IUser[
         onRowSelectionChange: setRowSelection,
     })
 
-        // <DebouncedInput
-        //     type="number"
-        //     min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
-        //     max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
-        //     value={(columnFilterValue as [number, number])?.[0] ?? ''}
-        //     onChange={value =>
-        //         column.setFilterValue((old: [number, number]) => [value, old?.[1]])
-        //     }
-        //     placeholder={`Min ${
-        //         column.getFacetedMinMaxValues()?.[0] !== undefined
-        //         ? `(${column.getFacetedMinMaxValues()?.[0]})`
-        //         : ''
-        //     }`}
-        //     className="w-24 border shadow rounded"
-        // />
-
     return (
         <div className="w-full">
             <div className="mb-4">
@@ -117,20 +131,6 @@ export function ExpTable({ accounts, columns, optionalComp }: { accounts: IUser[
                             onChange={(e) => setGlobalFilter(e.target.value) }
                             className="max-w-sm"
                         />
-                        {/* <Input 
-                            type="number"
-                            min={Number(table.getColumn('dob')?.getFacetedMinMaxValues()?.[0] ?? '')}
-                            max={Number(table.getColumn('dob')?.getFacetedMinMaxValues()?.[1] ?? '')}
-                            // value={(columnFilterValue.getFilterValue() as [number, number])?.[0] ?? ''}
-                            onChange={value =>
-                                table.getColumn('dob')?.setFilterValue((old: [number, number]) => [value, old?.[1]])
-                            }
-                            placeholder={`Min ${
-                                table.getColumn('dob')?.getFacetedMinMaxValues()?.[0] !== undefined
-                                ? `(${table.getColumn('dob')?.getFacetedMinMaxValues()?.[0]})`
-                                : ''
-                            }`}
-                        /> */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" className="ml-auto">
@@ -158,6 +158,10 @@ export function ExpTable({ accounts, columns, optionalComp }: { accounts: IUser[
                                 })}
                             </DropdownMenuContent>
                         </DropdownMenu>
+                        {
+                            (users || admins || warehouses) && 
+                            <ExcelButton func={() => { if (users) downloadUsersToExcel(users); if (admins) downloadAdminsToExcel(admins); if (warehouses) downloadWarehousesToExcel(warehouses) }} />
+                        }
                     </div>
                     { optionalComp }
                     

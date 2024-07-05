@@ -1,11 +1,11 @@
 'use client'
 import React, { useRef, useState } from "react"
-import { IAdmin } from "../../../_components/ExpTable"
 import { Input } from "@/components/ui/input"
 import { PiCheckBold, PiXCircleBold } from "react-icons/pi"
 import { ToolTip } from "@/components/Tooltip"
 import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
+import { IAdmin } from "../../_components/columns"
 
 export default function EditableInput({ inputType, data, classNameHead, head, defValue, handleFunc, children, hoverText }: { data: IAdmin | null, classNameHead?: string, head?: string, defValue:any, inputType: string, handleFunc: any, children?: React.ReactNode, hoverText: string }) {
 

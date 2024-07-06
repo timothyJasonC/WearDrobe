@@ -189,7 +189,7 @@ async function totalTransactionByAdmin(warehouseId: string | null, query: string
     return order
 }
 
-export async function getOrderByUser(userId: string, query: string, page: string, limit: string) {
+export async function getOrderByUser(userId: string, query: string, page: string, limit: string, fromDate:Date, toDate:Date) {
     const orders = await prisma.order.findMany({
         orderBy: {
             createdAt: 'desc',
@@ -207,6 +207,7 @@ export async function getOrderByUser(userId: string, query: string, page: string
             ],
             OR: [
                 { id: { contains: query } },
+                { createdAt: { gte: fromDate,lte: toDate } }
             ]
         },
         skip: (+page - 1) * +limit,
@@ -246,7 +247,7 @@ export async function getTotalOrderByAdmin(adminId: string, query: string) {
     }
 }
 
-export async function getOrderByAdmin(adminId: string, query: string, page: string, limit: string, warehouse: string) {
+export async function getOrderByAdmin(adminId: string, query: string, page: string, limit: string, warehouse: string, fromDate:Date, toDate:Date) {
     const admin = await prisma.admin.findUnique({
         where: { id: adminId },
         include: {

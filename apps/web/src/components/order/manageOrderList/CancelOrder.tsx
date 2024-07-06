@@ -4,22 +4,24 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { cancelOrder } from '@/lib/order';
 import { IOrder } from '@/constants';
 import { getAdminClientSide, getUserClientSide } from '@/lib/utils';
+import { DateRange } from 'react-day-picker';
 
 type CancelOrderPorps = {
     orderId: string
     setOrderList: (value: IOrder[] | null) => void
     currentPage: string | null
+    date: DateRange
 }
 
-export default function CancelOrder({ orderId, setOrderList, currentPage }: CancelOrderPorps) {
+export default function CancelOrder({ orderId, setOrderList, currentPage, date }: CancelOrderPorps) {
     const handleDelete = async () => {
         const dataUser = await getUserClientSide()
         const admin = await getAdminClientSide()
         if (dataUser) {
-            const res = await cancelOrder(orderId, null, dataUser.id, currentPage)
+            const res = await cancelOrder(orderId, null, dataUser.id, currentPage, date)
             setOrderList(res)
         } else {
-            const res = await cancelOrder(orderId, admin.id, null, currentPage)
+            const res = await cancelOrder(orderId, admin.id, null, currentPage, date)
             setOrderList(res)
         }
     };

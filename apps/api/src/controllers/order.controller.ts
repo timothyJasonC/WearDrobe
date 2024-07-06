@@ -79,7 +79,7 @@ export class OrderController {
                 const address = await getAddressById(cart?.addressID!)
                 const warehouse = await getWarehouseById(cart?.warehouseId!)
                 const shippingCost = cart?.totalAmount - cart?.items.reduce((acc, item) => acc + item.price, 0)
-                
+
                 res.json({ cart, address, warehouse: { coordinate: warehouse?.coordinate! }, shippingCost })
             } else {
                 if (cart !== null) res.json(cart)
@@ -227,26 +227,29 @@ export class OrderController {
 
     async getOrderByAdmin(req: Request, res: Response) {
         try {
-            const { adminId, userId } = req.body
+            const { adminId, userId, date } = req.body
             let { q: query, page, limit, w } = req.query;
 
             if (typeof query !== "string") throw 'Invalid request'
             if (typeof w !== "string") throw 'Invalid request'
             if (typeof page !== "string" || isNaN(+page)) page = '1';
             if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
-
+            const fromDate = new Date(date.from);
+            fromDate.setHours(0, 0, 0, 0)
+            const toDate = new Date(date.to);
+            toDate.setDate(toDate.getDate());
+            toDate.setHours(23, 59, 0, 0);
             const warehouse = await getWarehouseByName(w)
-            console.log(query);
 
             if (userId) {
-                const orderList = await getOrderByUser(userId, query, page, limit)
+                const orderList = await getOrderByUser(userId, query, page, limit, fromDate, toDate)
                 const totalOrders = await getTotalOrderByUser(userId, query)
                 const totalPages = Math.ceil(totalOrders / +limit)
                 const currentPage = +page
                 res.json({ orderList, totalPages, currentPage })
             }
             if (adminId) {
-                const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!)
+                const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!, fromDate, toDate)
                 const totalOrders = await getTotalOrderByAdmin(adminId, query)
                 const totalPages = Math.ceil(totalOrders! / +limit)
                 const currentPage = +page
@@ -259,7 +262,7 @@ export class OrderController {
 
     async cancelOrder(req: Request, res: Response) {
         try {
-            const { orderId, adminId, userId } = req.body
+            const { orderId, adminId, userId, date } = req.body
             let { q: query, page, limit, w } = req.query;
 
             if (typeof query !== "string") throw 'Invalid request'
@@ -267,16 +270,21 @@ export class OrderController {
             if (typeof page !== "string" || isNaN(+page)) page = '1';
             if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
             const cancel = await cancelOrder(orderId)
+            const fromDate = new Date(date.from);
+            fromDate.setHours(0, 0, 0, 0)
+            const toDate = new Date(date.to);
+            toDate.setDate(toDate.getDate());
+            toDate.setHours(23, 59, 0, 0);
 
             const warehouse = await getWarehouseByName(w)
 
             if (cancel) {
                 if (adminId) {
-                    const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!)
+                    const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!, fromDate, toDate)
                     res.json(orderList)
                 }
                 if (userId) {
-                    const orderList = await getOrderByUser(userId, query, page, limit)
+                    const orderList = await getOrderByUser(userId, query, page, limit, fromDate, toDate)
                     res.json(orderList)
                 }
             }
@@ -287,17 +295,24 @@ export class OrderController {
 
     async changeToShipped(req: Request, res: Response) {
         try {
-            const { orderId, adminId } = req.body
+            const { orderId, adminId, date } = req.body
             let { q: query, page, limit, w } = req.query;
             if (typeof query !== "string") throw 'Invalid request'
             if (typeof w !== "string") throw 'Invalid request'
             if (typeof page !== "string" || isNaN(+page)) page = '1';
             if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
 
+            const fromDate = new Date(date.from);
+            fromDate.setHours(0, 0, 0, 0)
+            const toDate = new Date(date.to);
+            toDate.setDate(toDate.getDate());
+            toDate.setHours(23, 59, 0, 0);
+
             const updateToShipped = await updateShipped(orderId)
+
             if (updateToShipped) {
                 const warehouse = await getWarehouseByName(w)
-                const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!)
+                const orderList = await getOrderByAdmin(adminId, query, page, limit, warehouse?.id!, fromDate, toDate)
                 res.json(orderList)
             }
         } catch (err) {
@@ -307,16 +322,22 @@ export class OrderController {
 
     async confirmOrder(req: Request, res: Response) {
         try {
-            const { orderId, userId } = req.body
+            const { orderId, userId, date } = req.body
             let { q: query, page, limit, w } = req.query;
             if (typeof query !== "string") throw 'Invalid request'
             if (typeof w !== "string") throw 'Invalid request'
             if (typeof page !== "string" || isNaN(+page)) page = '1';
             if (typeof limit !== "string" || isNaN(+limit)) limit = '10'
 
+            const fromDate = new Date(date.from);
+            fromDate.setHours(0, 0, 0, 0)
+            const toDate = new Date(date.to);
+            toDate.setDate(toDate.getDate());
+            toDate.setHours(23, 59, 0, 0);
+
             const updateToCompleted = await updateCompletedOrder(orderId)
             if (updateToCompleted) {
-                const orderList = await getOrderByUser(userId, query, page, limit)
+                const orderList = await getOrderByUser(userId, query, page, limit, fromDate, toDate)
                 res.json(orderList)
             }
         } catch (err) {

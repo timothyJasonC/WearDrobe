@@ -7,14 +7,16 @@ import CancelOrder from "./CancelOrder"
 import { formatToIDR, getUserClientSide } from "@/lib/utils"
 import ChangeToShipped from "./ChangeToShipped"
 import ConfirmShipped from "./ConfirmShipped"
+import { DateRange } from "react-day-picker"
 
 type OrderProps = {
   orderList: IOrder[] | null
   setOrderList: (value: IOrder[] | null) => void
   currentPage: string | null
+  date: DateRange
 }
 
-export default function OrderTable({ orderList, setOrderList, currentPage }: OrderProps) {
+export default function OrderTable({ orderList, setOrderList, currentPage, date }: OrderProps) {
   const [user, setUser] = useState(null)
   const getUser = async () => {
     const data = await getUserClientSide()
@@ -44,14 +46,14 @@ export default function OrderTable({ orderList, setOrderList, currentPage }: Ord
             <TableCell className="font-semibold max-w-44 truncate">{item.id}</TableCell>
             <TableCell className="flex items-center gap-2 text-center">
               {!user && item.status === "SHIPPED" && (
-                 <div className="flex flex-row gap-2 items-center">
-                 <p>{item.status}</p>
-               </div>
+                <div className="flex flex-row gap-2 items-center">
+                  <p>{item.status}</p>
+                </div>
               )}
               {user && item.status === "SHIPPED" && (
                 <div className="flex flex-row gap-2 items-center">
                   <p>{item.status}</p>
-                  <ConfirmShipped orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} />
+                  <ConfirmShipped orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} date={date}/>
                 </div>
               )}
               {item.status !== "SHIPPED" && "PROCESSED" && (
@@ -60,9 +62,9 @@ export default function OrderTable({ orderList, setOrderList, currentPage }: Ord
               {item.status === 'PROCESSED' && (
                 <div className="flex gap-2 items-center">
                   {user ? (
-                    <CancelOrder orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} />
+                    <CancelOrder orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} date={date} />
                   ) : (
-                    <ChangeToShipped orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} />
+                    <ChangeToShipped orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} date={date}/>
                   )}
                 </div>
               )}

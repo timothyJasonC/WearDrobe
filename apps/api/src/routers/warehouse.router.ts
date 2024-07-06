@@ -21,6 +21,8 @@ export class WarehouseRouter {
         this.router.get('/:id', this.warehouseController.getWarehouseList)
         this.router.patch('/assign-admin-to-warehouse', this.warehouseController.assignAdminToWarehouse)
         this.router.patch('/dismiss-admin-from-warehouse', this.warehouseController.dissmissAdminFromWarehouse)
+        this.router.delete('/deactivate-warehouse/:id', this.warehouseController.deactivateWarehouse)
+        this.router.patch('/reactivate-warehouse/:id', this.warehouseController.reactivateWarehouse)
     }
 
     getRouter() : Router{

@@ -133,10 +133,35 @@ export class WarehouseController {
             const admin = await prisma.admin.findFirst({ where: { id: req.body.adminId }});
             if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
             if (!admin) return serverResponse(res, 404, 'error', 'Admin not found')
-            if (!warehouse.adminID) return serverResponse(res, 404, 'error', `Not admin is assigned at ${ warehouse.warehouseName } warehouse, yet`)
+            if (!warehouse.adminID) return serverResponse(res, 404, 'error', `No admin is assigned at ${ warehouse.warehouseName } warehouse, yet`)
             if (warehouse.adminID != admin.id) return serverResponse(res, 404, 'error', 'Admin ID does not match with the assigned admin with related warehouse')
             await prisma.warehouse.update({ where: { id: warehouse.id }, data: { adminID: null } })
             serverResponse(res, 200, 'ok', `${admin.fullName} is successfully dismissed from ${warehouse.warehouseName} warehouse`)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async deactivateWarehouse(req: Request, res: Response) {
+        try {
+            const warehouse = await prisma.warehouse.findFirst({ where: { id: req.params.id }});
+            if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            if (!warehouse.isActive) return serverResponse(res, 400, 'error', 'Warehouse is already deactivated')
+            if (warehouse.adminID) await prisma.warehouse.update({ where: { id: warehouse.id }, data: { adminID: null } })
+            await prisma.warehouse.update({ where: { id: warehouse.id }, data: { isActive: false } })
+            serverResponse(res, 200, 'ok', `${warehouse?.warehouseName} warehouse is successfully deactivated` )
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async reactivateWarehouse(req: Request, res: Response) {
+        try {
+            const warehouse = await prisma.warehouse.findFirst({ where: { id: req.params.id }});
+            if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            if (warehouse.isActive) return serverResponse(res, 400, 'error', `${ warehouse.warehouseName }Warehouse is still active`)
+            await prisma.warehouse.update({ where: { id: warehouse.id }, data: { isActive: true } })
+            serverResponse(res, 200, 'ok', `${ warehouse.warehouseName } warehouse is successfully reactivated`)
         } catch (error: any) {
             return serverResponse(res, 400, 'error', error)
         }

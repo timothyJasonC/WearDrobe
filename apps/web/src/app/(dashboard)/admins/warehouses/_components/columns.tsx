@@ -6,7 +6,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
 import { PiDotsThreeVerticalBold, PiLightningFill, PiPencilBold, PiXCircleBold } from "react-icons/pi"
-import { getRequest } from "@/lib/fetchRequests"
+import { deleteRequest, getRequest, patchRequest } from "@/lib/fetchRequests"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { DialogWarehouse } from "./DialogWarehouse"
@@ -15,6 +15,8 @@ import { Gender } from "@/app/(home)/(user-dashboard)/user/edit-profile/_compone
 import { Role } from "../../_components/ExpTable"
 import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox"
+import ActiveIndicator from "@/components/sidebar/ActiveIndicator"
+import { useRouter } from "next/navigation"
 
 interface IAdmin {
     id: string;
@@ -75,27 +77,46 @@ const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
     const [isLoading, setIsLoading] = useState(false);
     const isActive = row.original.isActive;
     const warehouse = row.original;
+    const warehouseId = row.original.id;
+    const warehouseName = row.original.warehouseName
+    const router = useRouter();
 
-    async function handleDeactivate () {
-        // setIsLoading(true)
-        // try {
-        //     const res = await deleteRequest(`admin/${admin.id}`)
-        //     const data = await res.json();
-        //     if (res.ok) {
-        //         toast.success(data.message)
-        //         router.push('/admins/admins')
-        //     } else {
-        //         toast.error(data.message)
-        //     }
-        //     setDialogOpen(false)
-        // } catch (error) {
-        //     catchError(error)
-        // }
-        // setIsLoading(false)
+    async function handleDeactivate() {
+        setIsLoading(true)
+        try {
+            const res = await deleteRequest(`warehouses/deactivate-warehouse/${warehouse ? warehouse.id : ''}`)
+            const data = await res.json();
+            if (res.ok) {
+                toast.success(data.message)
+            } else {
+                toast.error(data.message)
+            }
+            setDeleteDialog(false)
+        } catch (error) {
+            toast.error(error instanceof Error? error.message : "Failed to deactivate warehouse")
+        } finally {
+            setIsLoading(false)
+            router.refresh()
+        }
     }
 
     async function handleReactivate() {
-
+        setIsLoading(true)
+        try {
+            const res = await patchRequest({ }, `warehouses/reactivate-warehouse/${ warehouseId }`)
+            const data = await res.json();
+            if (res.ok) {
+                toast.success(data.message)
+            } else {
+                toast.error(data.message)
+            }
+            setDeleteDialog(false)
+        } catch (error) {
+            toast.error(error instanceof Error? error.message : "Failed to reactivate warehouse")
+        } finally {
+            setIsLoading(false)
+            router.refresh()
+        }
     }
 
     function exitEditDialog() {
@@ -120,7 +141,7 @@ const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
                     <DropdownMenuItem>
                     <AlertDialogTrigger onClick={() => setEditDialog(true)} className="flex gap-1 items-center cursor-pointer">
                         <PiPencilBold size={`1.2rem`} />
-                        Edit <span className="font-semibold">{row.getValue('warehouseName')}</span> warehouse
+                        Edit <span className="font-semibold">{warehouseName}</span> warehouse
                     </AlertDialogTrigger>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
@@ -129,14 +150,14 @@ const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
                                 <ToolTip content={`Deactivating warehouse does not delete its data`}>
                                     <AlertDialogTrigger onClick={() => setDeleteDialog(true)} className="flex gap-1 items-center cursor-pointer">
                                         <PiXCircleBold className="fill-red-400" size={`1.2rem`} />
-                                        Deactivate <span className="font-semibold">{row.getValue('warehouseName')}</span> warehouse
+                                        Deactivate <span className="font-semibold">{warehouseName}</span> warehouse
                                     </AlertDialogTrigger>
                                 </ToolTip>
                             :
                                 <ToolTip content={`Reactivating warehouse restores its data`}>
                                     <AlertDialogTrigger onClick={() => setDeleteDialog(true)} className="flex gap-1 items-center cursor-pointer">
                                         <PiLightningFill className="fill-yellow-400" size={`1.2rem`} />
-                                        Reactivate <span className="font-semibold">{row.getValue('warehouseName')}</span> warehouse
+                                        Reactivate <span className="font-semibold">{warehouseName}</span> warehouse
                                     </AlertDialogTrigger>
                                 </ToolTip>
                         }
@@ -148,17 +169,17 @@ const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
                     <AlertDialogTitle>
                         {
                             isActive ?
-                            `Are you sure you want to deactivate ${row.getValue('warehouseName')} warehouse?`
+                            `Are you sure you want to deactivate ${warehouseName} warehouse?`
                             :
-                            `Are you sure you want to reactivate ${row.getValue('warehouseName')} warehouse?`
+                            `Are you sure you want to reactivate ${warehouseName} warehouse?`
                         }
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         {
                             isActive ?
-                            `This action will deactivate ${row.getValue('warehouseName')} warehouse. The deactivated warehouse will not operate. However, the related data will not be deleted from the database.`
+                            `This action will deactivate ${warehouseName} warehouse & the assigned admin will be dismissed. The deactivated warehouse will not operate. However, the related data will not be deleted from the database.`
                             :
-                            `This action will reactivate ${row.getValue('warehouseName')} warehouse. Warehouse will soon start operating and the related data will be restored.`
+                            `This action will reactivate ${warehouseName} warehouse. Warehouse will soon start operating and the related data will be restored.`
                         }
                     </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -167,9 +188,9 @@ const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
                     <LoadingButton loading={isLoading} onClick={isActive ? handleDeactivate : handleReactivate}>
                         {
                             isActive ?
-                            `Yes, deactivate ${row.getValue('warehouseName')}`
+                            `Yes, deactivate ${warehouseName}`
                             :
-                            `Yes, reactivate ${row.getValue('warehouseName')}`
+                            `Yes, reactivate ${warehouseName}`
                         }
                     </LoadingButton>
                 </AlertDialogFooter>
@@ -243,6 +264,11 @@ export const columns: ColumnDef<IWarehouse>[] = [
   {
     accessorKey: "address",
     cell: ({ row }) => <div className="lowercase">{row.getValue("address")}</div>,
+  },
+  {
+    accessorKey: "isActive",
+    header: "Status",
+    cell: ({ row }) => <div className="flex justify-center"><ActiveIndicator isActive={row.getValue('isActive') && row.getValue('isActive') ? true : false} activeText={`${ row.getValue('warehouseName') && row.getValue('warehouseName') ? row.getValue('warehouseName') : '' } Warehouse is active`} nonActiveText={` ${ row.getValue('warehouseName') && row.getValue('warehouseName') ? row.getValue('warehouseName') : '' } Warehouse is NOT active`} /></div>
   },
   {
     accessorKey: "postal_code",

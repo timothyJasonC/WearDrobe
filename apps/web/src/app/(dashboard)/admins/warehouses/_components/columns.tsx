@@ -51,7 +51,7 @@ const AssignedAdminCell = ({ adminID }: { adminID: string | null }) => {
     useEffect(() => {
         if (adminID) {
             async function getAssignedAdmin() {
-                const res = await (await getRequest(`/admin/${adminID}`)).json();
+                const res = await (await getRequest(`admin/${adminID}`)).json();
                 const admin = res.data;
                 setCurrentAdmin(admin);
             }
@@ -74,11 +74,12 @@ const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
     const [editDialog, setEditDialog] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const isActive = row.original.isActive;
+    const warehouse = row.original;
 
     async function handleDeactivate () {
         // setIsLoading(true)
         // try {
-        //     const res = await deleteRequest(`/admin/${admin.id}`)
+        //     const res = await deleteRequest(`admin/${admin.id}`)
         //     const data = await res.json();
         //     if (res.ok) {
         //         toast.success(data.message)
@@ -174,7 +175,7 @@ const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
                 </AlertDialogFooter>
             </AlertDialogContent>
       </AlertDialog>
-      <DialogWarehouse btnText={"Update Warehouse"} editWarehouse={true} setEditDialog={setEditDialog} editDialog={editDialog} optionalCancleFunc={exitEditDialog} />
+      <DialogWarehouse existingData={warehouse} btnText={"Update Warehouse"} editWarehouse={true} setEditDialog={setEditDialog} editDialog={editDialog} optionalCancleFunc={exitEditDialog} />
     </>
   );
 };

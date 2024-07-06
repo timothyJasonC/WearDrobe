@@ -12,9 +12,11 @@ import { getCities, getProvinces } from "@/lib/cart"
 import { getRequest, postRequest } from "@/lib/fetchRequests"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { IAdmin } from "../../admins/_components/columns"
+import { useRouter } from "next/navigation"
+import { IWarehouse } from "./columns"
 
-export function DialogWarehouse({ btnText, editWarehouse, editDialog, setEditDialog, optionalCancleFunc, warehouseProvince, warehouseCity, warehouseAddress, WarehouseName, assignedWarehouseAdmin }
-: { btnText: string, editWarehouse: boolean, editDialog?: any, setEditDialog?:any, optionalCancleFunc?: any, warehouseProvince?: string, warehouseCity?: string, warehouseAddress?: string, WarehouseName?: string, assignedWarehouseAdmin?: string }) {
+export function DialogWarehouse({ btnText, editWarehouse, editDialog, setEditDialog, optionalCancleFunc, existingData }
+: { btnText: string, editWarehouse: boolean, editDialog?: any, setEditDialog?:any, optionalCancleFunc?: any, existingData?: IWarehouse }) {
     const [ isLoading, setIsLoading ] = useState(false);
 
     const [provinces, setProvinces] = useState<Province[]>([]);
@@ -28,6 +30,7 @@ export function DialogWarehouse({ btnText, editWarehouse, editDialog, setEditDia
     const [ warehouseNameCheck, setWarehouseNameCheck ] = useState(true);
     const [ assignedAdmin, setAssignedAdmin ] = useState('')
     const [ availableAdmins, setAvailableAdmins ] = useState([])
+    const router = useRouter();
     
     const warehouseNameRef = useRef(null)
 
@@ -70,7 +73,7 @@ export function DialogWarehouse({ btnText, editWarehouse, editDialog, setEditDia
 
     async function fetchAvailableAdmins(){
         try {
-            const res = await getRequest('/admin/availableAdmins')
+            const res = await getRequest('admin/availableAdmins')
             const data = await res.json()
             if (res.ok) {
                 setAvailableAdmins(data.data)
@@ -88,16 +91,17 @@ export function DialogWarehouse({ btnText, editWarehouse, editDialog, setEditDia
 
     useEffect(() => {
         if (editWarehouse) {
-            if (warehouseProvince) {
-                setSelectedProvince(warehouseProvince)
+            if (existingData) {
+                console.log(existingData)
+                setSelectedProvince(existingData.province_id)
             }
         }
     }, [ provinces ])
 
     useEffect(() => {
-        if (editWarehouse) {
-            // setSelectedCity(fetchedAddress.city_id)
-            // setAddress(fetchedAddress.address)
+        if (existingData) {
+            setSelectedCity(existingData.city_id)
+            setAddress(existingData.address)
         }
     }, [ cities ])
 
@@ -112,11 +116,12 @@ export function DialogWarehouse({ btnText, editWarehouse, editDialog, setEditDia
         try {
             if (warehouseNameRef.current) {
                 const warehouseNameValue = (warehouseNameRef.current as HTMLInputElement)?.value
-                const res = await postRequest({ selectedCity, address, warehouseName: warehouseNameValue, assignedAdmin: assignedAdmin == 'null' ? '' : assignedAdmin }, '/warehouses/')
+                const res = await postRequest({ selectedCity, address, warehouseName: warehouseNameValue, assignedAdmin: assignedAdmin == 'null' ? '' : assignedAdmin }, 'warehouses/')
                 const data = await res.json();
                 if (res.ok) {
                     toast.success(data.message)
                     setOpenDialog(false)
+                    router.refresh()
                 } else {
                     toast.error(data.message)
                 }

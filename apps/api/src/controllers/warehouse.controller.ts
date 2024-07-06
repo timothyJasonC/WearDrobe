@@ -110,4 +110,36 @@ export class WarehouseController {
             return serverResponse(res, 400, 'error', error)
         }
     }
+
+    async assignAdminToWarehouse(req: Request, res: Response) {
+        try {
+            const warehouse = await prisma.warehouse.findFirst({ where: { id: req.body.warehouseId }});
+            const admin = await prisma.admin.findFirst({ where: { id: req.body.adminId }});
+            if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            if (!admin) return serverResponse(res, 404, 'error', 'Admin not found')
+            const assignedWarehouse  = await prisma.warehouse.findFirst({ where: { adminID: admin.id } });
+            if (assignedWarehouse?.warehouseName == warehouse.warehouseName) return serverResponse(res, 404, 'error', `${ admin.fullName } has been assigned to ${ assignedWarehouse.warehouseName } warehouse.`)
+            if (assignedWarehouse) return serverResponse(res, 404, 'error', `${ admin.fullName } has been assigned to ${ assignedWarehouse.warehouseName } warehouse. One warehouse can only be assigned to one admin.`)
+            await prisma.warehouse.update({ where: { id: warehouse.id }, data: { adminID: admin.id } })
+            serverResponse(res, 200, 'ok', `${admin.fullName} is successfully assigned to ${warehouse.warehouseName} warehouse`, warehouse)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async dissmissAdminFromWarehouse(req: Request, res: Response) {
+        try {
+            const warehouse = await prisma.warehouse.findFirst({ where: { id: req.body.warehouseId }});
+            const admin = await prisma.admin.findFirst({ where: { id: req.body.adminId }});
+            if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            if (!admin) return serverResponse(res, 404, 'error', 'Admin not found')
+            if (!warehouse.adminID) return serverResponse(res, 404, 'error', `Not admin is assigned at ${ warehouse.warehouseName } warehouse, yet`)
+            if (warehouse.adminID != admin.id) return serverResponse(res, 404, 'error', 'Admin ID does not match with the assigned admin with related warehouse')
+            await prisma.warehouse.update({ where: { id: warehouse.id }, data: { adminID: null } })
+            serverResponse(res, 200, 'ok', `${admin.fullName} is successfully dismissed from ${warehouse.warehouseName} warehouse`)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
 }

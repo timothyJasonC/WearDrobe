@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useReducer, useState } from "react"
 import AddressCard from "./AddressCard"
 import { getAddressList } from "@/lib/cart"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -21,6 +21,7 @@ export default function UserAddressBlock({ userId }: { userId: string }) {
         if (userAddressList) setIsLoading(false)
         setCurrentAddressList(userAddressList)
     }
+
     useEffect(() => {
         getUserAddressList()
     }, [ ])

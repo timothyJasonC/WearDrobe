@@ -31,7 +31,7 @@ export async function getAdminClientSide() {
     if(!token) return 
     let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
     if (token || typeof token === 'string') decoded = jwtDecode(token)
-    const res = await (await getRequest(`/admin/${decoded.id}`)).json()
+    const res = await (await getRequest(`admin/${decoded.id}`)).json()
     const admin = res.data
     return admin;
 }
@@ -41,7 +41,7 @@ export async function getAdminServerSide(cookies: any) {
         const token = cookies().get('token')?.value
         let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
         if (token) decoded = jwtDecode(token) 
-        const res = await (await getRequest(`/admin/${decoded.id}`)).json()
+        const res = await (await getRequest(`admin/${decoded.id}`)).json()
         const user = res.data;
         return user;    
     } catch (error) {
@@ -54,7 +54,7 @@ export async function getUserClientSide() {
     if(!token) return 
     let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
     if (token || typeof token === 'string') decoded = jwtDecode(token)
-    const res = await (await getRequest(`/user/${decoded.id}`)).json()
+    const res = await (await getRequest(`user/${decoded.id}`)).json()
     const user = res.data
     return user;
 }
@@ -64,7 +64,7 @@ export async function getUserServerSide(cookies:any) {
         const token = cookies().get('token')?.value
         let decoded: { id: string, role: string, iat: number, exp: number } = { id: '', role: '', iat: 0, exp: 0 }
         if (token) decoded = jwtDecode(token) 
-        const res = await (await getRequest(`/user/${decoded.id}`)).json()
+        const res = await (await getRequest(`user/${decoded.id}`)).json()
         const user = res.data;
         return user;    
     } catch (error) {

@@ -28,7 +28,7 @@ export default async function Page() {
     
     let users: IUser[] = []
     try {
-        const res =  await (await getRequest('/user')).json()
+        const res =  await (await getRequest('user')).json()
         users = res.data;
     } catch (error) {
         return 

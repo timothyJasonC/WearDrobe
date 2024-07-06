@@ -5,14 +5,12 @@ import { getRequest } from "@/lib/fetchRequests"
 import columns from "./_components/columns"
 import { ExpTable } from "../_components/ExpTable"
 import { StatisticsCard } from "../../_components/statisticsCard"
-import { Button } from "@/components/ui/button"
-import ExcelButton from "../_components/ExcelButton"
 
 export default async function Page() {
 
     let admins = []
     try {
-        const res =  await (await getRequest('/admin/')).json()
+        const res =  await (await getRequest('admin/')).json()
         admins = res.data;
     } catch (error) {
         return 

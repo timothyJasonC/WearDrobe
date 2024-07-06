@@ -1,6 +1,4 @@
-'use client'
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { Separator } from "@/components/ui/separator"
 import { deleteRequest, patchRequest } from "@/lib/fetchRequests"
@@ -9,6 +7,7 @@ import { PiCheckBold, PiPencilSimple, PiTrash } from "react-icons/pi"
 import { toast } from "sonner"
 import { AddressDialog } from "./AddressDialog"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { useRouter } from "next/navigation"
 
 export default function AddressCard({ id, labelAddress, coordinate, mainAddress, province, type, city_name, postal_code, userId }: { id: string, labelAddress: string, coordinate: string, mainAddress: boolean, province: string, type: string, city_name: string, postal_code: string, userId: string }) {
 
@@ -19,7 +18,7 @@ export default function AddressCard({ id, labelAddress, coordinate, mainAddress,
     async function handleMainAddress() {
         setIsLoading(true)
         try {
-            const res = await patchRequest({ id, userId }, '/address/setMainAddress')
+            const res = await patchRequest({ id, userId }, 'address/setMainAddress')
             const data = await res.json()
             if (res) setIsLoading(false)
             if (res.ok) {
@@ -37,7 +36,7 @@ export default function AddressCard({ id, labelAddress, coordinate, mainAddress,
     async function handleDeleteAddress() {
         setIsLoadingDelete(true)
         try {
-            const res = await deleteRequest(`/address/delete/${id}`)
+            const res = await deleteRequest(`address/delete/${id}`)
             const data = await res.json()
             if (res) setIsLoadingDelete(false)
             if (res.ok) {

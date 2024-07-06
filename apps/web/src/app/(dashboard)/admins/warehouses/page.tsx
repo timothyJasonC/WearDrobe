@@ -10,7 +10,7 @@ export default async function Page() {
 
     let warehouses = []
     try {
-        const res =  await (await getRequest('/warehouses/all/')).json()
+        const res =  await (await getRequest('warehouses/all/')).json()
         warehouses = res.data;
     } catch (error) {
         return 

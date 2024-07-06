@@ -37,7 +37,7 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
 
     async function getEditingProvince() {
         try {
-            const res = await getRequest(`/address/${id}`)
+            const res = await getRequest(`address/${id}`)
             const data = await res.json()
             const fetchedAddress = data.data;
             if (fetchedAddress) {
@@ -51,7 +51,7 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
 
     async function getEditingCity() {
         try {
-            const res = await getRequest(`/address/${id}`)
+            const res = await getRequest(`address/${id}`)
             const data = await res.json()
             const fetchedAddress = data.data;
             if (fetchedAddress) {

@@ -4,7 +4,7 @@ import { SetupAccountDialog } from "../../_components/SetupAccountDialog";
 import SetupUserAccountForm from "../_components/SetupUserAccountForm";
 import { getUserServerSide, isTokenExp } from "@/lib/utils";
 import { PiCheckBold, PiCheckCircleBold } from "react-icons/pi";
-import { getRequest, getRequestToken, postRequestToken, refreshToken } from "@/lib/fetchRequests";
+import { getRequest, getRequestToken, refreshToken } from "@/lib/fetchRequests";
 import { Spinner } from "@/components/ui/spinner";
 import { useParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
@@ -27,7 +27,7 @@ export default function Page() {
         async function getUser() {
             try {
                 if (decodedToken) {
-                    const data = await (await getRequest(`/user/${decodedToken.id}`)).json()
+                    const data = await (await getRequest(`user/${decodedToken.id}`)).json()
                     if (data.data) setUser(data.data)
                 }
             } catch (error) {
@@ -57,7 +57,7 @@ export default function Page() {
     useEffect(() => {
         async function verifyAccount() {
             try {
-                const res = await getRequestToken('/user/re-verify-account', activeToken)
+                const res = await getRequestToken('user/re-verify-account', activeToken)
                 if (res.ok) {
                     setVerified(true)
                 } 

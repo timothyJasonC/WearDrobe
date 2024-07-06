@@ -13,9 +13,9 @@ import ActiveIndicator from "@/components/sidebar/ActiveIndicator"
 
 export default async function Page({ params }: { params: { id: string } }) {
 
-    const res = await (await getRequest(`/admin/${params?.id}`)).json()
+    const res = await (await getRequest(`admin/${params?.id}`)).json()
     const admin = res.data
-    const warehouseRes = await (await getRequest(`/warehouses/assigned-warehouse/${admin?.id}`)).json();
+    const warehouseRes = await (await getRequest(`warehouses/assigned-warehouse/${admin?.id}`)).json();
     const assignedWarehouse = warehouseRes.data;
     
     async function handleEmail(email: string) {
@@ -26,7 +26,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 if (email == admin.email) {
                     return { success: { message: "Email didn't change" } };
                 } else {
-                    const res = await (await patchRequest({ email: email }, `/admin/email/${admin.id}`)).json()
+                    const res = await (await patchRequest({ email: email }, `admin/email/${admin.id}`)).json()
                     return { success: res };
                 }
             } else {
@@ -44,7 +44,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                 if (fullName.trim() == admin.fullName) {
                     return { success: { message: "Full Name didn't change" } };
                 } else {
-                    const res = await (await patchRequest({ fullName }, `/admin/name/${admin.id}`)).json()
+                    const res = await (await patchRequest({ fullName }, `admin/name/${admin.id}`)).json()
                     return { success: res };
                 }
             } else return { error: "Full Name must be at least 6 characters" }

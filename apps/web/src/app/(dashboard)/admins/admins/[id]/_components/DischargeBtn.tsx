@@ -20,7 +20,7 @@ export default function DischargeBtn({ admin }: { admin: IAdmin | null }) {
     async function handleDischarge() {
         setIsloading(true)
         try {
-            const res = await deleteRequest(`/admin/${admin ? admin?.id : ''}`)
+            const res = await deleteRequest(`admin/${admin ? admin?.id : ''}`)
             const data = await res.json();
             if (res.ok) {
                 toast.success(data.message)

@@ -55,7 +55,7 @@ export function VerifyCurrentPassForm({ className } : { className: string }) {
                     toast.error('Token is expired or invalid', { description: 'please request the new one on login page or account page'})
                 }
 
-                const res = await postRequest(accountData, '/account/check-password')
+                const res = await postRequest(accountData, 'account/check-password')
                 if (res) setIsLoading(false)
                 if (res.ok) {
                     swipeToNextForm()

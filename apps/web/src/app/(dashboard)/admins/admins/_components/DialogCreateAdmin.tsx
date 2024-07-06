@@ -17,9 +17,11 @@ import { LoadingButton } from "@/components/ui/loading-button"
 import { useState } from "react"
 import { toast } from "sonner"
 import { postRequest } from "@/lib/fetchRequests"
+import { useRouter } from "next/navigation"
 
 export function DialogCreateAdmin() {
     const [ isLoading, setIsLoading ] = useState(false);
+    const router = useRouter()
 
     const regFormSchema = z.object({
         email: z.string().email()
@@ -34,10 +36,11 @@ export function DialogCreateAdmin() {
         setIsLoading(true)
         const { email } = registerForm.getValues()
         try {
-            const res = await postRequest({ email: email }, '/admin')
+            const res = await postRequest({ email: email }, 'admin')
             if (res) setIsLoading(false)
             if (res.ok) {
                 toast.success("Email is successfully registered!", { description: "Please inform the new candidate to check their account" })
+                router.refresh()
             } else if (res.status == 409) {
                 toast.warning("Email has been registered!")
                 if (!(await res.json()).data.accountActive) setTimeout(() => { toast("Please inform the new candidate to check their email") }, 2000);

@@ -27,7 +27,7 @@ export default function Page() {
         async function getAdmin() {
             try {
                 if (decodedToken) {
-                    const data = await (await getRequest(`/admin/${decodedToken.id}`)).json()
+                    const data = await (await getRequest(`admin/${decodedToken.id}`)).json()
                     if (data.data) setAdmin(data.data)
                 }
             } catch (error) {
@@ -57,7 +57,7 @@ export default function Page() {
     useEffect(() => {
         async function verifyAccount() {
             try {
-                const res = await getRequestToken('/admin/re-verify-account', activeToken)
+                const res = await getRequestToken('admin/re-verify-account', activeToken)
                 const data = await res.json();
                 if (res.ok) {
                     setVerified(true)

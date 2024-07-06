@@ -82,7 +82,7 @@ export function AddressDialog({ children, btnText, editAddress, id }: { children
     async function handleEditAddress() {
         try {
             const addressData = { id, selectedCity, address, labelAddress: labelAddress.trim() }
-            const res = await patchRequest(addressData, '/address/editAddress')
+            const res = await patchRequest(addressData, 'address/editAddress')
             if (res) setIsLoading(false)
             if (res.ok) {
                 toast.success(`${labelAddress} address has been updated!`)

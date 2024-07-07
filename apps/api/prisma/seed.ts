@@ -49,7 +49,6 @@ async function main() {
         data: productImages,
         skipDuplicates: true
     })
-
     
 }
 

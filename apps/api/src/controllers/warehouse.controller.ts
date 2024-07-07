@@ -167,4 +167,40 @@ export class WarehouseController {
         }
     }
 
+    async editWarehouse(req: Request, res: Response) {
+        try {
+
+            const { selectedCity, address, warehouseName, assignedAdmin } = req.body
+            console.log(req.body)
+            const city = await fetch(`https://api.rajaongkir.com/starter/city?id=${selectedCity}`, {
+                method: 'GET',
+                headers: { key: `${process.env.NEXT_PUBLIC_RAJA_ONGKIR_API_KEY}` }
+            });
+            const data = await city.json()
+            const result = data.rajaongkir.results
+
+            const warehouse = await prisma.warehouse.update({
+                where: {
+                    id: req.params.id
+                },
+                data: {
+                    warehouseName: warehouseName,
+                    coordinate: `${address}, ${result.type} ${result.city_name}, ${result.province}, Indonesia`,
+                    address: address,
+                    city_id: result.city_id,
+                    province_id: result.province_id,
+                    province: result.province,
+                    type: result.type,
+                    city_name: result.city_name,
+                    postal_code: result.postal_code,
+                    adminID: assignedAdmin ? assignedAdmin : null, 
+                }
+            })
+
+            serverResponse(res, 200, 'ok', `${ warehouse.warehouseName } warehouse is successfully updated!`)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
 }

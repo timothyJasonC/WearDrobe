@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { bandungSubDistricts } from "@/lib/utils";
 import { getRequest } from "@/lib/fetchRequests";
 import { toast } from "sonner";
+import { IWarehouse } from "@/app/(dashboard)/admins/warehouses/_components/columns";
+import { PiSmileySad } from "react-icons/pi";
 
 type AddressProps = {
   selectedProvince: string;
@@ -22,9 +24,12 @@ type AddressProps = {
   setLabelAddress?:(value: string) => void;
   id?: string
   forWarehouse: boolean
+  warehouseData?: IWarehouse
+  defaultCity?: string
+  setDefaultCity?:(value: string) => void;
 }
 
-export default function AddressInputs({ selectedProvince, setSelectedProvince, provinces, setSelectedCity, cities, selectedCity, address, setAddress, fetchCities, labelAddress, setLabelAddress, id, forWarehouse }: AddressProps) {
+export default function AddressInputs({ selectedProvince, setSelectedProvince, provinces, setSelectedCity, cities, selectedCity, address, setAddress, fetchCities, labelAddress, setLabelAddress, id, forWarehouse, warehouseData, defaultCity, setDefaultCity }: AddressProps) {
 
     const [ currentProvince, setCurrentProvince ] = useState('');
     const [ currentCity, setCurrentCity ] = useState('');
@@ -34,6 +39,7 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
     const [ currentAddress, setCurrentAddress ] = useState<any>();
     const [ currentRoad, setCurrentRoad ] = useState<any>();
     const [ lngLat, setLngLat ] = useState([])
+    const [ defaultAddress, setDefaultAddress ] = useState<string>();
 
     async function getEditingProvince() {
         try {
@@ -55,8 +61,10 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
             const data = await res.json()
             const fetchedAddress = data.data;
             if (fetchedAddress) {
-                setSelectedCity(fetchedAddress.city_id)
-                setAddress(fetchedAddress.address)
+                if (!currentCity) {
+                    setSelectedCity(fetchedAddress.city_id)
+                    setDefaultAddress(fetchedAddress.address)
+                }
             }
         } catch (error) {
             toast.error('Something went wrong while fetching your address data')
@@ -64,41 +72,39 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
     }
 
     useEffect(() => {
-        if (id) {
-            getEditingProvince()
-        }
+        if (id) getEditingProvince()
+        if (warehouseData) setSelectedProvince(warehouseData.province_id);
     }, [ id ])
     
     useEffect(() => {
         if (currentProvince) {
-            const selected = provinces.filter(prov => prov.province == currentProvince)[0]
-            if (selected) setSelectedProvince(selected.province_id)
+            if (provinces) {
+                const selected = provinces.filter(prov => prov.province == currentProvince)[0]
+                if (selected) setSelectedProvince(selected.province_id)
+            }
         }
     }, [ currentProvince ])
 
     useEffect(() => {
-        if (selectedProvince) {
-            fetchCities(selectedProvince);
-        }
+        if (selectedProvince) fetchCities(selectedProvince);
     }, [ selectedProvince ])
 
     useEffect(() => {
+        if (defaultCity) setCurrentCity(defaultCity)
+    }, [ ])
+
+    useEffect(() => {
         if (cities) {
-            if (id) {
-                getEditingCity();
-            } else {
-                const selected = cities.filter(city => city.city_name == currentCity)[0]
-                if (currentSubDistrict) {
-                    if (currentSubDistrict?.text_id) {
-                        if (bandungSubDistricts.includes(currentSubDistrict?.text_id)) {
-                            setSelectedCity('23')
-                        } else setSelectedCity(selected?.city_id)
-                    } else setSelectedCity(selected?.city_id)
-                } else setSelectedCity(selected?.city_id)
-                const newAddress = currentAddress || currentRoad?.text_id || currentNeighbor?.text_id || currentWard?.text_id || currentSubDistrict?.text_id || "";
-                setAddress(newAddress);
-                setCurrentProvince('')
-            }
+            if (id) getEditingCity();
+            const selected = cities.filter(city => city.city_name == currentCity)[0]
+            if (currentSubDistrict?.text_id) {
+                setSelectedCity(bandungSubDistricts.includes(currentSubDistrict.text_id) ? '23' : selected?.city_id);
+            } else setSelectedCity(selected?.city_id);
+                        
+            const newAddress = currentAddress || currentRoad?.text_id || currentNeighbor?.text_id || currentWard?.text_id || currentSubDistrict?.text_id || "";
+            setDefaultAddress(newAddress)
+            setAddress(newAddress);
+            setCurrentProvince('')
         }
     }, [ cities, lngLat ])
 
@@ -121,35 +127,54 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
                 <Label className='text-black'>Province</Label>
                 <Select onValueChange={setSelectedProvince} value={selectedProvince}> 
                     <SelectTrigger className={`max-w-full ${ forWarehouse ? 'sm:max-w-96 md:max-w-[35rem] lg:max-w-96' : 'sm:max-w-80' } duration-200`}>
-                        <SelectValue placeholder="Select Province" />
+                        <SelectValue placeholder={ !provinces ? 'Cannot fetch provinces' : 'Select Province' } />
                     </SelectTrigger>
                     <SelectContent>
-                        {provinces.map((province: Province) => (
-                        <SelectItem key={province.province_id} value={province.province_id}>
-                            {province.province}
-                        </SelectItem>
-                        ))}
+                        { provinces ?
+                        provinces.map((province: Province) => (
+                            <SelectItem key={province.province_id} value={province.province_id}>
+                                {province.province}
+                            </SelectItem>
+                        ))
+                        :
+                            <SelectItem value={'-1'}>
+                                <div className="flex items-center gap-2">
+                                    <PiSmileySad size={`1.1rem`} />
+                                    <span>You reached the daily limit. Try again tomorrow!</span>
+                                </div>
+                            </SelectItem>
+                        }
                     </SelectContent>
                 </Select>
             </div>
             <div className="flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1">
                 <Label className='text-black'>City</Label>
                 <Select onValueChange={setSelectedCity} value={selectedCity} disabled={!selectedProvince}>
-                <SelectTrigger className={`max-w-full ${ forWarehouse ? 'sm:max-w-96 md:max-w-[35rem] lg:max-w-96' : 'sm:max-w-80' } duration-200`}>
-                    <SelectValue placeholder="Select City" />
-                </SelectTrigger>
-                <SelectContent>
-                    {cities.map((city: City) => (
-                    <SelectItem key={city.city_id} value={city.city_id}>
-                        {city.type} {city.city_name}
-                    </SelectItem>
-                    ))}
-                </SelectContent>
+                    <SelectTrigger className={`max-w-full ${ forWarehouse ? 'sm:max-w-96 md:max-w-[35rem] lg:max-w-96' : 'sm:max-w-80' } duration-200`}>
+                        <SelectValue placeholder={ !cities ? 'Cannot fetch cities' : 'Select City' }  />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {
+                            cities ?
+                                cities.map((city: City) => (
+                                    <SelectItem key={city.city_id} value={city.city_id}>
+                                        {city.type} {city.city_name}
+                                    </SelectItem>
+                                ))
+                            :
+                            <SelectItem className="flex items-center gap-2" value={'-1'}>
+                                <div className="flex items-center gap-2">
+                                    <PiSmileySad size={`1.1rem`} />
+                                    <span>You reached the daily limit. Try again tomorrow!</span>
+                                </div>
+                            </SelectItem>
+                        }
+                    </SelectContent>
                 </Select>
             </div>
             <div className="flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1">
                 <Label className='text-black'>Address</Label>
-                <Input className={`max-w-full ${ forWarehouse ? 'sm:max-w-96 md:max-w-[35rem] lg:max-w-96' : 'sm:max-w-80' } duration-200`} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Address" disabled={!selectedCity} />
+                <Input className={`max-w-full ${ forWarehouse ? 'sm:max-w-96 md:max-w-[35rem] lg:max-w-96' : 'sm:max-w-80' } duration-200`} value={defaultAddress || address} onChange={(e) => setAddress(e.target.value)} placeholder="Address" disabled={!selectedCity} />
             </div>
         </section>
     );

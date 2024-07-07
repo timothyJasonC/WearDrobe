@@ -10,7 +10,6 @@ import xlsx, { IContent, IJsonSheet } from "json-as-xlsx";
 import { IUser } from "@/app/(dashboard)/admins/users/page";
 import { IAdmin } from "@/app/(dashboard)/admins/admins/_components/columns";
 import { IWarehouse } from "@/app/(dashboard)/admins/warehouses/_components/columns";
-import { Row } from "@tanstack/react-table";
 
 
 export function cn(...inputs: ClassValue[]) {

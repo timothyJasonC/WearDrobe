@@ -7,7 +7,6 @@ import { PiCheckBold, PiPencilSimple, PiTrash } from "react-icons/pi"
 import { toast } from "sonner"
 import { AddressDialog } from "./AddressDialog"
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { useRouter } from "next/navigation"
 
 export default function AddressCard({ id, labelAddress, coordinate, mainAddress, province, type, city_name, postal_code, userId }: { id: string, labelAddress: string, coordinate: string, mainAddress: boolean, province: string, type: string, city_name: string, postal_code: string, userId: string }) {
 

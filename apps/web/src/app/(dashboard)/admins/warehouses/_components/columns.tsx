@@ -62,11 +62,16 @@ const AssignedAdminCell = ({ adminID }: { adminID: string | null }) => {
     }, []);
 
     return (
-        <ToolTip content={currentAdmin && currentAdmin?.fullName ? `Click to see ${currentAdmin && currentAdmin?.fullName}` : 'No admin is assigned, yet'}>
-            <Link href={`/admins/admins/${currentAdmin && currentAdmin?.id}`}>
-                <div className="lowercase">{currentAdmin && currentAdmin?.fullName ? currentAdmin?.fullName : '-'}</div>
-            </Link>
-        </ToolTip>
+        <>
+            <ToolTip content={currentAdmin && currentAdmin?.fullName ? `Click to see ${currentAdmin && currentAdmin?.fullName}` : 'No admin is assigned, yet'}>
+                {
+                    currentAdmin && currentAdmin?.id ?
+                    <Link href={`/admins/admins/${currentAdmin && currentAdmin?.id}`}>{ currentAdmin?.fullName && currentAdmin?.fullName }</Link>
+                    :
+                    <div className="lowercase">{currentAdmin && currentAdmin?.fullName ? currentAdmin?.fullName : '-'}</div>
+                }
+            </ToolTip>
+        </>
     );
 };
 
@@ -122,6 +127,32 @@ const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
     function exitEditDialog() {
         setEditDialog(false);
         setDeleteDialog(false);
+    }
+
+    async function handleEditWarehouse(warehouseNameValue: string, selectedCity: string, address: string, assignedAdmin: string, existingAdmin: IAdmin) {
+        setIsLoading(true)
+        try {
+            if (warehouseNameValue) {
+                if ((selectedCity == warehouse?.city_id && address == warehouse?.address) && (warehouseNameValue == warehouse.warehouseName && (assignedAdmin || existingAdmin?.id) == warehouse.adminID)) {
+                    toast.warning('You have not made any changes, yet')
+                } else {
+                    const res = await patchRequest({ selectedCity, address, warehouseName: warehouseNameValue, assignedAdmin: assignedAdmin || existingAdmin?.id || '' }, `warehouses/${warehouse?.id}`)
+                    const data = await res.json();
+                    if (res.ok) {
+                        toast.success(data.message)
+                        setEditDialog(false)
+                        setDeleteDialog(false)
+                        router.refresh()
+                    } else {
+                        toast.error(data.message)
+                    }
+                }
+            }
+        } catch (error) {
+            if (error instanceof Error) toast.error(error.message)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -196,7 +227,7 @@ const ActionsCell = ({ row }: { row: Row<IWarehouse> }) => {
                 </AlertDialogFooter>
             </AlertDialogContent>
       </AlertDialog>
-      <DialogWarehouse existingData={warehouse} btnText={"Update Warehouse"} editWarehouse={true} setEditDialog={setEditDialog} editDialog={editDialog} optionalCancleFunc={exitEditDialog} />
+      <DialogWarehouse editFunc={handleEditWarehouse} warehouseData={warehouse} btnText={"Update Warehouse"} editWarehouse={true} setEditDialog={setEditDialog} editDialog={editDialog} optionalCancleFunc={exitEditDialog} />
     </>
   );
 };

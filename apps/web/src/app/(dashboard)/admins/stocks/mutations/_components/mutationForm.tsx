@@ -1,8 +1,8 @@
 import { Label } from '@/components/ui/label'
 import React, { useEffect, useState } from 'react'
-import { Selector } from '../../../products/_components/manageProductModal/selector'
+import { Selector } from '../../../../../../components/selector'
 import { IProductVariant, IWarehouse } from '@/constants'
-import { createMutationRequest, getAllWarehouse, getProductName, getProductSlug, getVariantStock } from '@/app/action'
+import { createMutationRequest, getWarehouseFiltered, getProductName, getProductSlug, getVariantStock } from '@/app/action'
 import { Separator } from '@/components/ui/separator'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
@@ -49,12 +49,15 @@ export const MutationForm = ({selectedWH, setOpen}:IMutationForm) => {
         }
     }
 
+    console.log(selectedWH);
+    
+
     useEffect(() => {
         const getData = async () => {
             const res = await getProductName('')
             setVariant('')
-            const war = await getAllWarehouse(selectedWH)
-            if (res.status == 'ok' && war.status == 'ok') {
+            const war = await getWarehouseFiltered(selectedWH)    
+            if (res.status == 'ok') {
                 setNameArr(res.data)
                 setSelectedProd(res.data[0].name)
                 setWarehouseList(war.data)
@@ -62,6 +65,8 @@ export const MutationForm = ({selectedWH, setOpen}:IMutationForm) => {
         }
         getData()
     }, [selectedWH])   
+    
+    console.log(warehouseList)
 
     useEffect(() => {
         if (selectedProd) {
@@ -85,7 +90,7 @@ export const MutationForm = ({selectedWH, setOpen}:IMutationForm) => {
         setVariant('')
         setSize('')
         setQty(0)
-    }, [selectedProd, targetWH])
+    }, [selectedProd, targetWH])    
 
     useEffect(() => {
         if (variant && size) {
@@ -107,7 +112,7 @@ export const MutationForm = ({selectedWH, setOpen}:IMutationForm) => {
         <Selector 
         label='warehouse'
         setState={setTargetWH}
-        state={warehouseList}/>
+        state={warehouseList.map(item => item.warehouseName)}/>
 
         <Separator className='my-7' />
 
@@ -193,7 +198,7 @@ export const MutationForm = ({selectedWH, setOpen}:IMutationForm) => {
         </div>
         <div className="flex gap-2 justify-end mt-7">
             <CancelAlert setOpen={setOpen} title={'Close mutation form?'} cta={'Cancel'} message={'All input will be lost.'}/>
-            <SubmitAlert action={handleSubmit} title={'Update product stock?'} cta={'Update'} message={'Make sure all data are correct.'}/>
+            <SubmitAlert action={handleSubmit} title={'Request product mutation?'} cta={'Request'} message={'Make sure all data are correct.'}/>
       </div>
     </div>
   )

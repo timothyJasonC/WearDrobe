@@ -24,18 +24,19 @@ interface IStockTable {
   export function StockTable({productList, setPage, page, productQty}:IStockTable) {
     return (
       <div>
-        <Table className="my-7">
+        <Table className="my-7 text-[0.82rem]">
           {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px]">No.</TableHead>
               <TableHead className="">Product Name</TableHead>
+              <TableHead className="">Product ID</TableHead>
               <TableHead className="text-center">Gender</TableHead>
               <TableHead className="text-center max-w-52">Type</TableHead>
               <TableHead className="text-center">Category</TableHead>
               <TableHead className="text-center min-w-32">Last Updated</TableHead>
-              <TableHead className="text-center">In</TableHead>
-              <TableHead className="text-center">Out</TableHead>
+              <TableHead className="text-center">Stock In</TableHead>
+              <TableHead className="text-center">Stock Out</TableHead>
               <TableHead className="text-center">Stock at Date</TableHead>
               <TableHead className="text-center">Current Stock</TableHead>
               <TableHead className="text-center"></TableHead>
@@ -53,6 +54,7 @@ interface IStockTable {
               <TableRow key={item.id}>
                 <TableCell>{(index + 1) + ((page - 1) * 10)}</TableCell>
                 <TableCell className="font-semibold">{item.name}</TableCell>
+                <TableCell className="">{item.id}</TableCell>
                 <TableCell className="text-center">{item.category.gender.at(0) + item.category.gender.slice(1).toLowerCase()}</TableCell>
                 <TableCell className="text-center">{item.category.type.at(0) + item.category.type.slice(1).toLowerCase()}</TableCell>
                 <TableCell className="text-center">{item.category.category}</TableCell>
@@ -73,7 +75,7 @@ interface IStockTable {
             })
             :
             <TableRow>
-              <TableCell className="font-medium text-center" colSpan={8} >Data will appear here.</TableCell>
+              <TableCell className="text-center" colSpan={11} >No results.</TableCell>
             </TableRow>
           } 
           </TableBody>

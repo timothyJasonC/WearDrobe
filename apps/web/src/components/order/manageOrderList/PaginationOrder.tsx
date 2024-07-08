@@ -10,7 +10,7 @@ type PaginationProps = {
   }
 
 export default function PaginationOrder({ page, totalPages, urlParamName }: PaginationProps) {
-    const [currentPage, setCurrentPage] = useState(2);
+    const [currentPage, setCurrentPage] = useState(1);
     const [isMobile, setIsMobile] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -40,11 +40,13 @@ export default function PaginationOrder({ page, totalPages, urlParamName }: Pagi
         Math.max(1, currentPage - 2),
         Math.max(1, currentPage - 1),
         currentPage,
-        Math.min(totalPages, currentPage + 1),
-        Math.min(totalPages, currentPage + 2)
+        Math.max(1, currentPage + 1),
+        Math.max(1, currentPage + 2)
     ].filter((page, index, self) => self.indexOf(page) === index);
 
     const showEllipsis = totalPages - currentPage > 3;
+    console.log(pages);
+    
 
     return (
         <Pagination>

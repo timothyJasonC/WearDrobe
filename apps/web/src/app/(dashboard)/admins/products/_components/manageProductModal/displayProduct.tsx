@@ -3,7 +3,6 @@ import { ProdTable } from './prodTable'
 import { PaginationTemplate } from '@/components/pagination'
 import { Input } from "@/components/ui/input"
 import { PiMagnifyingGlass } from "react-icons/pi";
-import { getProduct } from '@/app/action'
 import { IProduct, IProductList } from '@/constants'
 
 interface IAdminProduct {
@@ -19,20 +18,12 @@ export const AdminProductDisplay = ({page, setPage, getData,productList, product
 	
 	return (
 		<div className='w-full'>
-			<div className='flex items-center w-full justify-end gap-2'>
-				<label htmlFor="search"><PiMagnifyingGlass className='text-2xl'/></label>
-				<Input id='search' type="text" placeholder="Search products" className='max-w-60'/>
-			</div>
-			<div className=''>
-				<div className=''>
-				<ProdTable 
-					productList={productList}
-					action={getData}
-					isSuper={isSuper}
-					page={page}
-				/>
-				</div>
-			</div>
+			<ProdTable 
+				productList={productList}
+				action={getData}
+				isSuper={isSuper}
+				page={page}
+			/>
 			<PaginationTemplate
 			setPage={setPage}
 			page={page}

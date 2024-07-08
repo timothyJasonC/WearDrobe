@@ -12,8 +12,8 @@ export class ProductRouter {
     } 
 
     private initializeRoutes(): void {
+        this.router.post('/lists', this.productController.getProduct)
         this.router.post('/', this.productController.createProduct)
-        this.router.get('/', this.productController.getProduct)
         this.router.get('/names', this.productController.getProductName)
         this.router.get('/catalogs', this.productController.getProductByQuery)
         this.router.get('/:slug', this.productController.getProductBySlug)

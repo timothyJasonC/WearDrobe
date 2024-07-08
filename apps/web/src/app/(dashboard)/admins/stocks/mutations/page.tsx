@@ -1,8 +1,7 @@
 'use client'
 
-import { StatisticsCard } from '@/app/(dashboard)/_components/statisticsCard'
 import { WarehouseDropdown } from '@/app/(dashboard)/_components/warehouseDropdown'
-import { getProduct, getWarehouse } from '@/app/action'
+import { getWarehouse } from '@/app/action'
 import { IWarehouse } from '@/constants'
 import { getAdminClientSide } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
@@ -43,7 +42,7 @@ export default function Mutation() {
 
 
   return (
-    <div className='flex flex-col w-full min-h-screen py-10 px-10 md:px-20'>
+    <div className=''>
       
       <div className='flex w-full mb-7 items-center max-sm:flex-col gap-y-7'>
         <div className='w-full flex items-center gap-0'>

@@ -4,18 +4,20 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { IOrder } from '@/constants';
 import { getUserClientSide } from '@/lib/utils';
 import { confirmOrder } from '@/lib/order';
+import { DateRange } from 'react-day-picker';
 
 type ConfirmShippedPorps = {
     orderId: string
     setOrderList: (value: IOrder[] | null) => void
     currentPage: string | null
+    date: DateRange
 }
 
-export default function ConfirmShipped({ orderId, setOrderList, currentPage }: ConfirmShippedPorps) {
+export default function ConfirmShipped({ orderId, setOrderList, currentPage, date }: ConfirmShippedPorps) {
     const handleConfirmShipped = async () => {
         const dataUser = await getUserClientSide()
         if (dataUser) {
-            const res = await confirmOrder(orderId, dataUser.id, currentPage)
+            const res = await confirmOrder(orderId, dataUser.id, currentPage, date)
             setOrderList(res)
         }
     };

@@ -7,7 +7,7 @@ export const AdminDashboard = async ({children}: Readonly<{children: React.React
     const admin = await getAdminServerSide(cookies)
     
     return (
-        <div className="bg-white flex">
+        <div className="bg-white h-screen flex">
             <AdminSideBar admin={admin} />
             {children}
         </div>

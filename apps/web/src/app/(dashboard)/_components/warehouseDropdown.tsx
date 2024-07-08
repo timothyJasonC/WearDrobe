@@ -20,8 +20,9 @@ export function WarehouseDropdown({ selectedWH, setSelectedWH, warehouseList, is
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="text-4xl hover:bg-gray-100 rounded-none px-0 border-b-2 border-b-black">
-          <PiCaretCircleDownFill className="text-xl mr-2" /> {selectedWH}
+        <Button variant="ghost" className="text-2xl md:text-4xl hover:bg-gray-100 rounded-none px-0 border-b-2 border-b-black">
+          <PiCaretCircleDownFill className="text-xl mr-2" /> 
+          {selectedWH}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" onCloseAutoFocus={(e) => e.preventDefault()}>

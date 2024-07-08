@@ -24,6 +24,7 @@ export interface IOrder {
   createdAt: string | Date; // ISO date string
   updatedAt: string; // ISO date string
   items?: IOrderItem[];
+  user?: {addresses: [{city_name: string}] }
 }
 
 export interface IOrderItem {
@@ -36,6 +37,19 @@ export interface IOrderItem {
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
   productVariant: { color: string, image: string, product: { name: string } }
+}
+
+export interface IOrderItem2 {
+  id: string;
+  orderId: string;
+  productVariantId: string;
+  size: string
+  quantity: number;
+  price: number;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  productVariant: IProductVariant
+  order: IOrder
 }
 
 export interface IImageFieldProps {
@@ -112,6 +126,7 @@ export interface IColorVariant {
     stockIn:{_sum:{quantity:number}}
     stockOut:{_sum:{quantity:number}}
     toDateStock:number
+    analytics:{_sum:{price:number, quantity:number,}, _count:{id:number}}
   }
 
 export interface IWarehouseProduct {

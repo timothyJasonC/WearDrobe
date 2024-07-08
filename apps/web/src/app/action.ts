@@ -67,8 +67,8 @@ export async function editCategory(dataSet: {gender: string, type: string, categ
   return data
 }
 
-export async function getAllWarehouse(filter: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}warehouses/?filter=${filter}`, {
+export async function getWarehouseFiltered(filter: string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}warehouses/filter/${filter}`, {
     method: "GET"
   })
   const data = await res.json()
@@ -95,10 +95,13 @@ export async function createProduct(dataSet:IProductDataSet) {
   return data
 }
 
-export async function getProduct(warehouse?:string, p?:number, l?:number) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}products?w=${warehouse}&p=${p}&l=${l}`, {
-    method: 'GET',
-    next: {revalidate: 1}
+export async function getProduct(warehouse:string, p:number, l:number, filter:{date:DateRange, g:string, t:string, c:string, q:string}) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}products/lists?w=${warehouse}&p=${p}&l=${l}`, {
+    method: "POST",
+    headers: {
+      "content-Type": "application/json"
+    },
+    body: JSON.stringify(filter)
   })
   const data = await res.json()
   return data
@@ -154,25 +157,25 @@ export async function getVariantStock(varID:string, w:string, size:string) {
   return data
 }
 
-export async function getAllStock(w:string, p:number, l:number, date:DateRange) {
+export async function getAllStock(w:string, p:number, l:number, filter:{date:DateRange, g:string, t:string, c:string, q:string}) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}stocks/all?w=${w}&p=${p}&l=${l}`, {
     method: 'POST', 
     headers: {
       "content-Type": "application/json"
     },
-    body: JSON.stringify(date)
+    body: JSON.stringify(filter)
   })
   const data = await res.json()
   return data
 }
 
-export async function getStockDetail(slug:string, w:string, type:string, p:number, l:number, date:DateRange) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}stocks/${slug}?w=${w}&type=${type}&p=${p}&l=${l}`, {
+export async function getStockDetail(slug:string, w:string, p:number, l:number, filter: {date:DateRange,t:string, v:string, s:string}) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}stocks/${slug}?w=${w}&p=${p}&l=${l}`, {
     method: 'POST', 
     headers: {
       "content-Type": "application/json"
     },
-    body: JSON.stringify(date)
+    body: JSON.stringify(filter)
   })
   const data = await res.json()
   return data
@@ -225,6 +228,30 @@ export async function rejectRequest(id: string) {
 export async function cancelRequest(id: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}mutations/cancel-requests/${id}`, {
     method: 'DELETE', 
+  })
+  const data = await res.json()
+  return data
+}
+
+export async function getAllSales(w: string, p:number, l:number, filter: {date:DateRange, g:string, t:string, c:string, q:string}) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}sales/?w=${w}&p=${p}&l=${l}`, {
+    method: 'POST', 
+    headers: {
+      "content-Type": "application/json"
+    },
+    body: JSON.stringify(filter)
+  })
+  const data = await res.json()
+  return data
+}
+
+export async function getSalesDetail(slug:string, w:string, p:number, l:number, filter:{date:DateRange, v:string, s:string}) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}sales/${slug}?w=${w}&p=${p}&l=${l}`, {
+    method: 'POST', 
+    headers: {
+      "content-Type": "application/json"
+    },
+    body: JSON.stringify(filter)
   })
   const data = await res.json()
   return data

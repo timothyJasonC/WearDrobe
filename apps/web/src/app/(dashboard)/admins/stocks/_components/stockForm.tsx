@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Selector } from '../../products/_components/manageProductModal/selector'
+import { Selector } from '../../../../../components/selector'
 import { IProduct, IWarehouse } from '@/constants'
 import { Label } from '@radix-ui/react-label'
 import { changeStock, getProductName, getProductSlug } from '@/app/action'
@@ -47,11 +47,12 @@ export const StockForm = ({selectedWH, warehouseList, setOpen}:IDropdown) => {
     setProduct(prodName[0].name)
   }
 
-  const getData = async(product:string, warehouse:string) => {
+  const getData = async() => {
     if (product) {
       const slug = product.toLowerCase().replaceAll(" ", "-") 
       const sizeValue = size === "All Sizes" ? "" : size
-      const prodData = await getProductSlug(slug, warehouse, sizeValue)      
+      const wh = warehouse == 'All Warehouses' ? '' : warehouse
+      const prodData = await getProductSlug(slug, wh, sizeValue)      
       setProductData(prodData.productList)
     }
   }
@@ -66,7 +67,7 @@ export const StockForm = ({selectedWH, warehouseList, setOpen}:IDropdown) => {
         if (res.status === 'ok') {
           toast.success('Stock successfully updated. Stock changes added to log.')
           setStockArray([])
-          getData(product, warehouse)
+          getData()
         } else {
           toast.error(res.message)
         }
@@ -81,7 +82,7 @@ export const StockForm = ({selectedWH, warehouseList, setOpen}:IDropdown) => {
   }, [])
   
   useEffect(() => {
-    getData(product, warehouse)
+    getData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product, warehouse, size])
 

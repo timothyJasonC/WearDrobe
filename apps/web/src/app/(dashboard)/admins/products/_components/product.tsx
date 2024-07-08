@@ -8,7 +8,19 @@ import { CreateProductDialog } from '@/app/(dashboard)/admins/products/_componen
 import { AdminProductDisplay } from '@/app/(dashboard)/admins/products/_components/manageProductModal/displayProduct'
 import { IProduct, IWarehouse } from '@/constants'
 import { getAdminClientSide } from '@/lib/utils'
+import { DateRange } from 'react-day-picker'
+import { PiFileArrowDownFill, PiMagnifyingGlass } from 'react-icons/pi'
+import { Input } from '@/components/ui/input'
+import { DatePickerWithRange } from '../../stocks/_components/datePicker'
+import { SalesPopover } from '../../sales/_components/salesPopover'
+import { useDebouncedCallback } from 'use-debounce'
+import ExcelButton from '@/app/(dashboard)/_components/excelButton'
+import { downloadProductsToExcel } from '@/lib/xlsx'
 
+const monthFirstDate = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
 
 
 export  function Products() {
@@ -18,10 +30,24 @@ const [productList, setProductList] = useState<IProduct[]>([])
 const [open, setOpen] = useState(false);
 const [openC, setOpenC] = useState(false);
 const [categoryLength, setCategoryLength] = useState(0) 
-const [productQty, setProductQty] = useState(0) 
+const [productQty, setProductQty] = useState(0)
+const [gender, setGender] = useState('All')
+const [type, setType] = useState('All')
+const [category, setCategory] = useState('All')
+const [q, setQ] = useState('')
 const [page, setPage] = useState(1)
 const [isSuper, setIsSuper] = useState(false)
+const [date, setDate] = useState<DateRange | undefined>({
+  from: monthFirstDate(),
+  to: new Date(),
+})
 
+const debounced = useDebouncedCallback(
+  (value) => {
+      setQ(value);
+    },
+    500
+)
 
 const getAdmWH = async() => {
   const admin = await getAdminClientSide()
@@ -35,13 +61,22 @@ const getAdmWH = async() => {
   }
 }
 
-const getData = async(wh:string) => {
-    const product = await getProduct(wh, page, 10)
-    const category = await getCategory("", "")
-    setProductList(product.productList)
-    setProductQty(product.totalProduct)
-    setCategoryLength(category.totalCategory)
+const getData = async() => {
+  if (date?.from && date?.to && selectedWH) {
+    const g = gender == "All" ? '' : gender
+    const t = type == "All" ? '' : type
+    const c = category == "All" ? '' : category
+    const wh = selectedWH == 'All Warehouses' ? '' : selectedWH 
+    const filter = {date, g, t, c, q}
+    const prod = await getProduct(wh, page, 10, filter)    
+    const cat = await getCategory("", "")
+    if (prod.status == 'ok' && cat.status == 'ok') {
+      setProductList(prod.productList)
+      setProductQty(prod.totalProduct)
+      setCategoryLength(cat.totalCategory)
+    }
   }
+}
 
   useEffect(() => {
     getAdmWH()
@@ -49,17 +84,17 @@ const getData = async(wh:string) => {
   
   useEffect(() => {
     if (selectedWH) {
-      getData(selectedWH)
+      getData()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWH, open , openC, page])
+}, [selectedWH, page, date, gender, type, category, q])
   
   
   return (
-    <div className='flex flex-col w-full py-10 px-10 md:px-20'>
+    <div className=''>
       
       <div className='flex w-full mb-7 flex-col-reverse xl:flex-row'>
-        <div className='flex gap-5 md:gap-10 max-md:flex-wrap'>
+        <div className='flex gap-5 max-md:flex-wrap'>
           <StatisticsCard 
             title='Products'
             number={productQty ? productQty : 0}
@@ -81,12 +116,24 @@ const getData = async(wh:string) => {
             />
         </div>
       </div>
+
+      <div className='flex w-full items-center max-sm:gap-2 gap-4 flex-wrap gap-y-5 justify-between'>
+        <ExcelButton func={() => downloadProductsToExcel(productList, selectedWH)}/>
+
+        <div className='flex flex-1 gap-2 max-sm:justify-between justify-end items-center'>
+          <Input id='search' type="text" placeholder="Search products" className='w-full sm:max-w-60 min-w-44' onChange={(e) => debounced(e.target.value)}/>
+          <DatePickerWithRange date={date} setDate={setDate}/>
+          <SalesPopover gender={gender} type={type} category={category} setGender={setGender} setType={setType} setCategory={setCategory}/>
+        </div>
+
+      </div>
+
       <div className='w-full'>
         <AdminProductDisplay 
         page={page}
         setPage={setPage}
         productList={productList}
-        getData={() => getData(selectedWH)}
+        getData={() => getData()}
         productQty={productQty}
         isSuper={isSuper}
         />

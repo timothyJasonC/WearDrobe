@@ -31,7 +31,7 @@ export function Selector({label, state, defValue, setState, disabled, width}:{la
                     <p>{item.category ? item.category : item.warehouseName ? item.warehouseName : item.name? item.name : item}</p>
                   </div>
                 </SelectItem>
-                <Separator className={item == 'Select All' ? '' : 'hidden'}/>
+                <Separator className={item == 'Select All' || item == 'All'  ? '' : 'hidden'}/>
               </div>
             )
           })}

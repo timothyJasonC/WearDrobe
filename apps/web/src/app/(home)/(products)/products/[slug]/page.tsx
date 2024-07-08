@@ -109,8 +109,8 @@ export default function Page() {
                             </div>
                         </div>
                         
-                        <div className="h-full max-md:hidden">
-                            <div className="flex flex-col sm:w-[500px] md:w-[330px] lg:w-[400px] xl:w-[500px] sticky top-36 mb-20 rounded-lg p-10 bg-white drop-shadow-[0_10px_15px_rgba(0,0,0,0.07)]">
+                        <div className="min-h-full max-md:hidden">
+                            <div className="flex flex-col sm:w-[500px] md:w-[330px] lg:w-[400px] xl:w-[500px] sticky top-32 mb-10 rounded-lg p-10 bg-white drop-shadow-[0_10px_15px_rgba(0,0,0,0.07)]">
                                 <p className="text-4xl xl:text-6xl font-semibold mb-10">{product.name}</p>
                                 <div className="font-medium flex items-end">
                                     <p className="text-xl">Rp</p>

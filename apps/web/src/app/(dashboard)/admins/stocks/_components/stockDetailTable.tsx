@@ -23,10 +23,7 @@ interface IStockTable {
   
 
   
-  export function StockDetailTable({StockList, setPage, page, productQty, isSuper}:IStockTable) {
-    console.log(productQty);
-    console.log(StockList);
-    
+  export function StockDetailTable({StockList, setPage, page, productQty, isSuper}:IStockTable) {   
     
     return (
       <div>
@@ -85,7 +82,7 @@ interface IStockTable {
             })
             :
             <TableRow>
-              <TableCell className="font-medium text-center" colSpan={7} >Data will appear here.</TableCell>
+              <TableCell className="font-medium text-center" colSpan={8} >Data will appear here.</TableCell>
             </TableRow>
           } 
           </TableBody>

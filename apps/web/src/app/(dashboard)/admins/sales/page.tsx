@@ -1,12 +1,12 @@
 import React from 'react'
-import { Stocks } from './_components/stocks'
+import { SalesReport } from './_components/sales'
 
 
 
 export default async function StocksPage() {  
   return (
     <div className=''>
-      <Stocks />
+      <SalesReport />
     </div>
   )
 }

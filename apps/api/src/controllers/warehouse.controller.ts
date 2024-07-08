@@ -80,21 +80,15 @@ export class WarehouseController {
         }
     }
     
-    async getAllWarehouses(req: Request, res: Response) {
+    async getWarehouseFiltered(req: Request, res: Response) {
         try {
-            const {filter} = req.query
-            let warehouseList
-            if (filter) {
-                 warehouseList = await prisma.warehouse.findMany({
-                    where: {
-                        warehouseName: {
-                            not: String(filter)
-                        }
-                    }
-                })
-            } else {
-                warehouseList = await prisma.warehouse.findMany()
-            }
+            const {filter} = req.params
+            console.log(filter);
+            const warehouseList = await prisma.warehouse.findMany({
+                where: {
+                    warehouseName: {not: filter}
+                }
+            })
             serverResponse(res, 200, 'ok', 'warehouse found', warehouseList)
         } catch (error:any) {
             serverResponse(res, 400, 'error', error)

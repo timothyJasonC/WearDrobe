@@ -53,7 +53,7 @@ export default class App {
   private routes(): void {
     const apiRouter = new ApiRouter()
 
-    this.app.get('/', (req: Request, res: Response) => {
+    this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 

@@ -82,7 +82,7 @@ export function AddressDialog({ children, btnText, editAddress, id }: { children
     async function handleEditAddress() {
         try {
             const addressData = { id, selectedCity, address, labelAddress: labelAddress.trim() }
-            const res = await patchRequest(addressData, '/address/editAddress')
+            const res = await patchRequest(addressData, 'address/editAddress')
             if (res) setIsLoading(false)
             if (res.ok) {
                 toast.success(`${labelAddress} address has been updated!`)
@@ -119,7 +119,7 @@ export function AddressDialog({ children, btnText, editAddress, id }: { children
             <AlertDialogContent className="bg-white">
                 <AlertDialogHeader className="mb-8 sm:mb-4">
                     <div className="flex items-center justify-between">
-                        <AlertDialogTitle className="flex items-center gap-2"><PiHouseBold/>New Address</AlertDialogTitle>
+                        <AlertDialogTitle className="flex items-center gap-2"><PiHouseBold/>{ editAddress ? 'Edit Address' : 'New Address' }</AlertDialogTitle>
                         <PiXBold onClick={() => { removeAddress; setOpenDialog(false) }}  className="sm:hidden" />
                     </div>
                     <AddressInputs

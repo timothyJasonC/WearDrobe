@@ -7,7 +7,7 @@ import {
     FormMessage,
   } from "@/components/ui/form"
   import { Input } from "@/components/ui/input"
-import { Selector } from '../selector'
+import { Selector } from '@/components/selector';
 
 interface ICategory {
     id?: string

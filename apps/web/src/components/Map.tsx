@@ -125,22 +125,24 @@ export default function Map({ setCurrentCity, setCurrentProvince, setLngLat, set
 
                     let parsed = ''
                     let parsedBackupCity = ''
-                    if (city) {
+                    if (city && typeof city.text_id === 'string') {
                         if (city.text_id.includes('Kabupaten')) {
-                            parsed = city.text_id.split('Kabupaten')[1].trim()
+                            parsed = city.text_id.split('Kabupaten')[1].trim();
                         } else if (city.text_id.includes('Kota')) {
-                            parsed = city.text_id.split('Kota')[1].trim()
+                            parsed = city.text_id.split('Kota')[1].trim();
                         }
-                    } else {
-                        if (typeArr.length > 0) {
-                            console.log('typeArr must be exist', typeArr)
-                            const backup = results.features.filter(item => item.place_type_name[0] == typeArr[typeArr.length - 1])[0];
+                    } else if (typeArr.length > 0) {
+                        toast('typeArr must exist', { description: typeArr[0] });
+                        const backup = results.features.filter(item => item.place_type_name[0] == typeArr[typeArr.length - 1])[0];
+                        if (backup && backup.text_id && typeof backup.text_id === 'string') {
                             if (backup.text_id.includes('Kabupaten')) {
-                                parsedBackupCity = backup.text_id.split('Kabupaten')[1].trim()
+                                parsedBackupCity = backup.text_id.split('Kabupaten')[1].trim();
                             } else if (backup.text_id.includes('Kota')) {
-                                parsedBackupCity = backup.text_id.split('Kota')[1].trim()
-                            } else parsedBackupCity = backup.text_id
-                            setBackupCity(backup.text_id)
+                                parsedBackupCity = backup.text_id.split('Kota')[1].trim();
+                            } else {
+                                parsedBackupCity = backup.text_id;
+                            }
+                            setBackupCity(backup.text_id);
                         }
                     }
 

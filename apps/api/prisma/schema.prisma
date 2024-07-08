@@ -5,7 +5,7 @@ generator client {
 datasource db {
     provider          = "mysql"
     url               = env("DATABASE_URL")
-    // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 enum Gender {
@@ -135,6 +135,7 @@ model Warehouse {
     postal_code   String
     createdAt     DateTime           @default(now())
     adminID       String?            @unique
+    isActive      Boolean            @default(true)
     admin         Admin?             @relation(fields: [adminID], references: [id])
     products      WarehouseProduct[]
     mutations     StockMutation[]
@@ -165,7 +166,7 @@ model Product {
     isDeleted      Boolean?         @default(false)
     thumbnailURL   String?
     createdAt      DateTime         @default(now())
-    updatedAt      DateTime?
+    updatedAt      DateTime?        @default(now())
     stockUpdatedAt DateTime?
     images         ProductImage[]
     variants       ProductVariant[]

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import prisma from "@/prisma";
 import {v4 as uuidv4} from 'uuid'
 import { serverResponse } from "@/helpers/apiResponse";
-import { MutationTypes, ProductSize } from "@prisma/client";
+import { MutationTypes, ProductGender, ProductSize, ProductTypes } from "@prisma/client";
 
 
 
@@ -14,7 +14,9 @@ export class StockController {
             const {warehouseName, type, variant} =req.body
             if (!warehouseName || !type || !variant) throw "Invalid stock data input."
             if (["RESTOCK", "TRANSFER", "RESTOCK", "REMOVE", "TRANSACTION", "INBOUND", "DELETE"].includes(type) == false) throw "Invalid stock data input."
-            const mutationType = type.toUpperCase()            
+            const mutationType = type.toUpperCase() 
+            const warehouseCheck = await prisma.warehouse.findFirst()
+            if (!warehouseCheck) throw 'There is no existing warehouse.'           
             await prisma.$transaction(async (tx) => {
                 if (warehouseName === "All Warehouses" || warehouseName==='') {
                     const wareHouseList = await tx.warehouse.findMany()
@@ -29,7 +31,8 @@ export class StockController {
                         for (let i = 0; i<variant.length; i++) {
                             if (variant[i].size === "All Sizes") {
                                 for (let k = 0; k<sizeArray.length; k++) {
-                                    const currentStock = await tx.warehouseProduct.findFirst({
+                                    let currentStock
+                                     currentStock = await tx.warehouseProduct.findFirst({
                                         where: {
                                             productVariantID: variant[i].id,
                                             size: sizeArray[k],
@@ -46,7 +49,28 @@ export class StockController {
                                             }
                                         }
                                     })
-                                    if (!currentStock) throw "Product variant not found."
+                                    if (!currentStock) {
+                                        currentStock = await tx.warehouseProduct.create({
+                                            data: {
+                                                id: uuidv4(),
+                                                size: sizeArray[k],
+                                                stock: 0,
+                                                isDelete: false,
+                                                productVariantID: variant[i].id,
+                                                warehouseID: stockMutation.warehouseID
+                                            }, include: {
+                                                productVariant: {
+                                                    include: {
+                                                        product: {
+                                                            select:{
+                                                                name:true
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
                                     if (currentStock!.stock < variant[i].qty && type == "REMOVE") throw `Failed to remove, insufficient stock at ${wareHouseList[w].warehouseName} (${currentStock!.stock}, ${currentStock?.productVariant.color}, ${sizeArray[k]})` 
                                     const newStockLog = await tx.stockMutationItem.create({
                                         data: {
@@ -72,7 +96,8 @@ export class StockController {
                                     })
                                 }
                             } else {
-                                const currentStock = await tx.warehouseProduct.findFirst({
+                                let currentStock
+                                currentStock = await tx.warehouseProduct.findFirst({
                                     where: {
                                         productVariantID: variant[i].id,
                                         size: variant[i].size.toUpperCase(),
@@ -89,7 +114,28 @@ export class StockController {
                                         }
                                     }
                                 }) 
-                                if (!currentStock) throw "Product variant not found."
+                                if (!currentStock) {
+                                    currentStock = await tx.warehouseProduct.create({
+                                        data: {
+                                            id: uuidv4(),
+                                            size: variant[i].size.toUpperCase(),
+                                            stock: 0,
+                                            isDelete: false,
+                                            productVariantID: variant[i].id,
+                                            warehouseID: stockMutation.warehouseID
+                                        }, include: {
+                                            productVariant: {
+                                                include: {
+                                                    product: {
+                                                        select:{
+                                                            name:true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })
+                                }
                                 if (currentStock!.stock < variant[i].qty && type == "REMOVE") throw `Failed to remove, insufficient stock at  ${wareHouseList[w].warehouseName} (${currentStock!.stock}, ${currentStock?.productVariant.color}, ${variant[i].size.toUpperCase()}`       
                                 const newStockLog = await tx.stockMutationItem.create({
                                     data: {
@@ -133,7 +179,8 @@ export class StockController {
                     for (let i = 0; i<variant.length; i++) {
                         if (variant[i].size === "All Sizes") {
                             for (let k = 0; k<sizeArray.length; k++) {
-                                const currentStock = await tx.warehouseProduct.findFirst({
+                                let currentStock
+                                currentStock = await tx.warehouseProduct.findFirst({
                                     where: {
                                         productVariantID: variant[i].id,
                                         size: sizeArray[k],
@@ -150,7 +197,28 @@ export class StockController {
                                         }
                                     }
                                 })
-                                if (!currentStock) throw "Product variant not found."
+                                if (!currentStock) {
+                                    currentStock = await tx.warehouseProduct.create({
+                                        data: {
+                                            id: uuidv4(),
+                                            size: sizeArray[k],
+                                            stock: 0,
+                                            isDelete: false,
+                                            productVariantID: variant[i].id,
+                                            warehouseID: stockMutation.warehouseID
+                                        }, include: {
+                                            productVariant: {
+                                                include: {
+                                                    product: {
+                                                        select:{
+                                                            name:true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })
+                                }
                                 if (currentStock!.stock < variant[i].qty && type == "REMOVE") throw `Failed to remove, insufficient stock at ${wareHouseList!.warehouseName} (${currentStock!.stock}, ${currentStock?.productVariant.color}, ${sizeArray[k]})` 
                                 const newStockLog = await tx.stockMutationItem.create({
                                     data: {
@@ -176,7 +244,8 @@ export class StockController {
                                 })
                             }
                         } else {
-                            const currentStock = await tx.warehouseProduct.findFirst({
+                            let currentStock
+                            currentStock = await tx.warehouseProduct.findFirst({
                                 where: {
                                     productVariantID: variant[i].id,
                                     size: variant[i].size.toUpperCase(),
@@ -193,7 +262,28 @@ export class StockController {
                                     }
                                 }
                             })  
-                            if (!currentStock) throw "Product variant not found."
+                            if (!currentStock) {
+                                currentStock = await tx.warehouseProduct.create({
+                                    data: {
+                                        id: uuidv4(),
+                                        size: variant[i].size.toUpperCase(),
+                                        stock: 0,
+                                        isDelete: false,
+                                        productVariantID: variant[i].id,
+                                        warehouseID: stockMutation.warehouseID
+                                    }, include: {
+                                        productVariant: {
+                                            include: {
+                                                product: {
+                                                    select:{
+                                                        name:true
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                            }
                             if (currentStock!.stock < variant[i].qty && type == "REMOVE") throw `Failed to remove, insufficient stock at ${wareHouseList!.warehouseName} (${currentStock!.stock}, ${currentStock?.productVariant.color}, ${variant[i].size.toUpperCase()})`       
                             const newStockLog = await tx.stockMutationItem.create({
                                 data: {
@@ -310,238 +400,114 @@ export class StockController {
     async getAllStock(req: Request, res: Response) {
         try {
             const {w, p, l} = req.query
-            console.log(w);
-            const { from, to } = req.body;
-
+            const { date, g, t, c, q } = req.body;
+            const limit = l ? l : 10
+            const fromDate = new Date(date.from);
+            fromDate.setHours(0, 0, 0, 0)
+            const toDate = new Date(date.to);
+            toDate.setHours(23, 59, 59, 999);              
 
             await prisma.$transaction(async (tx)=> {
-                const fromDate = new Date(from);
-                fromDate.setHours(0, 0, 0, 0)
-                const toDate = new Date(to);
-                toDate.setDate(toDate.getDate());
-                toDate.setHours(23, 59, 0, 0);
-                let limit = l ? l : 10
-                const totalProduct = await tx.product.count()
-                if (w === 'All Warehouses' || !w) {
-                        const products = await tx.product.findMany({
+                const products = await tx.product.findMany({
+                    include: {
+                        images: true,
+                        variants: {
                             include: {
-                                images: true,
-                                variants: {
-                                    include: {
-                                        warehouseProduct: {
-                                            select: {
-                                                warehouseID: true,
-                                                id: true,
-                                                size: true,
-                                                stock: true,
-                                                updatedAt: true,
-                                            }
-                                        }
-                                    },where: {
-                                        isDeleted: false
-                                    },
-                                },
-                                category: true,
-                            },
-                            take: +limit, 
-                            skip: (+p! - 1) * +limit,
-                            orderBy: {
-                                stockUpdatedAt: 'desc'
-                            }
-                        })
-                        const productsWithStock = products.map(product => ({
-                            ...product,
-                            variants: product.variants.map(variant => ({
-                            ...variant,
-                            totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
-                            }))
-                        }));
-                    
-                        const productData = productsWithStock.map(product => ({
-                            ...product,
-                            totalStock: product.variants.reduce((total, variant) => {
-                            return total + variant.warehouseProduct.reduce((variantTotal, wp) => variantTotal + wp.stock, 0);
-                            }, 0)
-                        }));
-                        
-                        const productList = await Promise.all(productData.map(async (product) => {
-                          const stockIn = await prisma.stockMutationItem.aggregate({
-                            _sum: {
-                              quantity: true,
-                            },
-                            where: {
-                              WarehouseProduct: {
-                                productVariant: {
-                                  product: {
-                                    id: product.id
-                                  }
-                                }
-                              },
-                              stockMutation: {
-                                AND: [
-                                  { type: 'RESTOCK' },
-                                  { createdAt: { gte: fromDate,lte: toDate } },
-                                ]
-                              },
-                            },
-                          });
-
-                          console.log(stockIn);
-                          
-                         
-                        
-                          const stockOut = await prisma.stockMutationItem.aggregate({
-                            _sum: {
-                              quantity: true,
-                            },
-                            where: {
-                              WarehouseProduct: {
-                                productVariant: {
-                                  product: {
-                                    id: product.id
-                                  }
-                                }
-                              },
-                              stockMutation: {
-                                AND: [
-                                  { OR: [{ type: 'DELETE' }, { type: 'REMOVE' }, { type: 'TRANSACTION' }] },
-                                  { createdAt: { gte: fromDate,lte: toDate } }
-                                ]
-                              },
-                            },
-                          });
-
-                          const toDateStockIn = await prisma.stockMutationItem.aggregate({
-                            _sum: {
-                              quantity: true,
-                            },
-                            where: {
-                              WarehouseProduct: {
-                                productVariant: {
-                                  product: {
-                                    id: product.id
-                                  }
-                                }
-                              },
-                              stockMutation: {
-                                AND: [
-                                  { type: 'RESTOCK' },
-                                  { createdAt: { lte: toDate } }
-                                ]
-                              },
-                            },
-                          });
-                         
-                        
-                          const toDateStockOut = await prisma.stockMutationItem.aggregate({
-                            _sum: {
-                              quantity: true,
-                            },
-                            where: {
-                              WarehouseProduct: {
-                                productVariant: {
-                                  product: {
-                                    id: product.id
-                                  }
-                                }
-                              },
-                              stockMutation: {
-                                AND: [
-                                  { OR: [{ type: 'DELETE' }, { type: 'REMOVE' }, { type: 'TRANSACTION' }] },
-                                  { createdAt: { lte: toDate } }
-                                ]
-                              },
-                            },
-                          });
-
-                          const toDateStock = (toDateStockIn._sum.quantity?  toDateStockIn._sum.quantity : 0) - (toDateStockOut._sum.quantity ? toDateStockOut._sum.quantity : 0)
-                        
-                          return {
-                            ...product,
-                            stockIn,
-                            stockOut,
-                            toDateStock
-                          };
-                        }));                      
-
-                        const totalStock = await tx.warehouseProduct.aggregate({
-                            _sum: {
-                                stock: true
-                            },
-                        })
-                        
-                        return res.status(200).send({
-                            status: 'ok',
-                            message: 'product found',
-                            productList,
-                            totalStock: totalStock._sum.stock,
-                            totalProduct
-                        })
-                } else {
-                    const products = await tx.product.findMany({
-                        include: {
-                            images: true,
-                            variants: {
-                                include: {
-                                    warehouseProduct: {
-                                        where: {
-                                            warehouse: {
-                                                warehouseName: String(w)
-                                            }
-                                        },
-                                        select: {
-                                            warehouseID: true,
-                                            id: true,
-                                            size: true,
-                                            stock: true,
-                                            updatedAt: true,
-                                        },
+                                warehouseProduct: {
+                                    select: {
+                                        warehouseID: true,
+                                        id: true,
+                                        size: true,
+                                        stock: true,
+                                        updatedAt: true,
                                     }
-                                }, where: {
-                                    isDeleted: false
-                                },
+                                }
+                            },where: {
+                                isDeleted: false
                             },
-                            category: true
                         },
-                        take: +limit, 
-                        skip: (+p! - 1) * +limit,
-                        orderBy: {
-                            stockUpdatedAt: 'desc'
+                        category: true,
+                    },
+                    where: {
+                        name: q 
+                        ? {contains: String(q)}
+                        : {not: undefined},
+                        category: {
+                            gender: g 
+                            ? String(g).toUpperCase() as ProductGender 
+                            : { not: undefined },
+                            type: t 
+                            ? String(t).toUpperCase() as ProductTypes
+                            : { not: undefined },
+                            category: c
+                            ? String(c)
+                            : {not: undefined}
+                        },
+                        variants: {
+                            some: {
+                                warehouseProduct: {
+                                    some: {
+                                        warehouse: {
+                                            warehouseName: w ? String(w) : { not: undefined },
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    take: +limit, 
+                    skip: (+p! - 1) * +limit,
+                    orderBy: {
+                        stockUpdatedAt: 'desc'
+                    }
+                })
+                const productsWithStock = products.map(product => ({
+                    ...product,
+                    variants: product.variants.map(variant => ({
+                    ...variant,
+                    totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
+                    }))
+                }));
+                
+                const productList = await Promise.all(productsWithStock.map(async (product) => {
+                    const totalStock = await prisma.warehouseProduct.aggregate({
+                        where: {
+                            warehouse: {
+                                warehouseName: w 
+                                ? String(w)
+                                : {not: undefined}
+                            },
+                            productVariant: {
+                                product: {
+                                    id: product.id
+                                }
+                            }
+                        },
+                        _sum: {
+                            stock: true
                         }
                     })
-                    const productsWithStock = products.map(product => ({
-                        ...product,
-                        variants: product.variants.map(variant => ({
-                        ...variant,
-                        totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
-                        }))
-                    }));
-                
-                    const productData = productsWithStock.map(product => ({
-                        ...product,
-                        totalStock: product.variants.reduce((total, variant) => {
-                        return total + variant.warehouseProduct.reduce((variantTotal, wp) => variantTotal + wp.stock, 0);
-                        }, 0)
-                    }));
 
-                    const productList = await Promise.all(productData.map(async (product) => {
-                        const stockIn = await prisma.stockMutationItem.aggregate({
-                          _sum: {
-                            quantity: true,
-                          },
-                          where: {
-                            WarehouseProduct: {
-                              warehouse: {
-                                warehouseName: String(w),
-                              },
-                              productVariant: {
-                                product: {
-                                  id: product.id
-                                }
-                              }
-                            },
-                            stockMutation: {
-                              AND: [
+
+                    const stockIn = await prisma.stockMutationItem.aggregate({
+                    _sum: {
+                        quantity: true,
+                    },
+                    where: {
+                        WarehouseProduct: {
+                        warehouse: {
+                            warehouseName: w
+                            ? String(w)
+                            : {not: undefined}
+                        },
+                        productVariant: {
+                            product: {
+                            id: product.id
+                            }
+                        }
+                        },
+                        stockMutation: {
+                            AND: [
                                 { OR: [
                                     { AND : [
                                         {type: "INBOUND"},
@@ -552,27 +518,29 @@ export class StockController {
                                 ] },
                                 { createdAt: { gte: fromDate, lte: toDate } }
                               ]
-                            },
-                          },
-                        });
-                    
-                        const stockOut = await prisma.stockMutationItem.aggregate({
-                          _sum: {
-                            quantity: true,
-                          },
-                          where: {
-                            WarehouseProduct: {
-                              productVariant: {
-                                product: {
-                                  id: product.id
-                                }
-                              },
-                              warehouse: {
-                                warehouseName: String(w)
-                              }
-                            },
-                            stockMutation: {
-                              AND: [
+                        },
+                    },
+                    });                        
+                
+                    const stockOut = await prisma.stockMutationItem.aggregate({
+                    _sum: {
+                        quantity: true,
+                    },
+                    where: {
+                        WarehouseProduct: {
+                        warehouse: {
+                            warehouseName: w
+                            ? String(w)
+                            : {not: undefined}
+                        },
+                        productVariant: {
+                            product: {
+                            id: product.id
+                            }
+                        }
+                        },
+                        stockMutation: {
+                            AND: [
                                 { OR: [
                                     { type: 'DELETE' }, 
                                     { type: 'REMOVE' }, 
@@ -584,102 +552,135 @@ export class StockController {
                                 ] },
                                 { createdAt: { gte: fromDate,lte: toDate } }
                               ]
-                            },
-                          },
-                        });
-
-                        const toDateStockIn = await prisma.stockMutationItem.aggregate({
-                            _sum: {
-                              quantity: true,
-                            },
-                            where: {
-                              WarehouseProduct: {
-                                warehouse: {
-                                  warehouseName: String(w),
-                                },
-                                productVariant: {
-                                  product: {
-                                    id: product.id
-                                  }
-                                }
-                              },
-                              stockMutation: {
-                                AND: [
-                                  { OR: [
-                                      { AND : [
-                                          {type: "INBOUND"},
-                                          {status: 'ACCEPTED'}
-                                          ]
-                                      }, 
-                                      { type: 'RESTOCK' }
-                                  ] },
-                                  { createdAt: { lte: toDate } }
-                                ]
-                              },
-                            },
-                          });
-
-                          const toDateStockOut = await prisma.stockMutationItem.aggregate({
-                            _sum: {
-                              quantity: true,
-                            },
-                            where: {
-                              WarehouseProduct: {
-                                warehouse: {
-                                  warehouseName: String(w),
-                                },
-                                productVariant: {
-                                  product: {
-                                    id: product.id
-                                  }
-                                }
-                              },
-                              stockMutation: {
-                                AND: [
-                                  { OR: [
-                                      { type: 'DELETE' }, 
-                                      { type: 'REMOVE' }, 
-                                      { type: 'TRANSACTION' },
-                                      { AND: [
-                                          {type: 'TRANSFER'},
-                                          {status: 'ACCEPTED'}
-                                      ] }, 
-                                  ] },
-                                  { createdAt: { lte: toDate } }
-                                ]
-                              },
-                            },
-                          });
-
-                          const toDateStock = (toDateStockIn._sum.quantity?  toDateStockIn._sum.quantity : 0) - (toDateStockOut._sum.quantity ?toDateStockOut._sum.quantity : 0)
-                    
-                        return {
-                          ...product,
-                          stockIn,
-                          stockOut,
-                          toDateStock
-                        };
-                      }));
-                    
-
-                    const totalStock = await tx.warehouseProduct.aggregate({
-                        _sum: {
-                            stock: true
                         },
-                        where: {
-                            warehouse: {
-                                warehouseName: String(w)
+                    },
+                    });
+
+                    const toDateStockIn = await prisma.stockMutationItem.aggregate({
+                    _sum: {
+                        quantity: true,
+                    },
+                    where: {
+                        WarehouseProduct: {
+                        warehouse: {
+                            warehouseName: w
+                            ? String(w)
+                            : {not: undefined}
+                        },
+                        productVariant: {
+                            product: {
+                            id: product.id
                             }
                         }
-                    })
-                    return res.status(200).send({
-                        status: 'ok',
-                        message: 'product found',
-                        productList,
-                        totalStock: totalStock._sum.stock,
-                        totalProduct
-                    })                   
-                }
+                        },
+                        stockMutation: {
+                            AND: [
+                                { OR: [
+                                    { AND : [
+                                        {type: "INBOUND"},
+                                        {status: 'ACCEPTED'}
+                                        ]
+                                    }, 
+                                    { type: 'RESTOCK' }
+                                ] },
+                                { createdAt: { lte: toDate } }
+                              ]
+                        },
+                    },
+                    });
+                    
+                
+                    const toDateStockOut = await prisma.stockMutationItem.aggregate({
+                    _sum: {
+                        quantity: true,
+                    },
+                    where: {
+                        WarehouseProduct: {
+                        productVariant: {
+                            product: {
+                            id: product.id
+                            }
+                        }
+                        },
+                        stockMutation: {
+                            AND: [
+                                { OR: [
+                                    { type: 'DELETE' }, 
+                                    { type: 'REMOVE' }, 
+                                    { type: 'TRANSACTION' },
+                                    { AND: [
+                                        {type: 'TRANSFER'},
+                                        {status: 'ACCEPTED'}
+                                    ] }, 
+                                ] },
+                                { createdAt: { lte: toDate } }
+                              ]
+                        },
+                    },
+                    });
+
+                    const toDateStock = (toDateStockIn._sum.quantity?  toDateStockIn._sum.quantity : 0) - (toDateStockOut._sum.quantity ? toDateStockOut._sum.quantity : 0)
+                
+                    return {
+                    ...product,
+                    stockIn,
+                    stockOut,
+                    toDateStock,
+                    totalStock:totalStock._sum.stock
+                    };
+                }));                      
+
+                const totalStock = await tx.warehouseProduct.aggregate({
+                    _sum: {
+                        stock: true
+                    },
+                    where: {
+                        warehouse: {
+                            warehouseName: w 
+                            ? String(w)
+                            : {not: undefined}
+                        }
+                    }
+                })
+
+                const totalProduct = await tx.product.count({
+                    where: {
+                        name: q 
+                        ? {contains: String(q)}
+                        : {not: undefined},
+                        category: {
+                            gender: g 
+                            ? String(g).toUpperCase() as ProductGender 
+                            : { not: undefined },
+                            type: t 
+                            ? String(t).toUpperCase() as ProductTypes
+                            : { not: undefined },
+                            category: c
+                            ? String(c)
+                            : {not: undefined}
+                        },
+                        variants: {
+                            some: {
+                                warehouseProduct: {
+                                    some: {
+                                        warehouse: {
+                                            warehouseName: w ? String(w) : { not: undefined },
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                })
+                
+                return res.status(200).send({
+                    status: 'ok',
+                    message: 'product found',
+                    productList,
+                    totalStock: totalStock._sum.stock,
+                    totalProduct
+                })
+              
             })
         } catch (error:any) {
             serverResponse(res, 400, 'error', error)
@@ -689,18 +690,24 @@ export class StockController {
     async getStockSlug(req: Request, res: Response) {
         const {w, type, p, l} = req.query
         const {slug} = req.params
-        const { from, to } = req.body;
-        const fromDate = new Date(from);
+        const { date, v, s } = req.body;
+        const fromDate = new Date(date.from);
         fromDate.setHours(0, 0, 0, 0)
-        const toDate = new Date(to);
-        toDate.setHours(23, 59, 59, 999);     
+        const toDate = new Date(date.to);
+        toDate.setHours(23, 59, 59, 999);  
         const limit = l ? l : 10
-        
+        let size = s == 'One Size' ? 'ONESIZE' : String(s).toUpperCase() 
         try {
             const stocks = await prisma.stockMutationItem.findMany({
                 where: {
                     WarehouseProduct: {
+                        size: size
+                        ? size as ProductSize
+                        : {not: undefined},
                         productVariant: {
+                            color: v 
+                            ? String(v)
+                            : {not: undefined},
                             product: { slug }
                         }
                     },stockMutation: {
@@ -741,7 +748,13 @@ export class StockController {
             const totalData = await prisma.stockMutationItem.count({
                 where: {
                     WarehouseProduct: {
+                        size: size
+                        ? size as ProductSize
+                        : {not: undefined},
                         productVariant: {
+                            color: v 
+                            ? String(v)
+                            : {not: undefined},
                             product: { slug }
                         }
                     },stockMutation: {

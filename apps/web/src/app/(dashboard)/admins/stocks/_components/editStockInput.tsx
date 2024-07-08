@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { TableCell, TableRow} from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { Selector } from '../../products/_components/manageProductModal/selector';
+import { Selector } from '../../../../../components/selector';
 import { PiArrowRightBold, PiTrashFill } from 'react-icons/pi';
 import { toast } from 'sonner';
 import { IProduct, IWarehouse } from '@/constants';
@@ -36,8 +36,6 @@ export const DefaultTable = ({productData,updateType, setStockArray, stockArray,
     setSize(selectSize)
   }, [selectSize])
 
-
-
   const handleAddArr = () => {
       const id = productData.variants.filter(item => item.color === variant).map(item => item.id)[0];
       const sizeFix =  productData.oneSize ? "ONESIZE" : selectSize
@@ -57,11 +55,14 @@ export const DefaultTable = ({productData,updateType, setStockArray, stockArray,
     }
   }, [variant, selectSize, qty])
 
+  console.log(productData);
+  
+
   return (
     <TableRow>
         <TableCell className="font-medium text-center ">
           {
-            productData ? 
+            productData ?
               <Selector
                   width="rounded-full text-xs h-7"
                   label="variants"

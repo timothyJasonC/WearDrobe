@@ -74,14 +74,13 @@ export function TransferTable({selectedWH, open, setOpen, getQty}:IHistoryTable)
       <Table className="min-w-[300px]">
         <TableHeader>
           <TableRow className="bg-secondary">
-            <TableHead className="">No.</TableHead>
+            <TableHead className="text-center"></TableHead>
             <TableHead className="">Products</TableHead>
             <TableHead className="text-center">Variants</TableHead>
             <TableHead className="text-center">Size</TableHead>
             <TableHead className="text-center">Requesting Warehouse</TableHead>
             <TableHead className="text-center min-w-32">Date Created</TableHead>
             <TableHead className="text-center">Qty</TableHead>
-            <TableHead className="text-center"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -90,7 +89,22 @@ export function TransferTable({selectedWH, open, setOpen, getQty}:IHistoryTable)
             const date = DateConvert(item.createdAt)
             return (
               <TableRow className="" key={index}>
-              <TableCell className="font-medium">{index}</TableCell>
+              <TableCell>
+                  <div className="flex justify-center items-center gap-1 text-xl">
+                    <SubmitAlert 
+                    icon={<PiCheckCircleBold className='flex text-green-600 hover:text-green-500 hover:cursor-pointer' />}  
+                    title="Approve stock transfer request?"
+                    message="Your stock will be mutated to requesting warehouse."
+                    action={() => handleAccept(item.id)}
+                    />
+                    <SubmitAlert 
+                    icon={<PiXCircleBold className='flex text-red-400 hover:text-red-300 hover:cursor-pointer' />}  
+                    title="Decline stock transfer request?"
+                    message="Your stock will remain the same."
+                    action={() => handleReject(item.id)}
+                    />
+                  </div>
+              </TableCell>
               <TableCell className="font-medium">{item.StockMutationItem[0].WarehouseProduct.productVariant.product?.name}</TableCell>
               <TableCell className="text-center">{item.StockMutationItem[0].WarehouseProduct.productVariant.color}</TableCell>
               <TableCell className="text-center">{item.StockMutationItem[0].WarehouseProduct.size}</TableCell>
@@ -100,22 +114,6 @@ export function TransferTable({selectedWH, open, setOpen, getQty}:IHistoryTable)
                 <p>{date.hours.toString().padStart(2, '0')}.{date.minute.toString().padStart(2, '0')} WIB</p>
               </TableCell>
               <TableCell className="text-center">{item.StockMutationItem[0].quantity}</TableCell>
-              <TableCell>
-                  <div className="flex justify-center items-center gap-1 text-xl">
-                    <SubmitAlert 
-                    icon={<PiCheckCircleBold className='flex text-green-600 hover:text-green-500' />}  
-                    title="Approve stock transfer request?"
-                    message="Your stock will be mutated to requesting warehouse."
-                    action={() => handleAccept(item.id)}
-                    />
-                    <SubmitAlert 
-                    icon={<PiXCircleBold className='flex text-red-400 hover:text-red-300' />}  
-                    title="Decline stock transfer request?"
-                    message="Your stock will remain the same."
-                    action={() => handleReject(item.id)}
-                    />
-                  </div>
-              </TableCell>
           </TableRow>
             )
           })

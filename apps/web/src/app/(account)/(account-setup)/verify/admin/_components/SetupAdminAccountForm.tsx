@@ -63,7 +63,7 @@ export default function SetupAdminAccountForm() {
                 const adminData = {
                     fullName: fullName, password: password, dob: dob, gender: gender 
                 }
-                const res = await postRequestToken(adminData, '/admin/setup-verify-admin', activeToken)
+                const res = await postRequestToken(adminData, 'admin/setup-verify-admin', activeToken)
                 
                 if (res) setIsLoading(false)
                 if (res.ok) {

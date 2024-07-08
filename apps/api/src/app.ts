@@ -9,7 +9,12 @@ import express, {
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import { SampleRouter } from './routers/sample.router';
+import { ApiRouter } from './routers/api.router';
+import cron from 'node-cron'
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient()
+
 
 export default class App {
   private app: Express;
@@ -19,6 +24,7 @@ export default class App {
     this.configure();
     this.routes();
     this.handleError();
+    this.setupScheduler()
   }
 
   private configure(): void {
@@ -51,13 +57,45 @@ export default class App {
   }
 
   private routes(): void {
-    const sampleRouter = new SampleRouter();
+    const apiRouter = new ApiRouter()
 
-    this.app.get('/', (req: Request, res: Response) => {
+    this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 
-    this.app.use('/samples', sampleRouter.getRouter());
+    this.app.use('/api', apiRouter.getRouter())
+
+  }
+
+  private setupScheduler(): void {
+    // Example cron job to run every day at midnight
+    cron.schedule('0 */4 * * *', async () => {
+      console.log('Running daily scheduler job');
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      try {
+        const ordersToUpdate = await prisma.order.findMany({
+          where: {
+            status: 'SHIPPED',
+            shippedAt: {
+              lt: sevenDaysAgo,
+            },
+          },
+        });
+
+        for (const order of ordersToUpdate) {
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { status: 'COMPLETED' },
+          });
+        }
+
+        console.log('Daily job completed');
+      } catch (error) {
+        console.error('Error running daily scheduler job:', error);
+      }
+    });
   }
 
   public start(): void {

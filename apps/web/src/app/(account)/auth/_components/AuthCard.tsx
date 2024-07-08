@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa6";
 import { PiArrowUpRight, PiArrowLeft } from "react-icons/pi";
 import * as z from 'zod'
 import { useForm } from "react-hook-form"
@@ -22,7 +21,7 @@ import { SSOUsernameForm } from "./SSOUsernameForm"
 
 export function AuthCard() {
     const router = useRouter();
-    const { googleSSO, facebookSSO, SSOUserData } = useAuth();
+    const { googleSSO, SSOUserData } = useAuth();
     const [ isLoading, setIsLoading ] = useState(false);
 
     useEffect(() => {
@@ -212,7 +211,6 @@ export function AuthCard() {
                     </div>
                     <CardContent className="flex flex-col gap-2">
                         <Button onClick={googleSSO} className="bg-white text-black border-[1px] border-black/20 flex gap-2 hover:text-white">Login with Google <FcGoogle /> </Button>
-                        <Button onClick={facebookSSO} className="bg-white text-black border-[1px] border-black/20 flex gap-2 hover:text-white">Login with Facebook <FaFacebook /> </Button>
                     </CardContent>
                 </Card>
             </TabsContent>

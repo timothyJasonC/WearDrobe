@@ -17,7 +17,6 @@ export class WarehouseRouter {
         this.router.get('/all', this.warehouseController.getWarehouses)
         this.router.get('/filter/:filter', this.warehouseController.getWarehouseFiltered)
         this.router.get('/', this.warehouseController.getWarehouseList)
-        this.router.get('/', this.warehouseController.getAllWarehouses)
         this.router.get('/:id', this.warehouseController.getWarehouseList)
         this.router.post('/', this.warehouseController.createWarehouse)
         this.router.post('/', this.warehouseController.createWarehouse)

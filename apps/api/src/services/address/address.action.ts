@@ -3,11 +3,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient()
 
-export async function createAddress(city: any, address: string, userId: string) {
+export async function createAddress(city: any, address: string, userId: string,labelAddress: string) {
     const newAddress = await prisma.addressList.create({
         data: {
             id: uuidv4(),
             address: address,
+            labelAddress: labelAddress,
             city_id: city.city_id,
             province_id: city.province_id,
             province: city.province,
@@ -22,6 +23,32 @@ export async function createAddress(city: any, address: string, userId: string) 
     return newAddress
 }
 
+export async function editAddress(id: string, city: any, address: string, labelAddress: string) {
+    const updatedAddress = await prisma.addressList.update({
+        where: { id: id },
+        data: {
+            address: address,
+            labelAddress: labelAddress,
+            city_id: city.city_id,
+            province_id: city.province_id,
+            province: city.province,
+            type: city.type,
+            city_name: city.city_name,
+            postal_code: city.postal_code,
+            coordinate: `${address}, ${city.city_name}, ${city.province}, Indonesia`,
+        }
+    })
+    return updatedAddress
+}
+
+export async function getAddressById(id: string) {
+    const address = await prisma.addressList.findUnique({
+        where: { id },
+        select: { coordinate: true }
+    })
+    return address
+}
+
 export async function getUserAddressList(userId: string) {
     const addressList = await prisma.addressList.findMany({
         where: {
@@ -30,7 +57,12 @@ export async function getUserAddressList(userId: string) {
         select: {
             id: true,
             coordinate: true,
-            mainAddress: true
+            mainAddress: true,
+            labelAddress: true,
+            province: true,
+            type: true,
+            city_name: true,
+            postal_code: true,
         }
     })
     return addressList
@@ -70,21 +102,20 @@ export async function getAllWarehouseAddress() {
     try {
         const warehouses = await prisma.warehouse.findMany()
         for (const warehouse of warehouses) {
-            const address = `${warehouse?.address}, ${warehouse?.city_name}, ${warehouse?.province}, Indonesia`
+            const address = warehouse.address
 
             const coordinates = await getAddressCoordinates(address)
             warehouseAddress[warehouse.warehouseName] = coordinates
         }
         return warehouseAddress
     } catch (error) {
-        console.error('Error fetching address coordinates:', error);
         throw new Error('Error fetching address coordinates');
     }
 }
 
 export async function getWarehouseById(warehouseId: string) {
     const warehouse = await prisma.warehouse.findUnique({
-        where: {id: warehouseId}
+        where: { id: warehouseId }
     })
     return warehouse
 }
@@ -105,11 +136,8 @@ function toRadians(degrees: number) {
 
 export async function findClosestWarehouse(userLocation: { lat: string; lon: string; display_name: string } | null, warehouses: { [key: string]: { lat: string; lon: string; display_name: string } | null }) {
     if (!userLocation || !warehouses) return null;
-
-    let closestWarehouseKey = null;
-    let minDistance = Infinity;
-
     const { lat: userLat, lon: userLon } = userLocation;
+    const distances = [];
 
     for (const warehouseKey in warehouses) {
         const warehouse = warehouses[warehouseKey];
@@ -117,15 +145,19 @@ export async function findClosestWarehouse(userLocation: { lat: string; lon: str
 
         const { lat, lon } = warehouse;
         const distance = await haversineDistance(Number(userLat), Number(userLon), Number(lat), Number(lon));
-
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestWarehouseKey = warehouseKey;
-        }
+        distances.push({ warehouseKey, warehouse, distance });
     }
 
-    return closestWarehouseKey ? { [closestWarehouseKey]: warehouses[closestWarehouseKey] } : null
+    distances.sort((a, b) => a.distance - b.distance);
+
+    return distances.map(item => ({
+        warehouseKey: item.warehouseKey,
+        warehouse: item.warehouse,
+        distance: item.distance
+    }));
 }
+
+
 
 export async function getWarehouseByName(warehouseName: string) {
     const warehouse = await prisma.warehouse.findFirst({
@@ -149,7 +181,7 @@ export async function getShippingCost(warehouseId: string, userAddress: string, 
 
     const cost = await fetch('https://api.rajaongkir.com/starter/cost', {
         method: 'POST',
-        headers: { 
+        headers: {
             'key': `${process.env.NEXT_PUBLIC_RAJA_ONGKIR_API_KEY}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         },

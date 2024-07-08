@@ -1,5 +1,7 @@
-import { createAddress, findClosestWarehouse, getAddressCoordinates, getAddressUserById, getAllWarehouseAddress, getShippingCost, getUserAddressList, getWarehouseByName } from "@/services/address/address.action";
+import { serverResponse } from "@/helpers/apiResponse";
+import { createAddress, editAddress, findClosestWarehouse, getAddressCoordinates, getAddressUserById, getAllWarehouseAddress, getShippingCost, getUserAddressList, getWarehouseByName } from "@/services/address/address.action";
 import { Request, Response } from "express";
+import prisma from "@/prisma";
 
 export class AddressController {
     async getProvinces(req: Request, res: Response) {
@@ -31,14 +33,14 @@ export class AddressController {
 
     async addAddress(req: Request, res: Response) {
         try {
-            const { selectedCity, address, userId } = req.body
+            const { selectedCity, address, userId, labelAddress } = req.body
             const city = await fetch(`https://api.rajaongkir.com/starter/city?id=${selectedCity}`, {
                 method: 'GET',
                 headers: { key: `${process.env.NEXT_PUBLIC_RAJA_ONGKIR_API_KEY}` }
             });
             const data = await city.json()
             const result = data.rajaongkir.results
-            const addressUser = await createAddress(result, address, userId)
+            const addressUser = await createAddress(result, address, userId, labelAddress)
             res.json({ message: 'add address successfull', addressUser })
         } catch (err) {
             res.json(err)
@@ -67,16 +69,16 @@ export class AddressController {
     async getClossestWarehouse(req: Request, res: Response) {
         try {
             const { address } = req.body
-            
+
             const addressUser = await getAddressUserById(address)
-            const addressCoordinates = await getAddressCoordinates(`${addressUser?.address}, ${addressUser?.city_name}, ${addressUser?.province}, Indonesia`)
+            const addressCoordinates = await getAddressCoordinates(addressUser?.address!)
             const allWarehouseAddress = await getAllWarehouseAddress()
-
             const closestWarehouse = await findClosestWarehouse(addressCoordinates, allWarehouseAddress)
-            const warehouseId = Object.keys(closestWarehouse!)
-            const warehouse = await getWarehouseByName(warehouseId[0])
+            if (closestWarehouse) {
+                const warehouse = await getWarehouseByName(closestWarehouse[0].warehouseKey!)
+                res.json(warehouse)
+            }
 
-            res.json(warehouse)
         } catch (err) {
             res.json(err)
         }
@@ -84,7 +86,7 @@ export class AddressController {
 
     async getShippingCost(req: Request, res: Response) {
         try {
-            const {warehouseId, userAddress, shipping} = req.body
+            const { warehouseId, userAddress, shipping } = req.body
             const data = await getShippingCost(warehouseId, userAddress, shipping)
             res.json(data.rajaongkir.results)
         } catch (err) {
@@ -92,4 +94,54 @@ export class AddressController {
 
         }
     }
+
+    async updateMainAddress(req: Request, res: Response) {
+        try {
+            const address = await prisma.addressList.findFirst({ where: { id: req.body.id }})
+            if (!address) return serverResponse(res, 400, 'error', 'address not found!')
+            await prisma.addressList.updateMany({ where: { userID: req.body.userId }, data: { mainAddress: false } })
+            await prisma.addressList.update({ where: { id: address.id }, data: { mainAddress: true } })
+            serverResponse(res, 200, 'ok', `${address.labelAddress} has been set to main!`)
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async deleteAddress(req: Request, res: Response) {
+        try {
+            const address = await prisma.addressList.findFirst({ where: { id: req.params.id }})
+            if (!address) return serverResponse(res, 400, 'error', 'address not found!')
+            await prisma.addressList.delete({ where: { id: req.params.id } })
+            serverResponse(res, 200, 'ok', `${address.labelAddress} has been deleted!`)
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async getAddressById(req: Request, res: Response) {
+        try {
+            const address = await prisma.addressList.findFirst({ where: { id: req.params.id }});
+            if (!address) return serverResponse(res, 400, 'error', 'Address not found!')
+            serverResponse(res, 200, 'ok', `Address found!`, address)
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async editAddress(req: Request, res: Response) {
+        try {
+            const { id, selectedCity, address, labelAddress } = req.body
+            const city = await fetch(`https://api.rajaongkir.com/starter/city?id=${selectedCity}`, {
+                method: 'GET',
+                headers: { key: `${process.env.NEXT_PUBLIC_RAJA_ONGKIR_API_KEY}` }
+            });
+            const data = await city.json()
+            const result = data.rajaongkir.results
+            const addressUser = await editAddress(id, result, address, labelAddress)
+            serverResponse(res, 200, 'ok', `Address has been updated!`, addressUser)
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+    
 }

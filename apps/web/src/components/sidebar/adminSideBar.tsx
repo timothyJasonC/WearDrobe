@@ -1,22 +1,36 @@
-import React from 'react'
-import { SupAdmMenu } from './supAdmMenu'
+'use client';
+import { usePathname } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { PiListBold } from 'react-icons/pi';
+import { IAdmin } from '@/app/(dashboard)/admins/_components/ExpTable';
+import AdminDashboardContent from './AdminDashboardContent';
 
-export const AdminSideBar = ({children}: Readonly<{children: React.ReactNode}>) => {
-  return (
-    <div className="bg-xwhite min-h-screen flex">
-       <div className="h-screen flex flex-col max-sm:hidden w-20 lg:w-72 grow-0 shrink-0 sticky top-0 justify-between overflow-y-auto p-10 border-r-2 border-r-gray-200">
-          <div>
-              <p className='text-base text-gray-500'>Super Admin</p>
-              <p className='text-xl truncate font-bold'>Arya Hanif Nugroho</p>
-          </div>
-          <SupAdmMenu />
-          <div>
-            <button>Account Settings</button>
-          </div>
-        
+export const AdminSideBar = ({ admin }: { admin: IAdmin | null }) => {
+    const pathname = usePathname()
+    const [activeButton, setActiveButton] = useState('overviews')
+
+    useEffect(() => {
+          const route = pathname.split('/')
+          const currentPage = route[2]
+          setActiveButton(currentPage)
+    }, [pathname]);
+
+    return (
+        <>
+        <div className='hidden p-6 lg:flex w-80 flex-col justify-between border-r-2'>
+            <AdminDashboardContent admin={admin && admin} activeButton={activeButton} />
         </div>
-        {children}
-    </div>
-  )
-}
-
+        <div className='lg:hidden'>
+            <Sheet>
+                <SheetTrigger className='lg:hidden absolute sm:top-8 sm:right-8 top-4 right-4'>
+                    <PiListBold size={`1.5rem`} />
+                </SheetTrigger>
+                <SheetContent className='lg:hidden flex flex-col justify-between rounded-tl-2xl rounded-bl-2xl' side={'right'}>
+                    <AdminDashboardContent admin={admin && admin} activeButton={activeButton} />
+                </SheetContent>
+            </Sheet>
+        </div>
+        </>
+    );
+};

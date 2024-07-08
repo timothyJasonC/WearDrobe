@@ -18,7 +18,7 @@ export default function Campaign() {
                 gap-8 text-white z-[1]
             ">
                 <div className="text-center flex flex-col items-center gap-2">
-                    <p className="font-extralight lg:text-3xl text-2xl h-5 flex items-center"> We're Committed to a Healthier Environment</p>
+                    <p className="font-extralight lg:text-3xl text-2xl h-5 flex items-center"> We&apos;re Committed to a Healthier Environment</p>
                     <p className="font-light text-white/75 hidden sm:block">Read about our progress in our latest impact report.</p>
                 </div>
                 <Button className="px-8 bg-white text-black hover:text-white font-light">Learn more</Button>

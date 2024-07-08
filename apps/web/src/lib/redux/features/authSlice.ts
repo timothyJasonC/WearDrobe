@@ -17,7 +17,7 @@ interface IAddressList {
 
 interface IUser {
     id: string;
-    accountActive: boolean;
+    accountActive: boolean | null;
     username?: string | null;
     email: string;
     password?: string | null;

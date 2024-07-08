@@ -3,15 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
-import { Button } from "@/components/ui/button"
 import {
   Form, FormControl,
   FormField, FormItem,
   FormLabel, FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { PiArrowLeftThin, PiArrowRight, PiEye, PiEyeClosed, PiX } from "react-icons/pi"
+import { PiArrowLeftThin, PiArrowRight, PiEye, PiEyeClosed } from "react-icons/pi"
 import { patchRequest } from "@/lib/fetchRequests"
 import { toast } from "sonner"
 import { useEffect, useState } from "react"
@@ -148,7 +146,7 @@ export function NewPassForm({ className } : { className: string }) {
                             </FormItem>
                         )}
                     />
-                    <LoadingButton loading={isLoading ? true: false} type="submit" className="flex gap-2">Save New Password<PiArrowRight /></LoadingButton>
+                    <LoadingButton loading={isLoading} type="submit" className="flex gap-2">Save New Password<PiArrowRight /></LoadingButton>
                 </form>
             </Form>
         </div>

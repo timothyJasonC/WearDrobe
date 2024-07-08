@@ -3,17 +3,21 @@ import React from 'react'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { cancelOrder, changeToShipped } from '@/lib/order';
 import { IOrder } from '@/constants';
-import { getUserClientSide } from '@/lib/utils';
+import { getAdminClientSide, getUserClientSide } from '@/lib/utils';
+import { DateRange } from 'react-day-picker';
 
 type ChangeOrderPorps = {
     orderId: string
     setOrderList: (value: IOrder[] | null) => void
+    currentPage: string | null
+    date: DateRange
+
 }
-export default function ChangeToShipped({ orderId, setOrderList }: ChangeOrderPorps) {
+export default function ChangeToShipped({ orderId, setOrderList, currentPage, date }: ChangeOrderPorps) {
 
     const changeStatusToShipped = async () => {
-        const adminId = '6f09cf0c-2a9b-4550-8d1d-bc02157bdc4d'
-        const result = await changeToShipped(orderId, adminId)
+        const admin = await getAdminClientSide()
+        const result = await changeToShipped(orderId, admin.id, currentPage, date)
         setOrderList(result)
     }
     return (

@@ -1,16 +1,14 @@
-'use client'
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PiCameraFill } from "react-icons/pi";
 import { toast } from "sonner";
 
-export function InputPhotoProfile({ setFile }: { setFile: any }) {
-    const [error, setError] = useState("");
+export function InputPhotoProfile({ setFile }: { setFile: React.Dispatch<React.SetStateAction<File | null>> }) {
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const selectedFile = event.target.files[0];
+            // console.log(selectedFile)
             if (selectedFile) {
                 const fileType = selectedFile.type;
                 const fileSize = selectedFile.size;
@@ -28,7 +26,6 @@ export function InputPhotoProfile({ setFile }: { setFile: any }) {
                     return;
                 }
     
-                setError("");
                 setFile(selectedFile);
             }
         }

@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
+  "prisma": {
+  "seed": "ts-node prisma/seed.ts"
+    },
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register src/index.ts",
     "build": "tsc && tsc-alias",
@@ -21,6 +24,7 @@
     "express": "^4.18.2",
     "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.2",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.13",
     "puppeteer": "^22.12.0",
     "ts-node": "^10.9.2",
@@ -33,6 +37,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.15",
     "@types/uuid": "^9.0.8",
     "prisma": "^5.7.1",

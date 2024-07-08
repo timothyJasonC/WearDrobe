@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { PiArrowUpRight, PiPlusBold } from "react-icons/pi"
+import { PiArrowUpRight, PiUserPlus } from "react-icons/pi"
 import * as z from 'zod'
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -57,7 +57,10 @@ export function DialogCreateAdmin() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <LoadingButton variant="outline" className="flex gap-2"><PiPlusBold />Register New Warehouse Admin</LoadingButton>
+                <LoadingButton variant="outline" className="flex gap-2 bg-black text-white hover:bg-zinc-700 hover:text-white duration-200">
+                    <PiUserPlus size={`18px`} />
+                    <span className="hidden sm:block">Register New Admin</span>
+                </LoadingButton>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -88,7 +91,7 @@ export function DialogCreateAdmin() {
                                 }}
                             />
                             <div className="flex justify-end">
-                                <LoadingButton loading={isLoading ? true: false} className="px-10 flex gap-2 w-fit" type="submit">Send Invitation
+                                <LoadingButton loading={isLoading} className="px-10 flex gap-2 w-fit" type="submit">Send Invitation
                                     <PiArrowUpRight />
                                 </LoadingButton>
                             </div>

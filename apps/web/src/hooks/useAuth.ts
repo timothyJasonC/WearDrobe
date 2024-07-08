@@ -12,7 +12,7 @@ export default function useAuth() {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential?.accessToken;
                 const user = result.user;
-                if (token && user) setSSOUserData({ token, user }) 
+                if (token && user) setSSOUserData({ token, user })
             
             }).catch((error) => {
                 const errorCode = error.code;
@@ -20,7 +20,6 @@ export default function useAuth() {
                 const email = error.customData.email;
                 const credential = GoogleAuthProvider.credentialFromError(error);
         });
-    
     }
 
     async function facebookSSO() {

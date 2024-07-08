@@ -65,9 +65,21 @@ export async function getPaymentLink(data: any) {
     return paymentLink
 }
 
+export async function existingTransaction(id: string) {
+    const existOrder = await prisma.order.findUnique({
+        where: {
+            id,
+            paymentStatus: 'PENDING'
+        }
+    })
+    return existOrder
+}
+
 async function updateSuccessStock(items: any, warehouseID: string) {
     for (const item of items) {
         const { productVariantId, quantity, size } = item;
+
+        
 
         await prisma.warehouseProduct.updateMany({
             where: { productVariantID: productVariantId, size, warehouseID },
@@ -116,7 +128,7 @@ async function getAllOrder(warehouseId: string | null, query: string, page: stri
     if (warehouseId === 'none') return null;
     const order = await prisma.order.findMany({
         orderBy: {
-            createdAt: 'asc',
+            createdAt: 'desc',
         },
         where: warehouseId ? {
             AND: [
@@ -125,13 +137,13 @@ async function getAllOrder(warehouseId: string | null, query: string, page: stri
             OR: [
                 { id: { contains: query } },
             ]
-
         } : {
             AND: [
                 { warehouseId: warehouse }
             ],
             OR: [
                 { id: { contains: query } },
+                { warehouseId: warehouse }
             ]
         },
         skip: (+page - 1) * +limit,
@@ -145,13 +157,30 @@ async function totalTransactionByAdmin(warehouseId: string | null, query: string
     const order = await prisma.order.count({
         where: warehouseId ? {
             AND: [
-                { warehouseId: warehouseId }
+                { warehouseId: warehouseId },
+                {
+                    NOT: {
+                        status: {
+                            in: ['CART', 'CANCELLED'],
+                        },
+                    },
+                },
+
             ],
             OR: [
                 { id: { contains: query } },
             ]
 
         } : {
+            AND: [
+                {
+                    NOT: {
+                        status: {
+                            in: ['CART'],
+                        },
+                    },
+                },
+            ],
             OR: [
                 { id: { contains: query } },
             ]
@@ -160,17 +189,25 @@ async function totalTransactionByAdmin(warehouseId: string | null, query: string
     return order
 }
 
-export async function getOrderByUser(userId: string, query: string, page: string, limit: string) {
+export async function getOrderByUser(userId: string, query: string, page: string, limit: string, fromDate:Date, toDate:Date) {
     const orders = await prisma.order.findMany({
         orderBy: {
-            createdAt: 'asc',
+            createdAt: 'desc',
         },
         where: {
             AND: [
-                { userId: userId }
+                { userId: userId },
+                {
+                    NOT: {
+                        status: {
+                            in: ['CART'],
+                        },
+                    },
+                },
             ],
             OR: [
                 { id: { contains: query } },
+                { createdAt: { gte: fromDate,lte: toDate } }
             ]
         },
         skip: (+page - 1) * +limit,
@@ -210,7 +247,7 @@ export async function getTotalOrderByAdmin(adminId: string, query: string) {
     }
 }
 
-export async function getOrderByAdmin(adminId: string, query: string, page: string, limit: string, warehouse: string) {
+export async function getOrderByAdmin(adminId: string, query: string, page: string, limit: string, warehouse: string, fromDate:Date, toDate:Date) {
     const admin = await prisma.admin.findUnique({
         where: { id: adminId },
         include: {
@@ -272,7 +309,23 @@ export async function updateShipped(orderId: string) {
         const updateOrder = await prisma.order.update({
             where: { id: orderId },
             data: {
-                status: "SHIPPED"
+                status: "SHIPPED",
+                shippedAt: new Date()
+            }
+        })
+        return updateOrder
+    } catch (err) {
+        return null
+    }
+}
+
+export async function updateCompletedOrder(orderId: string) {
+    try {
+        const updateOrder = await prisma.order.update({
+            where: { id: orderId },
+            data: {
+                status: "COMPLETED",
+                shippedAt: new Date()
             }
         })
         return updateOrder

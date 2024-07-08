@@ -12,15 +12,12 @@ export default function Page() {
         <div className="flex flex-col lg:flex-row items-center h-screen overflow-hidden">
             <div className=" h-full w-full relative">
                 <Image priority fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="max-lg:blur-[1px] h-full object-cover w-full" src={imgUrl} alt="" 
+                    sizes="(min-width: 768px) 70vw, (min-width: 1200px) 100vw, 33vw"
+                    className=" saturate-[1.3] contrast-[1.1] h-full object-cover w-full" src={imgUrl} alt="" 
                 />
             </div>
-            <div className="p-4
-                lg:w-[50%] w-full max-lg:p-4 
-                flex justify-center items-center
-                absolute lg:static top-0 bottom-0
-            ">
+            <div className="p-4 lg:w-[50%] w-full max-lg:p-4 
+                flex justify-center items-center absolute lg:static top-0 bottom-0">
                 <AuthCard/>
                 <ForgotPassForm />
                 <Toaster position="top-center" richColors />

@@ -1,16 +1,16 @@
 'use client'
-import * as React from "react"
+import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { PiShoppingCartSimple, PiFireSimple, PiHeart, PiMagnifyingGlass, PiUser } from "react-icons/pi";
+import Cookies from "js-cookie";
+import { isTokenExp } from "@/lib/utils";
+import { PiFireSimple, PiMagnifyingGlass } from "react-icons/pi";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 import { Input } from "@/components/ui/input"
 import { HeaderDropdown } from "../app/(home)/_components/HeaderDropdown";
-import { ProfileDropdown } from "@/app/(home)/_components/ProfileDropdown";
-import Cookies from "js-cookie";
-import Cart from "./cart/Cart";
 import AccountMenu from "@/app/(home)/_components/AccountMenu";
 import CatalogDropdown from "@/app/(home)/_components/CatalogDropdown";
+import { useRouter } from "next/navigation"
 import { Search } from "./search";
 
 const components: { title: string; href: string; description: string }[] = [
@@ -52,6 +52,16 @@ const components: { title: string; href: string; description: string }[] = [
 ]
 
 export function Header() {
+
+    const [userLogged, setUserLogged] = useState(false);
+    const router = useRouter()
+
+    useEffect(() => {
+        const token = Cookies.get('token')
+        const role = Cookies.get('role')
+        if (token && (role == 'user' && !isTokenExp(token))) setUserLogged(true)
+    }, [])
+
     return (
         <div className="p-4 flex justify-center border-b-[1px] sticky top-0 bg-white z-50">
             <NavigationMenu>
@@ -64,13 +74,6 @@ export function Header() {
                             </NavigationMenuLink>
                         </Link>
                     </NavigationMenuItem>
-
-                    {/* <NavigationMenuItem className="md:block hidden">
-                        <div className="relative">
-                            <Input type="text" placeholder="Search" className="focus-visible:ring-0 focus-visible:border-black/50" />
-                            <PiMagnifyingGlass className="absolute top-0 bottom-0 right-4 m-auto fill-black/50" />
-                        </div>
-                    </NavigationMenuItem> */}
 
                     <div className="hidden md:flex">
                         <NavigationMenuItem>
@@ -124,24 +127,15 @@ export function Header() {
                         </NavigationMenu>
                     </div>
 
-                    <div className="hidden md:flex">
-                        <NavigationMenuItem>
-                            <Link href="/docs" legacyBehavior passHref>
-                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                    <div className="relative">
-                                        <PiHeart size={`20px`} />
-                                        <div className="bg-red-400 w-6 h-6 rounded-full absolute -top-4 -right-4 border-2 border-white flex justify-center items-center">
-                                            <span className="text-white text-xs flex justify-center items-center font-light scale-[80%]">99+</span>
-                                        </div>
-                                    </div>
-                                </NavigationMenuLink>
-                            </Link>
-                        </NavigationMenuItem>
+                    <NavigationMenuItem className="hidden md:flex">
+                        <AccountMenu userLogged={userLogged} router={router} />
+                    </NavigationMenuItem>
 
-                        <NavigationMenuItem>
-                            <AccountMenu />
-                        </NavigationMenuItem>
-                    </div>
+                    <NavigationMenuItem className="md:hidden">
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            <HeaderDropdown userLogged={userLogged} router={router} />
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
 
                 </NavigationMenuList>
             </NavigationMenu>

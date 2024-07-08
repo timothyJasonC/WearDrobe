@@ -11,6 +11,8 @@ export function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
     const tokenCookie = req.cookies.get('token');
     const token = tokenCookie ? tokenCookie.value : null;
+    const warAdmPath = ['/admins/products', '/admins/stocks', '/admins/transactions', '/admins/overview', '/admins/edit-profile', '/admins/change-password']
+    const superAdmPath = [ ...warAdmPath, '/admins/admins', '/admins/warehouses', '/admins/users'];
     
     if (!token) {
         if (pathname.startsWith('/admins') || pathname.startsWith('/user')) {
@@ -35,11 +37,16 @@ export function middleware(req: NextRequest) {
                     return NextResponse.redirect(new URL('/', req.url));
                 }
                 
-                if (pathname.startsWith('/admins')) {
-                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
+                if (warAdmPath.some(path => pathname.startsWith(path))) {
+                    if (decoded.role == 'superAdm' || decoded.role == 'warAdm') {
                         return NextResponse.next();
-                    }
-                    return NextResponse.redirect(new URL('/', req.url));
+                    } else return NextResponse.redirect(new URL('/', req.url));
+                } else if (superAdmPath.some(path => pathname.startsWith(path))) {
+                    if (decoded.role == 'superAdm') {
+                        return NextResponse.next();
+                    } else if (decoded.role == 'warAdm') {
+                        return NextResponse.redirect(new URL('/admins/overview', req.url));    
+                    } else return NextResponse.redirect(new URL('/', req.url));
                 } else if (pathname.startsWith('/user')) {
                     if (decoded.role === 'user') {
                         return NextResponse.next();
@@ -49,9 +56,9 @@ export function middleware(req: NextRequest) {
                     }
                     return NextResponse.redirect(new URL('/auth', req.url));
                 } else if (pathname === '/') {
-                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
-                        return NextResponse.redirect(new URL('/admins/overview', req.url));
-                    }
+                    // if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
+                    //     return NextResponse.redirect(new URL('/admins/overview', req.url));
+                    // }
                     return NextResponse.next();
                 } else if (pathname.startsWith('/catalog')) {
                     if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {

@@ -42,7 +42,7 @@ export function RowCarousel({product, index, setIndex}:IRowCarousel) {
                 alt={product.id}
                 src={product.thumbnailURL}
                 width={500} height={500}
-                className={`object-cover object-center ${index == 0 ? 'border-[1px] border-black' : ''}`}/>
+                className={`object-cover w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] lg:w-[60px] lg:h-[60px] xl:w-[70px] xl:h-[70px]  object-center ${index == 0 ? 'border-[1px] border-black' : ''}`}/>
             </CarouselItem>
 
         {product.images.map((item, idx) => (
@@ -54,7 +54,7 @@ export function RowCarousel({product, index, setIndex}:IRowCarousel) {
                 alt={item.id} 
                 src={item.image} 
                 width={500} height={500} 
-                className={`object-cover object-center ${index == idx + 1 ? 'border-[1px] border-black' : ''}`}/>
+                className={`object-cover object-center w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] lg:w-[60px] lg:h-[60px] xl:w-[70px] xl:h-[70px] ${index == idx + 1 ? 'border-[1px] border-black' : ''}`}/>
             </CarouselItem>
         ))}
 
@@ -67,7 +67,7 @@ export function RowCarousel({product, index, setIndex}:IRowCarousel) {
                 alt={item.id}
                 src={item.image}
                 width={500} height={500}
-                className={`object-cover object-center ${index == idx + product.images.length + 1 ? 'border-[1px] border-black' : ''}`}/>
+                className={`object-cover object-center w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] lg:w-[60px] lg:h-[60px] xl:w-[70px] xl:h-[70px] ${index == idx + product.images.length + 1 ? 'border-[1px] border-black' : ''}`}/>
             </CarouselItem>
         ))}
       </CarouselContent>

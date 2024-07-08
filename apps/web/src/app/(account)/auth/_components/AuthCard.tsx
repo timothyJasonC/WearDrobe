@@ -144,48 +144,28 @@ export function AuthCard() {
                 </div>
             </TabsList>
             
-            <TabsContent className="" value="login">
+            <TabsContent value="login">
                 <Card>
-                <CardHeader>
-                    <CardTitle>Login</CardTitle>
-                    <CardDescription>
-                        Log in to WearDrobe with your email for personalized shopping, exclusive sales, seamless checkout, and the latest updates.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent >
-                    <Form {...loginForm}>
-                        <form className="flex flex-col gap-4" onSubmit={loginForm.handleSubmit(handleLogin)}>
-                            <FormField
-                                control={loginForm.control}
-                                name="email"
-                                render={({ field }) => {
-                                    return (
-                                        <FormItem>
-                                            <FormLabel className="text-black">Email</FormLabel>
-                                            <FormControl>
-                                                <Input 
-                                                    placeholder="@example: brucewayne@gmail.com"
-                                                    type="email"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage/>
-                                        </FormItem>
-                                    )
-                                }}
-                            />
-                            <div className="flex flex-col gap-2">
+                    <CardHeader>
+                        <CardTitle>Login</CardTitle>
+                        <CardDescription>
+                        Sign in with your email for personalized shopping, exclusive sales, smooth checkout, and updates.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent >
+                        <Form {...loginForm}>
+                            <form className="flex flex-col gap-4" onSubmit={loginForm.handleSubmit(handleLogin)}>
                                 <FormField
                                     control={loginForm.control}
-                                    name="password"
+                                    name="email"
                                     render={({ field }) => {
                                         return (
                                             <FormItem>
-                                                <FormLabel className="text-black">Password</FormLabel>
+                                                <FormLabel className="text-black">Email</FormLabel>
                                                 <FormControl>
                                                     <Input 
-                                                        placeholder="password"
-                                                        type="password"
+                                                        placeholder="@example: brucewayne@gmail.com"
+                                                        type="email"
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -194,35 +174,55 @@ export function AuthCard() {
                                         )
                                     }}
                                 />
-                                <Label 
-                                    onClick={() => {
-                                        document.getElementById('forgot-password-dialog')?.classList.remove('hidden')
-                                        document.getElementById('forgot-password-dialog')?.classList.add('flex')
-                                    } } 
-                                    className="text-blue-600 font-light cursor-pointer">Forgot password?</Label>
-                            </div>
-                            <LoadingButton loading={isLoading ? true: false} className="px-10 flex gap-2" type="submit">Login</LoadingButton>
-                        </form>
-                    </Form>
-                </CardContent>
-                <div className="flex px-6 mb-4 items-center">
-                    <div className="bg-black/30 h-[1px] w-full"></div>
-                    <span className="mx-4 text-black/30">or</span>
-                    <div className="bg-black/30 h-[1px] w-full"></div>
-                </div>
-                <CardContent className="flex flex-col gap-2">
-                    <Button onClick={googleSSO} className="bg-white text-black border-[1px] border-black/20 flex gap-2 hover:text-white">Login with Google <FcGoogle /> </Button>
-                    <Button onClick={facebookSSO} className="bg-white text-black border-[1px] border-black/20 flex gap-2 hover:text-white">Login with Facebook <FaFacebook /> </Button>
-                </CardContent>
+                                <div className="flex flex-col gap-2">
+                                    <FormField
+                                        control={loginForm.control}
+                                        name="password"
+                                        render={({ field }) => {
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel className="text-black">Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input 
+                                                            placeholder="password"
+                                                            type="password"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage/>
+                                                </FormItem>
+                                            )
+                                        }}
+                                    />
+                                    <Label 
+                                        onClick={() => {
+                                            document.getElementById('forgot-password-dialog')?.classList.remove('hidden')
+                                            document.getElementById('forgot-password-dialog')?.classList.add('flex')
+                                        } } 
+                                        className="text-blue-600 font-light cursor-pointer">Forgot password?</Label>
+                                </div>
+                                <LoadingButton loading={isLoading} className="px-10 flex gap-2" type="submit">Login</LoadingButton>
+                            </form>
+                        </Form>
+                    </CardContent>
+                    <div className="flex px-6 mb-4 items-center">
+                        <div className="bg-black/30 h-[1px] w-full"></div>
+                        <span className="mx-4 text-black/30">or</span>
+                        <div className="bg-black/30 h-[1px] w-full"></div>
+                    </div>
+                    <CardContent className="flex flex-col gap-2">
+                        <Button onClick={googleSSO} className="bg-white text-black border-[1px] border-black/20 flex gap-2 hover:text-white">Login with Google <FcGoogle /> </Button>
+                        <Button onClick={facebookSSO} className="bg-white text-black border-[1px] border-black/20 flex gap-2 hover:text-white">Login with Facebook <FaFacebook /> </Button>
+                    </CardContent>
                 </Card>
             </TabsContent>
 
-            <TabsContent className=" min-w-" value="register">
+            <TabsContent value="register">
                 <Card>
                     <CardHeader>
                         <CardTitle>Register</CardTitle>
                         <CardDescription>
-                            Sign up at WearDrobe with your email for personalized shopping, exclusive sales, seamless checkout, and the latest updates. Join now!
+                            Join WearDrobe with your email for personalized shopping, exclusive sales, seamless checkout, and the latest trends. Don&apos;t miss out!
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2">
@@ -248,7 +248,7 @@ export function AuthCard() {
                                             )
                                         }}
                                     />
-                                    <LoadingButton loading={isLoading ? true: false} className="px-10 flex gap-2" type="submit">Create New Account
+                                    <LoadingButton loading={isLoading} className="px-10 flex gap-2" type="submit">Create New Account
                                         <PiArrowUpRight />
                                     </LoadingButton>
                                 </form>

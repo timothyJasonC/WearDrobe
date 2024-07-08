@@ -3,8 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
-import { Button } from "@/components/ui/button"
 import {
   Form, FormControl,
   FormField, FormItem,
@@ -146,7 +144,7 @@ export function NewPassForm() {
                             </FormItem>
                         )}
                     />
-                    <LoadingButton loading={isLoading ? true: false} type="submit" className="flex gap-2">Save New Password<PiArrowRight /></LoadingButton>
+                    <LoadingButton loading={isLoading} type="submit" className="flex gap-2">Save New Password<PiArrowRight /></LoadingButton>
                 </form>
             </Form>
         </div>

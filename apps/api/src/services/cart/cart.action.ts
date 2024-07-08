@@ -7,7 +7,8 @@ export async function getOrCreateCart(userId: string) {
     let cart = await prisma.order.findFirst({
         where: {
             userId,
-            paymentStatus: 'PENDING'
+            paymentStatus: 'PENDING',
+            status: 'CART'
         }
     });
 

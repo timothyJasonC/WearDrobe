@@ -143,6 +143,7 @@ CREATE TABLE `ProductVariant` (
     `productID` VARCHAR(191) NOT NULL,
     `color` VARCHAR(191) NOT NULL,
     `HEX` VARCHAR(191) NOT NULL,
+    `isDeleted` BOOLEAN NULL DEFAULT false,
     `image` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `ProductVariant_image_key`(`image`),

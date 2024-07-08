@@ -94,4 +94,14 @@ export class WarehouseController {
             serverResponse(res, 400, 'error', error)
         }
     }
+
+    async getWarehouses(req: Request, res: Response) {
+        try {
+            const warehouses = await prisma.warehouse.findMany();
+            if (!warehouses) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            serverResponse(res, 200, 'ok', 'Warehouses found!', warehouses)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
 }

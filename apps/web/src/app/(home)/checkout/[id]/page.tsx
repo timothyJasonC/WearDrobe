@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/Loading";
 import { toast } from "sonner";
+import NotFound from "@/components/notFound";
 
 type CheckoutProps = {
     params: {
@@ -34,6 +35,7 @@ export default function Page({ params: { id } }: CheckoutProps) {
     const [selectedShipping, setSelectedShipping] = useState<ShippingCost>()
     const [isLoading, setIsLoading] = useState(true)
     const [isStockSufficient, setIsStockSufficient] = useState(true)
+    const [notFound, setNotFound] = useState(false)
 
     const router = useRouter()
 
@@ -73,14 +75,13 @@ export default function Page({ params: { id } }: CheckoutProps) {
                 setTotalAmount(cart.items.reduce((acc, item) => acc + item.price, 0));
             } else {
                 setTotalAmount(0);
+                setNotFound(true)
             }
         } catch (err) {
             router.push('/404');
         }
         setIsLoading(false);
     }, [validate, getStock, cart, cart?.items, router]);
-
-    console.log(shipping);
 
     useEffect(() => {
         if (shipping !== '') {
@@ -105,6 +106,10 @@ export default function Page({ params: { id } }: CheckoutProps) {
 
     if (isLoading) {
         return <Loading />
+    }
+
+    if (notFound) {
+        return <NotFound/>
     }
 
     return (

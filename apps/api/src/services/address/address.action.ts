@@ -35,7 +35,7 @@ export async function editAddress(id: string, city: any, address: string, labelA
             type: city.type,
             city_name: city.city_name,
             postal_code: city.postal_code,
-            coordinate: `${address}, ${city.type} ${city.city_name}, ${city.province}, Indonesia`,
+            coordinate: `${address}, ${city.city_name}, ${city.province}, Indonesia`,
         }
     })
     return updatedAddress
@@ -102,7 +102,7 @@ export async function getAllWarehouseAddress() {
     try {
         const warehouses = await prisma.warehouse.findMany()
         for (const warehouse of warehouses) {
-            const address = `${warehouse?.address}, ${warehouse?.city_name}, ${warehouse?.province}, Indonesia`
+            const address = warehouse.address
 
             const coordinates = await getAddressCoordinates(address)
             warehouseAddress[warehouse.warehouseName] = coordinates

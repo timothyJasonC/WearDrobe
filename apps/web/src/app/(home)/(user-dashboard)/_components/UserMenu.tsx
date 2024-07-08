@@ -56,13 +56,13 @@ export default function UserMenu({ className, user }: { className?: string, user
             try {
                 let imgUrl: string = ''
                 if (file) imgUrl = await uploadFile(file, 'profile')
-                const res = await patchRequest({ imgUrl: imgUrl }, `/user/${user.id}`)
+                const res = await patchRequest({ imgUrl: imgUrl }, `user/${user.id}`)
                 const data = await res.json()
                 if (res) setIsloading(false)
                 if (res.ok) {
                     setFile(null)
                     toast.success('Photo profile has been updated')
-                    const res = await (await getRequest(`/user/${user.id}`)).json()
+                    const res = await (await getRequest(`user/${user.id}`)).json()
                     const currentUser = res.data
                     setCurrentPhotoProfile(currentUser.imgUrl)
                 } else if (res.status == 404) {
@@ -77,12 +77,12 @@ export default function UserMenu({ className, user }: { className?: string, user
     async function handleRemovePhotoProfile(){
         if (user) {
             setIsloading(true)
-            const res = await (await deleteRequest(`/user/${user.id}`)).json()
+            const res = await (await deleteRequest(`user/${user.id}`)).json()
             try {
                 if (res) setIsloading(false)
                 if (res.status == 'ok') {
                     toast.success(res.message)
-                    const response = await (await getRequest(`/user/${user.id}`)).json()
+                    const response = await (await getRequest(`user/${user.id}`)).json()
                     const currentUser = response.data
                     setCurrentPhotoProfile(currentUser.imgUrl)
                     setOpen(false)

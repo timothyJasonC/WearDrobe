@@ -5,7 +5,7 @@ import { Stocks } from './_components/stocks'
 
 export default async function StocksPage() {  
   return (
-    <div className='flex flex-col w-full min-h-screen py-10 px-10 md:px-20'>
+    <div className=''>
       <Stocks />
     </div>
   )

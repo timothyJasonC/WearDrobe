@@ -26,7 +26,7 @@ export function SSOUsernameForm({ SSOUserData, router }: { SSOUserData: any, rou
             email: user.email, imgUrl: user.photoURL
         }
         try {
-            const res = await postRequest(userData, '/user/create-sso-user');
+            const res = await postRequest(userData, 'user/create-sso-user');
             const formDialog = document.getElementById('username-form');
             const data = await res.json();
                 if (res.status == 200 || res.status == 201) {

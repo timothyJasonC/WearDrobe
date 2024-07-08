@@ -1,10 +1,9 @@
 'use client'
-import { getAllStock, getProduct, getWarehouse } from '@/app/action'
+import { getAllStock, getWarehouse } from '@/app/action'
 import { StockDialog } from '@/app/(dashboard)/admins/stocks/_components/stocksDialog'
 import { StockTable } from '@/app/(dashboard)/admins/stocks/_components/stocksTable'
 import { StatisticsCard } from '@/app/(dashboard)/_components/statisticsCard'
 import { WarehouseDropdown } from '@/app/(dashboard)/_components/warehouseDropdown'
-import { PaginationTemplate } from '@/components/pagination'
 import { Input } from '@/components/ui/input'
 import { IProduct, IWarehouse } from '@/constants'
 import { getAdminClientSide } from '@/lib/utils'
@@ -15,6 +14,11 @@ import { Button } from '@/components/ui/button'
 import { DatePickerWithRange } from './datePicker'
 import { DateRange } from "react-day-picker"
 import { PiFileArrowDownFill } from "react-icons/pi";
+import { SalesPopover } from '../../sales/_components/salesPopover'
+import { useDebouncedCallback } from 'use-debounce'
+import xlsx, { IContent, IJsonSheet } from "json-as-xlsx";
+import { downloadStockToExcel } from '@/lib/xlsx'
+import ExcelButton from '@/app/(dashboard)/_components/excelButton'
 
 const monthFirstDate = () => {
   const now = new Date();
@@ -30,12 +34,21 @@ export const Stocks = () => {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1)
   const [isSuper, setIsSuper] = useState(false)
+  const [gender, setGender] = useState('All')
+  const [type, setType] = useState('All')
+  const [category, setCategory] = useState('All')
+  const [q, setQ] = useState('')
   const [date, setDate] = useState<DateRange | undefined>({
     from: monthFirstDate(),
     to: new Date(),
   })
 
-  
+  const debounced = useDebouncedCallback(
+    (value) => {
+        setQ(value);
+      },
+      500
+  )
 
   const getAdmWH = async() => {
     const admin = await getAdminClientSide()
@@ -49,12 +62,20 @@ export const Stocks = () => {
   }
 
   const getData = async() => {
-    if (date && selectedWH) {
+    if (date?.from && date?.to && selectedWH) {
       const warehouse = selectedWH == 'All Warehouses'? '' : selectedWH
-      const product = await getAllStock(warehouse, page, 10, date)
-      setProductQty(product.totalProduct)
-      setProductList(product.productList)
-      setInventory(product.totalStock)
+      const g = gender == "All" ? '' : gender
+      const t = type == "All" ? '' : type
+      const c = category == "All" ? '' : category
+      const filter = {date, g, t, c, q}
+      const res = await getAllStock(warehouse, page, 10, filter)
+      console.log(res);
+      
+      if (res.status == 'ok') {
+        setProductQty(res.totalProduct)
+        setProductList(res.productList)
+        setInventory(res.totalStock)
+      }
     }
   }
 
@@ -65,7 +86,7 @@ export const Stocks = () => {
   useEffect(() => {
     getData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWH, open, page, date])
+  }, [selectedWH, page, date, gender, type, category, q])
   
   return (
     <div>  
@@ -90,10 +111,9 @@ export const Stocks = () => {
 
       <div>
 
-        <div className='flex items-center flex-wrap gap-y-10 justify-between'>
-          <div className='flex gap-2 max-sm:justify-center flex-1 w-full'>
-
-            <div className={`${productList ? "" : 'hidden'}`}>
+        <div className='flex items-center w-full gap-4 flex-wrap gap-y-5 justify-between'>
+          <div className='flex gap-2 max-sm:justify-center max-sm:flex-wrap sm:flex-1 max-sm:w-full'>
+            <div className={`${productList.length > 0 ? "" : 'hidden'}`}>
               <StockDialog 
                 selectedWH={selectedWH} 
                 setSelectedWH={setSelectedWH} 
@@ -102,21 +122,20 @@ export const Stocks = () => {
                 open={open}
               />
             </div>
-
-            <Link href={'/admins/stocks/mutations'} className={isSuper ? 'hidden' : ''}>
-              <Button variant={'outline'} className='flex items-center gap-1 max-sm:text-xs'><p>Manage Mutation</p><PiArrowSquareOut className="text-xl"/> </Button>
+            <Link href={'/admins/stocks/mutations'} className={productList.length > 0 ? isSuper? 'hidden' : '' : 'hidden'}>
+              <Button variant={'outline'} className='flex items-center gap-1 max-sm:text-xs'>
+                <p className='sm:hidden'>Mutation</p>
+                <p className='max-sm:hidden'>Manage Mutation</p>
+              <PiArrowSquareOut className="text-xl"/> </Button>
             </Link>
+            <ExcelButton func={() => downloadStockToExcel(productList, selectedWH)} />
 
           </div>
 
-          <div className='flex gap-2 flex-1 w-full max-sm:justify-between items-center'>
-            <div className='flex items-center justify-end gap-2 w-full'>
-              <label htmlFor="search" className='max-sm:hidden'><PiMagnifyingGlass className='text-2xl'/></label>
-              <Input id='search' type="text" placeholder="Search products" className='w-full sm:max-w-60 min-w-44'/>
-            </div>
-
+          <div className='flex flex-1 gap-2 max-sm:justify-between justify-end items-center'>
+            <Input id='search' type="text" placeholder="Search products" className='w-full sm:max-w-60 min-w-44' onChange={(e) => debounced(e.target.value)}/>
             <DatePickerWithRange date={date} setDate={setDate}/>
-            <PiFileArrowDownFill className='text-5xl'/>
+            <SalesPopover gender={gender} type={type} category={category} setGender={setGender} setType={setType} setCategory={setCategory}/>
           </div>
 
         </div>

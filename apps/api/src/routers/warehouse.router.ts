@@ -12,13 +12,19 @@ export class WarehouseRouter {
     }
 
     private initializeRoutes(): void {
-        this.router.get('/all', this.warehouseController.getWarehouses)
-        this.router.get('/', this.warehouseController.getWarehouseList)
         this.router.get('/available-warehouses', this.warehouseController.getAvailableWarehouse)
         this.router.get('/assigned-warehouse/:id', this.warehouseController.getWarehouseByAdminId)
-        this.router.post('/', this.warehouseController.createWarehouse)
-        this.router.get('/', this.warehouseController.getAllWarehouses)
+        this.router.get('/all', this.warehouseController.getWarehouses)
+        this.router.get('/filter/:filter', this.warehouseController.getWarehouseFiltered)
+        this.router.get('/', this.warehouseController.getWarehouseList)
         this.router.get('/:id', this.warehouseController.getWarehouseList)
+        this.router.post('/', this.warehouseController.createWarehouse)
+        this.router.post('/', this.warehouseController.createWarehouse)
+        this.router.patch('/:id', this.warehouseController.editWarehouse)
+        this.router.patch('/assign-admin-to-warehouse', this.warehouseController.assignAdminToWarehouse)
+        this.router.patch('/dismiss-admin-from-warehouse', this.warehouseController.dissmissAdminFromWarehouse)
+        this.router.patch('/reactivate-warehouse/:id', this.warehouseController.reactivateWarehouse)
+        this.router.delete('/deactivate-warehouse/:id', this.warehouseController.deactivateWarehouse)
     }
 
     getRouter() : Router{

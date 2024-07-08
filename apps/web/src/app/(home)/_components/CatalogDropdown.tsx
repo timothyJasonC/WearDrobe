@@ -14,21 +14,25 @@ export default function CatalogDropdown() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 max-md:hidden lg:hidden">        
                     <DropdownMenuGroup>
-                        <Link href={'/user/edit-profile'}>
+                        <Link href={'/catalogs'}>
                             <DropdownMenuItem className="flex gap-2 cursor-pointer">
                                 <PiFireSimple size={`16px`} />
                                 <span>New Arrival</span>
                             </DropdownMenuItem>
                         </Link>
-                        <DropdownMenuItem className="flex gap-2 cursor-pointer">
-                            <PiGenderFemale size={`16px`} />
-                            <span>Women</span>
-                        </DropdownMenuItem>
+                        <Link href={`catalogs?g=Women`}>
+                            <DropdownMenuItem className="flex gap-2 cursor-pointer">
+                                <PiGenderFemale size={`16px`} />
+                                <span>Women</span>
+                            </DropdownMenuItem>
+                        </Link>
                     </DropdownMenuGroup>
-                    <DropdownMenuItem className="flex gap-2 cursor-pointer">
-                        <PiGenderMale size={`16px`} />
-                        <span>Men</span>
-                    </DropdownMenuItem>
+                    <Link href={`catalogs?g=Men`}>
+                        <DropdownMenuItem className="flex gap-2 cursor-pointer">
+                            <PiGenderMale size={`16px`} />
+                            <span>Men</span>
+                        </DropdownMenuItem>
+                    </Link>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>

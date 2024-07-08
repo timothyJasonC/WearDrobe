@@ -7,9 +7,9 @@ import { Spinner } from "@/components/ui/spinner";
 import { useParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { getRequest, getRequestToken, refreshToken } from "@/lib/fetchRequests";
-import { IAdmin } from "@/app/(dashboard)/admins/_components/ExpTable";
 import { isTokenExp } from "@/lib/utils";
 import { toast } from "sonner";
+import { IAdmin } from "@/app/(dashboard)/admins/admins/_components/columns";
 
 export default function Page() {
     const params = useParams()
@@ -27,7 +27,7 @@ export default function Page() {
         async function getAdmin() {
             try {
                 if (decodedToken) {
-                    const data = await (await getRequest(`/admin/${decodedToken.id}`)).json()
+                    const data = await (await getRequest(`admin/${decodedToken.id}`)).json()
                     if (data.data) setAdmin(data.data)
                 }
             } catch (error) {
@@ -57,7 +57,7 @@ export default function Page() {
     useEffect(() => {
         async function verifyAccount() {
             try {
-                const res = await getRequestToken('/admin/re-verify-account', activeToken)
+                const res = await getRequestToken('admin/re-verify-account', activeToken)
                 const data = await res.json();
                 if (res.ok) {
                     setVerified(true)

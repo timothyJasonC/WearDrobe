@@ -54,7 +54,10 @@ export class ProductController {
             const fromDate = new Date(date.from);
             fromDate.setHours(0, 0, 0, 0)
             const toDate = new Date(date.to);
-            toDate.setHours(23, 59, 59, 999);              
+            toDate.setHours(23, 59, 59, 999);        
+            console.log('QUERY', req.query);
+            console.log('BODY', req.body);
+                  
             
             await prisma.$transaction(async (tx)=> {
                 const products = await tx.product.findMany({
@@ -98,20 +101,13 @@ export class ProductController {
                         variants: {
                             some: {
                                 isDeleted: false,
-                                warehouseProduct: {
-                                    some: {
-                                        isDelete: false,
-                                        warehouse: {
-                                            warehouseName: w ? String(w) : { not: undefined },
-                                        }
-                                    }
-                                }
                             }
                         }
                     },
                     take: +limit, 
                     skip: (+p! - 1) * +limit
                 })
+                
                 const productsWithStock = products.map(product => ({
                     ...product,
                     variants: product.variants.map(variant => ({
@@ -149,17 +145,6 @@ export class ProductController {
                             ? String(c)
                             : {not: undefined}
                         },
-                        variants: {
-                            some: {
-                                warehouseProduct: {
-                                    some: {
-                                        warehouse: {
-                                            warehouseName: w ? String(w) : { not: undefined },
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     },
                 })
                 

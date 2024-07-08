@@ -212,11 +212,6 @@ export interface IWarehouse {
   adminID?: string,
 }
 
-
-  export interface mutationList {
-    
-  }
-
 export interface Province {
   province_id: string;
   province: string;
@@ -248,6 +243,7 @@ export interface Warehouse {
     postal_code: string;
     createdAt: string;
     adminID: string | null;
+    isActive: boolean;
 }
 
 export interface ShippingCostResponse {

@@ -3,9 +3,9 @@ import AdminMenu from "./AdminMenu"
 import { PiCaretDown, PiHeadsetBold, PiPassword, PiUser } from "react-icons/pi"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import DropdownLogout from "@/app/(dashboard)/admins/_components/DropdownLogout"
-import { IAdmin } from "@/app/(dashboard)/admins/_components/ExpTable"
 import ActiveIndicator from "./ActiveIndicator"
 import { useRouter } from "next/navigation"
+import { IAdmin } from "@/app/(dashboard)/admins/admins/_components/columns"
 
 export default function AdminDashboardContent({ admin, activeButton }: { admin: IAdmin | null, activeButton: string }) {
     const router = useRouter()

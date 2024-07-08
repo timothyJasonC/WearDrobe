@@ -1,17 +1,20 @@
 'use client'
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
-import { cn } from "@/lib/utils"
+import { cn, shuffleArray } from "@/lib/utils"
 import Cookies from "js-cookie";
 import { isTokenExp } from "@/lib/utils";
 import { PiFireSimple, PiMagnifyingGlass } from "react-icons/pi";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
-import { Input } from "@/components/ui/input"
 import { HeaderDropdown } from "../app/(home)/_components/HeaderDropdown";
 import AccountMenu from "@/app/(home)/_components/AccountMenu";
 import CatalogDropdown from "@/app/(home)/_components/CatalogDropdown";
 import { useRouter } from "next/navigation"
 import { Search } from "./search";
+import { toast } from "sonner";
+import { getRequest } from "@/lib/fetchRequests";
+import { ICategory } from "@/constants";
+import { Spinner } from "./ui/spinner";
 
 const components: { title: string; href: string; description: string }[] = [
     {
@@ -54,12 +57,36 @@ const components: { title: string; href: string; description: string }[] = [
 export function Header() {
 
     const [userLogged, setUserLogged] = useState(false);
+    const [ menCategories, setMenCategories ] = useState([]);
+    const [ womenCategories, setWomenCategories ] = useState([]);
     const router = useRouter()
+
+    async function fetchMenCategory() {
+        try {
+            const res = await getRequest(`categories/men-cat`);
+            const data = await res.json()
+            if (res.ok) setMenCategories(data.data)
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message: "Error while fetching men categories")
+        }
+    }
+
+    async function fetchWomenCategory() {
+        try {
+            const res = await getRequest(`categories/women-cat`);
+            const data = await res.json()
+            if (res.ok) setWomenCategories(data.data)
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message: "Error while fetching men categories")
+        }
+    }
 
     useEffect(() => {
         const token = Cookies.get('token')
         const role = Cookies.get('role')
         if (token && (role == 'user' && !isTokenExp(token))) setUserLogged(true)
+        fetchMenCategory()
+        fetchWomenCategory()
     }, [])
 
     return (
@@ -94,12 +121,19 @@ export function Header() {
                             <NavigationMenuItem>
                                 <NavigationMenuTrigger>Women</NavigationMenuTrigger>
                                 <NavigationMenuContent className="max-lg:hidden">
-                                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                                        {components.map((component) => (
-                                            <ListItem key={component.title} title={component.title} href={component.href}>
-                                                {component.description}
-                                            </ListItem>
-                                        ))}
+                                    <ul className="grid w-[600px] gap-3 p-4 md:grid-cols-4">
+                                        {   
+                                            womenCategories && womenCategories.length > 0 ?
+                                            shuffleArray(womenCategories).map((item: ICategory) => (
+                                                <ListItem
+                                                    key={item.id}
+                                                    title={item.category}
+                                                    href={`/catalogs?g=women&t=${item.type}&c=${item.slug}`}
+                                                />
+                                            ))
+                                            :
+                                            <></>
+                                        }
                                     </ul>
                                 </NavigationMenuContent>
                             </NavigationMenuItem>
@@ -107,16 +141,22 @@ export function Header() {
                             <NavigationMenuItem>
                                 <NavigationMenuTrigger>Men</NavigationMenuTrigger>
                                 <NavigationMenuContent className="max-lg:hidden">
-                                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                                        {components.map((component) => (
-                                            <ListItem
-                                                key={component.title}
-                                                title={component.title}
-                                                href={component.href}
-                                            >
-                                                {component.description}
-                                            </ListItem>
-                                        ))}
+                                    <ul className="grid w-[600px] gap-3 p-4 md:grid-cols-4">
+                                        {   
+                                            menCategories && menCategories.length > 0 ?
+                                            shuffleArray(menCategories).map((item: ICategory) => (
+                                                <ListItem
+                                                    className="font-light"
+                                                    key={item.id}
+                                                    title={item.category}
+                                                    href={`/catalogs?g=Men&t=${item.type}&c=${item.category}`}
+                                                />
+                                            ))
+                                            :
+                                            <div>
+                                                <Spinner size={'small'} />Fetching categories. Please wait..
+                                            </div>
+                                        }
                                     </ul>
                                 </NavigationMenuContent>
                             </NavigationMenuItem>
@@ -158,7 +198,7 @@ const ListItem = React.forwardRef<
                     )}
                     {...props}
                 >
-                    <div className="text-sm font-medium leading-none">{title}</div>
+                    <div className="text-sm font-light text-black/80 leading-none">{title}</div>
                     <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                         {children}
                     </p>

@@ -12,10 +12,6 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { toast } from "sonner"
 import { patchRequest } from "@/lib/fetchRequests"
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import EditedData from "./EditedData"
-import { parseDate } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 
 export enum Gender { MALE = 'MALE', FEMALE = 'FEMALE' }
 
@@ -72,7 +68,7 @@ export default function EditProfileForm({ user } : { user: IUser | null }) {
     
             try {
                 if ((changedData.dob || changedData.username) || (changedData.gender || changedData.email)) {
-                    const res = await patchRequest(changedData, `/user/personal/${user.id}`)
+                    const res = await patchRequest(changedData, `user/personal/${user.id}`)
                     if (res) setIsLoading(false)
                     const data = await res.json()
                     if (res.ok) {

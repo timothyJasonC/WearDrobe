@@ -33,7 +33,7 @@ export function AuthCard() {
                 email: user.email, imgUrl: user.photoURL
             }
             try {
-                const res = await postRequest(userData, '/user/create-sso-user');
+                const res = await postRequest(userData, 'user/create-sso-user');
                 const data = await res.json();
                 const formDialog = document.getElementById('username-form');
                 if (res.status == 200 || res.status == 201) {
@@ -86,7 +86,7 @@ export function AuthCard() {
         setIsLoading(true)
         const { email } = registerForm.getValues()
         try {
-            const res = await postRequest({ email: email }, '/user')
+            const res = await postRequest({ email: email }, 'user')
             if (res) setIsLoading(false)
             if (res.ok) {
                 toast.success("Email successfully registered!", { description: "Please check your email to verify account." })
@@ -109,7 +109,7 @@ export function AuthCard() {
     async function handleLogin() {
         setIsLoading(true)
         try {
-            const res = await postRequest(loginForm.getValues(), '/account/login')
+            const res = await postRequest(loginForm.getValues(), 'account/login')
 
             if (res) setIsLoading(false)
             if (res.ok) {

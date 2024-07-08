@@ -30,7 +30,7 @@ export function ForgotPassForm() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
         try {
-            const res = await postRequest(values, '/account/request-forgot-pass')
+            const res = await postRequest(values, 'account/request-forgot-pass')
             setTimeout(() => {
                 if (!res) toast("Please wait while we're processing your request")
             }, 5000);

@@ -9,6 +9,9 @@ import { Input } from "../../../components/ui/input"
 import Cart from "@/components/cart/Cart"
 import { handleLogout } from "@/lib/utils"
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
+import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import { Search } from "../../../components/search";
   
 export function HeaderDropdown({ userLogged, router }: { userLogged: boolean, router: AppRouterInstance }) {
     
@@ -18,56 +21,26 @@ export function HeaderDropdown({ userLogged, router }: { userLogged: boolean, ro
                 <Button variant="outline"><PiList size={`20px`} /></Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 md:hidden">
-                <div className="relative">
-                    <Input type="text" placeholder="Search" className="focus-visible:ring-0 focus-visible:border-black/50" />
-                    <PiMagnifyingGlass className="absolute top-0 bottom-0 right-4 m-auto fill-black/50" />
-                </div>            
-                <DropdownMenuGroup>
-                    <DropdownMenuItem className="flex gap-2">
+                <Search />
+                <DropdownMenuItem className="flex items-center justify-between">
+                    <div className="flex gap-2">
                         <PiFireSimple size={'16px'} />
                         <span>New Arrival</span>
+                    </div>
+                    <Badge className="bg-red-400 font-light">Hot</Badge>
+                </DropdownMenuItem>
+                <Link href={`catalogs?g=Women`}>
+                    <DropdownMenuItem className="flex gap-2">
+                        <PiGenderFemale size={'16px'} />
+                        <span>Women</span>
                     </DropdownMenuItem>
-                    <DropdownMenuSub>
-                        <DropdownMenuSubTrigger className="flex gap-2">
-                            <PiGenderFemale size={'16px'} />
-                            <span>Women</span>
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                            <DropdownMenuSubContent className="md:hidden">
-                                <DropdownMenuItem>
-                                    <span>category 1</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <span>category 2</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <span>category 3</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                    <DropdownMenuSub>
-                        <DropdownMenuSubTrigger className="flex gap-2">
-                            <PiGenderMale size={'16px'} />
-                            <span>Men</span>
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                            <DropdownMenuSubContent className="md:hidden">
-                                <DropdownMenuItem>
-                                    <span>category 1</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <span>category 2</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <span>category 3</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                </DropdownMenuGroup>
+                </Link>
+                <Link href={`catalogs?g=Men`}>
+                    <DropdownMenuItem className="flex gap-2">
+                        <PiGenderMale size={'16px'} />
+                        <span>Men</span>
+                    </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 {
                     userLogged &&

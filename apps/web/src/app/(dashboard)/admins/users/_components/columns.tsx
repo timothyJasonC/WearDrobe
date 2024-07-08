@@ -4,35 +4,46 @@ import { ToolTip } from "@/components/Tooltip"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { calculateAge } from "@/lib/utils"
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, Row } from "@tanstack/react-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import React from "react"
+import { PiArrowUpRightBold } from "react-icons/pi"
 
-const ActionsCell = ({ row }: { row: any }) => {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
-          <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem>
-          <Link href={`/admins/users/${row.getValue('id')}`}>
-            View user details
-          </Link>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+const ActionsCell = ({ row }: { row: Row<IUser> }) => {
+    const userId = row.original.id;
+    return (
+        <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+            <Link className="flex items-center gap-2" href={`/admins/users/${userId}`}>
+                View user details
+                <PiArrowUpRightBold />
+            </Link>
+            </DropdownMenuItem>
+        </DropdownMenuContent>
+        </DropdownMenu>
+    );
 };
 
 export const columns: ColumnDef<IUser>[] = [
   {
     accessorKey: 'id',
-    header: "No",
+    header: ({ column }) => {
+        return (
+          <Button variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+            No
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+    },
     cell: ({ row }) => (
       <div className="capitalize">{row.index + 1}</div>
     ),
@@ -93,6 +104,7 @@ export const columns: ColumnDef<IUser>[] = [
   {
     id: "actions",
     enableHiding: false,
+    header: "Action",
     cell: ActionsCell,
   },
 ]

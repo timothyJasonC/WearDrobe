@@ -64,7 +64,7 @@ export default function SetupUserAccountForm() {
                 const userData = {
                     username: username, password: password, dob: dob, gender: gender 
                 }
-                const res = await postRequestToken(userData, '/user/setup-verify-user', activeToken)
+                const res = await postRequestToken(userData, 'user/setup-verify-user', activeToken)
     
                 if (res.ok) {
                     setIsLoading(false)

@@ -12,7 +12,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     
     let user: IUser | null;
     try {
-        const res = await (await getRequest(`/user/${params.id}`)).json()
+        const res = await (await getRequest(`user/${params.id}`)).json()
         user = res.data
     } catch (error) {
         return 

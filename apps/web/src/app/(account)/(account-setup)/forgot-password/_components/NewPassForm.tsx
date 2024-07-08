@@ -55,7 +55,7 @@ export function NewPassForm() {
                 if (values.password === values.confirmPassword) {
                     accountData = { id: id, password: values.password, token: currentToken }
 
-                    const res = await patchRequest(accountData, '/account/update-pass')
+                    const res = await patchRequest(accountData, 'account/update-pass')
                     if (res) setIsLoading(false)
                     if (res.ok) {
                         form.reset()

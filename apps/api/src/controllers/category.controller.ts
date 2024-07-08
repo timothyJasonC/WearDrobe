@@ -224,4 +224,24 @@ export class CategoryController {
         });
     }
   }
+
+  async getMenCategory(req:Request, res: Response) {
+    try {
+        const menCategories = await prisma.productCategory.findMany({ where: { gender: ProductGender.MEN } });
+        if (!menCategories) return serverResponse(res, 404, 'error', 'Men Categories have not been created')
+        serverResponse(res, 200, 'ok', 'Men categories found!', menCategories)
+    } catch (error: any) {
+        serverResponse(res, 400, 'error', error)
+    }
+  }
+
+  async getWomenCategory(req:Request, res: Response) {
+    try {
+        const womenCategories = await prisma.productCategory.findMany({ where: { gender: ProductGender.WOMEN } });
+        if (!womenCategories) return serverResponse(res, 404, 'error', 'Women Categories have not been created')
+        serverResponse(res, 200, 'ok', 'Women categories found!', womenCategories)
+    } catch (error: any) {
+        serverResponse(res, 400, 'error', error)
+    }
+  }
 }

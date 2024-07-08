@@ -6,14 +6,14 @@ import HeroCarousel from "@/app/(home)/_components/HeroCarousel"
 export default function Home() {
 
     return (
-        <main className=" space-y-12 lg:space-y-24">
+        <main className=" space-y-12 lg:space-y-24 py-10 lg:py-20">
 
-            <div className="flex justify-center mt-10 lg:mt-20">
+            <div className="flex justify-center">
                 <HeroCarousel />
             </div>
 
             <div className="flex justify-center">
-                <BestSeller />
+                <BestSeller all={true} headerText={"Best Seller"} />
             </div>
 
             <div className="flex justify-center">
@@ -21,6 +21,10 @@ export default function Home() {
             </div>
 
             <Campaign />
+
+            <div className="flex justify-center">
+                <BestSeller all={false} headerText={"Women's Choice"} totalCol="sm:basis-1/2" />
+            </div>
 
         </main>
     )

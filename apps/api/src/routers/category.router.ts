@@ -13,6 +13,8 @@ export class CategoryRouter {
 
     private initializeRoutes(): void {
         this.router.get('/', this.categoryController.getCategory)
+        this.router.get('/men-cat', this.categoryController.getMenCategory)
+        this.router.get('/women-cat', this.categoryController.getWomenCategory)
         this.router.get('/:slug', this.categoryController.getCategorySlug)
         this.router.post('/', this.categoryController.createCategory)
         this.router.patch('/', this.categoryController.editCategory)

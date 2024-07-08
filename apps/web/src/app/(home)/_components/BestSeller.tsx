@@ -12,7 +12,7 @@ import { formatToIDR } from "@/lib/utils";
 import Image from "next/image";
 
 
-export default function BestSeller() {
+export default function BestSeller({ all, headerText, totalCol }: { all: boolean, headerText: string, totalCol?: string }) {
 
     const dummyData = [
         {
@@ -54,7 +54,8 @@ export default function BestSeller() {
     return (
         <div className="flex flex-col items-center sm:items-start">
             <div className="lg:py-4 sm:px-0 duration-200 mb-6">
-                <h2 className="mb-2 text-lg font-bold text-center sm:text-start">Best seller</h2>
+                <h2 className="mb-2 text-lg font-bold text-center sm:text-start">{ headerText }</h2>
+                { all && 
                 <div className="flex lg:gap-4 overflow-scroll flex-wrap gap-2 justify-center">
                     {
                         dummyBadgeData.map((badge, idx) => {
@@ -62,17 +63,18 @@ export default function BestSeller() {
                         })
                     }
                 </div>
+                }
             </div>
 
             <Carousel opts={{ align: "start", }} className="max-w-72 sm:max-w-[40rem] lg:max-w-[50rem] xl:max-w-[65rem] ">
                 <CarouselContent className="">
                     {
                         dummyData.map((item, idx) => {
-                            return <CarouselItem key={idx} className="sm:basis-1/2 lg:basis-1/3 flex flex-col items-stretch">
-                                <div className="cursor-pointer relative">
+                            return <CarouselItem key={idx} className={` ${ totalCol ? totalCol: 'sm:basis-1/2 lg:basis-1/3' } flex flex-col items-stretch`}>
+                                <div className="cursor-pointer relative w-full">
                                     <Image
                                         width={350} height={100}
-                                        className="rounded-lg" src={item.img} alt="" 
+                                        className="rounded-lg w-full" src={item.img} alt="" 
                                     />
                                 </div>
                                 <div className="flex justify-between items-center">

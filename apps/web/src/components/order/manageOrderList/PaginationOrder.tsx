@@ -40,8 +40,8 @@ export default function PaginationOrder({ page, totalPages, urlParamName }: Pagi
         Math.max(1, currentPage - 2),
         Math.max(1, currentPage - 1),
         currentPage,
-        Math.max(1, currentPage + 1),
-        Math.max(1, currentPage + 2)
+        Math.min(currentPage, currentPage + 1),
+        Math.min(currentPage, currentPage + 2)
     ].filter((page, index, self) => self.indexOf(page) === index);
 
     const showEllipsis = totalPages - currentPage > 3;

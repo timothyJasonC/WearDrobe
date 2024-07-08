@@ -25,13 +25,8 @@ export default async function Page() {
                 <DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} />
             </div>
             {
-<<<<<<< HEAD
                warehouses ?
                     <ExpTable accounts={warehouses} columns={columns} optionalComp={<DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} />} />
-=======
-                warehouses?.length > 0 ?
-                    <ExpTable accounts={warehouses} columns={columns} optionalComp={<DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={true} />} />
->>>>>>> d2650225e113a765e5e856e9e7c83d0109dfcafd
                     :
                     <div>Warehouse not found</div>
             }

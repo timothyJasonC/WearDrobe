@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import ExcelButton from "../_components/ExcelButton";
 import xlsx, { IJsonSheet, IContent } from "json-as-xlsx";
 import { Gender } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm";
+import DashboardHeaderPhoto from "../_components/DashboardHeaderPhoto";
 // import { IUser } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm";
 
 
@@ -35,8 +36,12 @@ export default async function Page() {
     }    
 
     return (
-        <DashboardWrapper >
-            <div className="w-72 mb-7">
+        <DashboardWrapper className="relative">
+            <DashboardHeaderPhoto 
+                precisePos="50% 22%"
+                imgUrl={"https://images.pexels.com/photos/3965548/pexels-photo-3965548.jpeg"} 
+            />
+            <div className="w-72 mb-[6rem] z-[0] relative">
                 <StatisticsCard  title='Total User(s)' number={users && users?.length ? users?.length : 0}/>
             </div>
             {

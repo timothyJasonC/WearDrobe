@@ -115,9 +115,9 @@ export function ExpTable({ accounts, columns, optionalComp, users, admins, wareh
     })
 
     return (
-        <div className="w-full">
+        <div className="w-full z-[1] relative">
             <div className="mb-4">
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-2">
                     <div className="flex gap-2 sm:gap-4">
                         <Input
                             placeholder="Search..."

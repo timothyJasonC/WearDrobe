@@ -62,7 +62,7 @@ export function DialogCreateAdmin() {
             <DialogTrigger asChild>
                 <LoadingButton variant="outline" className="flex gap-2 bg-black text-white hover:bg-zinc-700 hover:text-white duration-200">
                     <PiUserPlus size={`18px`} />
-                    <span className="hidden sm:block">Register New Admin</span>
+                    <span className="hidden md:block">Register New Admin</span>
                 </LoadingButton>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">

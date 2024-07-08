@@ -55,7 +55,7 @@ export default function BestSeller() {
         <div className="flex flex-col items-center sm:items-start">
             <div className="lg:py-4 sm:px-0 duration-200 mb-6">
                 <h2 className="mb-2 text-lg font-bold text-center sm:text-start">Best seller</h2>
-                <div className="flex lg:gap-4 overflow-scroll flex-wrap gap-2 justify-center">
+                <div className="flex lg:gap-4 overflow-auto flex-wrap gap-2 justify-center">
                     {
                         dummyBadgeData.map((badge, idx) => {
                             return <Badge key={idx} variant="outline" className="px-7 py-2 font-normal text-sm text-black/80 hover:cursor-pointer">{ badge }</Badge>

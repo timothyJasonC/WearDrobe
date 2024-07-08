@@ -94,12 +94,7 @@ export function MutationTabs({selectedWH}:{selectedWH:string}) {
           </CardHeader>
           <CardContent className="space-y-2 px-0">
             <div>
-              {/* <div className="flex gap-1 items-center pb-2">
-                <p className="font-semibold">Request History</p>
-                <PiClockCounterClockwiseBold className="text-2xl"/>
-              </div> */}
               <TransferTable open={open} selectedWH={selectedWH} setOpen={setOpen} getQty={getQty}/>
-              {/* <PaginationTemplate page={createPage} productQty={10} setPage={setCreatePage} /> */}
             </div>
           </CardContent>
         </Card>

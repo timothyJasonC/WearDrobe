@@ -164,7 +164,7 @@ model Product {
     isDeleted      Boolean?         @default(false)
     thumbnailURL   String?
     createdAt      DateTime         @default(now())
-    updatedAt      DateTime?
+    updatedAt      DateTime?        @default(now())
     stockUpdatedAt DateTime?
     images         ProductImage[]
     variants       ProductVariant[]

@@ -1,10 +1,6 @@
 import { getRequest } from "@/lib/fetchRequests"
 import React from "react"
 import DashboardWrapper from "../_components/DashboardWrapper";
-<<<<<<< HEAD
-import { TableUser } from "./_components/TableUser";
-=======
->>>>>>> 7f6e2a6e16af183999b4983d2dc458b0ae5b031f
 import { Input } from "@/components/ui/input";
 import { ExpTable } from "../_components/ExpTable";
 import columns from "./_components/columns";

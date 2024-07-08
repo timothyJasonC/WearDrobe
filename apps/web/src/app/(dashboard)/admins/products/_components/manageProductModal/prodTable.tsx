@@ -40,11 +40,12 @@ interface IProdTable {
     
     
     return (
-      <Table className="my-7">
+      <Table className="my-7 text-[0.82rem]">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[50px]">No.</TableHead>
-            <TableHead>Product Name</TableHead>
+            <TableHead className={`${isSuper ? '' : 'hidden'}text-center`}></TableHead>
+            <TableHead className="min-w-[100px] sm:min-w-[200px]">Product Name</TableHead>
+            <TableHead className="text-center min-w-[100px] sm:min-w-[200px]">Product ID</TableHead>
             <TableHead className="text-center">Gender</TableHead>
             <TableHead className="text-center">Type</TableHead>
             <TableHead className="text-center">Category</TableHead>
@@ -52,14 +53,11 @@ interface IProdTable {
             <TableHead className="text-center min-w-32">Updated</TableHead>
             <TableHead className="text-center">Variants</TableHead>
             <TableHead className="text-center min-w-28">Size</TableHead>
-            <TableHead className="text-center">Stock</TableHead>
-            <TableHead className="text-center">Sales (IDR)</TableHead>
             <TableHead className="text-center">Price (IDR)</TableHead>
-            <TableHead className={`${isSuper ? '' : 'hidden'}text-center`}></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {productList.length ? 
+          {productList ? 
             productList.map((product, index) => {
             const date = DateConvert(product.createdAt)
             let dateU 
@@ -68,8 +66,23 @@ interface IProdTable {
             }
             return(
             <TableRow key={index + ((page - 1) * 10)}>
-              <TableCell>{index +1  + ((page - 1) * 10)}</TableCell>
-              <TableCell className="text-pretty font-semibold">{product.name}</TableCell>
+              <TableCell className={`${isSuper ? '' : 'hidden'}text-center`}>
+                <div className="flex gap-2">
+                  <EditProductDialog 
+                    slug={product.slug}
+                    action={action}
+                    isSuper={isSuper}
+                    />
+                  <SubmitAlert 
+                    action={() => handleDelete(product.slug)} 
+                    hidden={isSuper ? false : true}
+                    icon={<PiTrashFill className='flex hover:cursor-pointer text-xl text-red-400 hover:text-red-500'/>} 
+                    title={"Delete product?"} 
+                    message={"Product and its stocks will be permanently deleted. Action cannot be undone."}/>
+                </div>
+              </TableCell>
+              <TableCell className="text-pretty font-semibold min-w-[100px] sm:min-w-[200px]">{product.name}</TableCell>
+              <TableCell className="min-w-[100px] sm:min-w-[200px]">{product.id}</TableCell>
               <TableCell className="text-center">{product.category.gender.toLocaleLowerCase()}</TableCell>
               <TableCell className="text-center">{product.category.type.toLocaleLowerCase()}</TableCell>
               <TableCell className="text-center">{product.category.category}</TableCell>
@@ -111,24 +124,7 @@ interface IProdTable {
                 </div>
               </TableCell>
               <TableCell className="text-center">{product.oneSize ? "One Size" : "S M L XL"}</TableCell>
-              <TableCell className="text-center">{product.totalStock}</TableCell>
-              <TableCell className="text-center">{product.sales ? product.sales : '-'}</TableCell>
               <TableCell className="text-center font-semibold">{new Intl.NumberFormat('en-DE').format(product.price)}</TableCell>
-              <TableCell className={`${isSuper ? '' : 'hidden'}text-center`}>
-                <div className="flex gap-2">
-                  <EditProductDialog 
-                    slug={product.slug}
-                    action={action}
-                    isSuper={isSuper}
-                    />
-                  <SubmitAlert 
-                    action={() => handleDelete(product.slug)} 
-                    hidden={isSuper ? false : true}
-                    icon={<PiTrashFill className='flex hover:cursor-pointer text-xl text-red-400 hover:text-red-500'/>} 
-                    title={"Delete product?"} 
-                    message={"Product and its stocks will be permanently deleted. Action cannot be undone."}/>
-                </div>
-              </TableCell>
             </TableRow>
           )})
         : 

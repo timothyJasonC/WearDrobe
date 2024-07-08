@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
 import { PiPlusBold } from "react-icons/pi";
-import { Selector } from "../admins/products/_components/manageProductModal/selector";
+import { Selector } from "../../../components/selector";
 import { Label } from "@/components/ui/label"
 
 export function WarehouseDialog({setWarehouse, assignWarehouse, warehouse, warehouseList, setAssignWarehouse}:{setWarehouse:any, assignWarehouse:any, warehouse:any, warehouseList:any, setAssignWarehouse:any}) {

@@ -1,6 +1,6 @@
 'use client'
 import { getCatalog } from '@/app/action'
-import { Selector } from '@/app/(dashboard)/admins/products/_components/manageProductModal/selector'
+import { Selector } from '@/components/selector'
 import { IProduct } from '@/constants'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'

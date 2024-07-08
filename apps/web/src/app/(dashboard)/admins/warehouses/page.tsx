@@ -24,7 +24,7 @@ export default async function Page() {
                 </div>
             </div>
             {
-                warehouses.length > 0 ?
+               warehouses ?
                     <ExpTable accounts={warehouses} columns={columns} optionalComp={<DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} />} />
                     :
                     <div>Warehouse not found</div>

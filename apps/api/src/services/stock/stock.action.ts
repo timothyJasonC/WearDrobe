@@ -84,3 +84,41 @@ export async function addStockWarehouse( warehouseID: string, productVariantID: 
         }
     })
 }
+
+export async function handleWarehouseDelete( warehouseID:string) {
+        await prisma.$transaction(async (tx) => {
+            const whProducts = await tx.warehouseProduct.findMany({
+                where: {
+                    warehouseID
+                }
+            })
+            
+            const mutation = await tx.stockMutation.create({
+                data: {
+                    type: "DELETE",
+                    warehouseID
+                }
+            })
+
+            for (let i = 0; i<whProducts.length; i++) {
+                await tx.stockMutationItem.create({
+                    data: {
+                        id: uuidv4(),
+                        quantity: whProducts[i].stock,
+                        stockMutationID: mutation.id,
+                        warehouseProductID: whProducts[i].id                
+                    }
+                })
+            }
+
+            await tx.warehouseProduct.updateMany({
+                where: {
+                    warehouseID
+                },
+                data: {
+                    stock: 0
+                }
+            })
+            return 'stock emptied'
+        })
+}

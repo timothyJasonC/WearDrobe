@@ -107,7 +107,7 @@ export class OrderController {
             const stockData = await getStock(orderId);
             const stockDataWarehouse = await getStockByWarehouse(orderId, warehouseId)
             const warehouse = await getWarehouseById(warehouseId)
-
+            
             const outOfStockItems = stockData.filter(item => item.totalStock < item.orderedQuantity);
 
             if (outOfStockItems.length > 0) res.status(400).json({
@@ -167,6 +167,10 @@ export class OrderController {
                     }
                 }
                 const paymentLink = await getPaymentLink(data)
+                console.log('OOOORDDERRRR', order);
+                console.log('DATAAAAAAAAA',data);
+                console.log('PAYMENNRTNE', paymentLink);
+                
                 res.json(paymentLink)
             }
         } catch (err) {

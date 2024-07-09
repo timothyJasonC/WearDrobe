@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-    provider          = "mysql"
-    url               = env("DATABASE_URL")
-    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+    // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 enum Gender {
@@ -163,7 +163,7 @@ model Product {
     price          Int
     oneSize        Boolean          @default(false)
     categoryID     String
-    isActive       Boolean?         @default(false)
+    isActive       Boolean?         @default(true)
     thumbnailURL   String?
     createdAt      DateTime         @default(now())
     updatedAt      DateTime?        @default(now())

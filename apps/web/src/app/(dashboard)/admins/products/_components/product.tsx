@@ -1,7 +1,7 @@
 'use client'
 import { StatisticsCard } from '@/app/(dashboard)/_components/statisticsCard'
 import { WarehouseDropdown } from '@/app/(dashboard)/_components/warehouseDropdown'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { getCategory, getProduct, getWarehouse } from '@/app/action'
 import { ManageCategoryDialog } from '@/app/(dashboard)/_components/manageCategoryModal/categoryDialog'
 import { CreateProductDialog } from '@/app/(dashboard)/admins/products/_components/manageProductModal/createProductDialog'
@@ -61,33 +61,38 @@ const getAdmWH = async() => {
   }
 }
 
-const getData = async() => {
+const getData = useCallback(async () => {
   if (date?.from && date?.to && selectedWH) {
-    const g = gender == "All" ? '' : gender
-    const t = type == "All" ? '' : type
-    const c = category == "All" ? '' : category
-    const wh = selectedWH == 'All Warehouses' ? '' : selectedWH 
-    const filter = {date, g, t, c, q}
-    const prod = await getProduct(wh, page, 10, filter)    
-    const cat = await getCategory("", "")
-    if (prod.status == 'ok' && cat.status == 'ok') {
-      setProductList(prod.productList)
-      setProductQty(prod.totalProduct)
-      setCategoryLength(cat.totalCategory)
+    const g = gender === "All" ? '' : gender;
+    const t = type === "All" ? '' : type;
+    const c = category === "All" ? '' : category;
+    const wh = selectedWH === 'All Warehouses' ? '' : selectedWH;
+    const filter = { date, g, t, c, q };
+    try {
+      const [prod, cat] = await Promise.all([
+        getProduct(wh, page, 10, filter),
+        getCategory("", "")
+      ]);
+      
+      if (prod.status === 'ok' && cat.status === 'ok') {
+        setProductList(prod.productList);
+        setProductQty(prod.totalProduct);
+        setCategoryLength(cat.totalCategory);
+      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
     }
   }
-}
+}, [date, selectedWH, gender, type, category, page, q]);
 
-  useEffect(() => {
-    getAdmWH()
-  }, [])
-  
-  useEffect(() => {
-    if (selectedWH) {
-      getData()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [selectedWH, page, date, gender, type, category, q])
+useEffect(() => {
+  getAdmWH();
+}, []);
+
+useEffect(() => {
+    getData();
+}, [getData,open, openC ]);
+
   
   
   return (

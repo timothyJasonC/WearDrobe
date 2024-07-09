@@ -58,7 +58,7 @@ interface IStockTable {
                     <p className={`rounded-full shadow-sm px-5 ${item.stockMutation?.type === 'REMOVE' ? 'bg-red-100 text-red-700' : 'hidden'}`}>Removed</p>
                     <p className={`rounded-full shadow-sm px-5 ${item.stockMutation?.type === 'TRANSFER' ? 'bg-blue-100 text-blue-700' : 'hidden'}`}>Transfer</p>
                     <p className={`rounded-full shadow-sm px-5 ${item.stockMutation?.type === 'INBOUND' ? 'bg-violet-100 text-violet-600' : 'hidden'}`}>Inbound</p>
-                    <p className={`rounded-full shadow-sm px-5 ${item.stockMutation?.type === 'DELETE' ? 'bg-gray-100 text-gray-700' : 'hidden'}`}>Variant Deleted</p>
+                    <p className={`rounded-full shadow-sm px-5 ${item.stockMutation?.type === 'DELETE' ? 'bg-gray-100 text-gray-700' : 'hidden'}`}>Deleted</p>
                     <p className={`rounded-full shadow-sm px-5 ${item.stockMutation?.type === 'TRANSACTION' ? 'bg-amber-100 text-amber-700' : 'hidden'}`}>Transaction</p>
                 </TableCell>
                 <TableCell className={`text-center ${isSuper ? '' : 'hidden'}`}>{item.WarehouseProduct.warehouse?.warehouseName}</TableCell>

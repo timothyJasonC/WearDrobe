@@ -74,7 +74,6 @@ export async function getAddressUserById(addressId: string) {
     })
     return address
 }
-
 export async function getAddressCoordinates(addresLoc: string) {
     try {
         const encodedAddress = encodeURIComponent(addresLoc).replace(/%20/g, '+');

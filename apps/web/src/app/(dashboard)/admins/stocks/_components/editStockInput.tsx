@@ -53,10 +53,7 @@ export const DefaultTable = ({productData,updateType, setStockArray, stockArray,
       setIsValid(true)
       handleAddArr()
     }
-  }, [variant, selectSize, qty])
-
-  console.log(productData);
-  
+  }, [variant, selectSize, qty]) 
 
   return (
     <TableRow>

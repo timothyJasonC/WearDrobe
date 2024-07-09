@@ -16,7 +16,7 @@ interface ISubmitButton {
     action:() => void
     title:string
     cta?:string 
-    message:string
+    message:string | ReactNode
     icon?: ReactNode
     hidden?: boolean
 }

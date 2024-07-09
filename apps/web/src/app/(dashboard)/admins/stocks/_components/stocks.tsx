@@ -86,7 +86,7 @@ export const Stocks = () => {
   useEffect(() => {
     getData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWH, page, date, gender, type, category, q])
+  }, [selectedWH, page, date, gender, type, category, q, open])
   
   return (
     <div>  
@@ -113,7 +113,7 @@ export const Stocks = () => {
 
         <div className='flex items-center w-full gap-4 flex-wrap gap-y-5 justify-between'>
           <div className='flex gap-2 max-sm:justify-center max-sm:flex-wrap sm:flex-1 max-sm:w-full'>
-            <div className={`${productList.length > 0 ? "" : 'hidden'}`}>
+            <div className={`${productList ? "" : 'hidden'}`}>
               <StockDialog 
                 selectedWH={selectedWH} 
                 setSelectedWH={setSelectedWH} 

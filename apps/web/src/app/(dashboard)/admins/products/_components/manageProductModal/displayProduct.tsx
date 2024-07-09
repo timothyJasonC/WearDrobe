@@ -20,7 +20,7 @@ export const AdminProductDisplay = ({page, setPage, getData,productList, product
 		<div className='w-full'>
 			<ProdTable 
 				productList={productList}
-				action={getData}
+				action={() =>getData()}
 				isSuper={isSuper}
 				page={page}
 			/>

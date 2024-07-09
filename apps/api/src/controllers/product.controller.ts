@@ -19,42 +19,40 @@ export class ProductController {
 
     async getProductName(req: Request, res: Response) {
         try {
-            const {n} = req.query
-            let productNameList
-            if (n) {
-                productNameList = await prisma.product.findMany({
-                    select: {
-                        name: true,
-                        slug: true
-                    },where: {
-                        name: {
-                            contains: String(n),
-                        }
-                    }, 
-                    orderBy: {
-                        name: 'asc'
-                    }, 
-                    take: 6
-                })
-            } else {
-                productNameList = await prisma.product.findMany({select: {name:true, slug:true}, orderBy: {name:'asc'}, where: {isDeleted: false}})
+            const { n } = req.query;
+            const query: any = {
+                select: {
+                    name: true,
+                    slug: true
+                },
+                where: {
+                    name: n ? { contains: String(n) } : { not: undefined }
+                },
+                orderBy: {
+                    name: 'asc'
+                }
             }
-            serverResponse(res, 200, 'ok', 'product name found.', productNameList)
-        } catch (error:any) {
-            serverResponse(res, 400, 'error', error)
+            if (n) {
+                query.take = 6;
+            }
+            const productNameList = await prisma.product.findMany(query);
+        
+            serverResponse(res, 200, 'ok', 'product name found.', productNameList);
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error);
         }
     }
 
     async getProduct(req: Request, res: Response) {
         try {
             const {w, p, l} = req.query
-            console.log(w);
             const { date, g, t, c, q } = req.body;
             const limit = l ? l : 10
             const fromDate = new Date(date.from);
             fromDate.setHours(0, 0, 0, 0)
             const toDate = new Date(date.to);
-            toDate.setHours(23, 59, 59, 999);              
+            toDate.setHours(23, 59, 59, 999);        
+                  
             
             await prisma.$transaction(async (tx)=> {
                 const products = await tx.product.findMany({
@@ -98,20 +96,13 @@ export class ProductController {
                         variants: {
                             some: {
                                 isDeleted: false,
-                                warehouseProduct: {
-                                    some: {
-                                        isDelete: false,
-                                        warehouse: {
-                                            warehouseName: w ? String(w) : { not: undefined },
-                                        }
-                                    }
-                                }
                             }
                         }
                     },
                     take: +limit, 
                     skip: (+p! - 1) * +limit
                 })
+                
                 const productsWithStock = products.map(product => ({
                     ...product,
                     variants: product.variants.map(variant => ({
@@ -149,17 +140,6 @@ export class ProductController {
                             ? String(c)
                             : {not: undefined}
                         },
-                        variants: {
-                            some: {
-                                warehouseProduct: {
-                                    some: {
-                                        warehouse: {
-                                            warehouseName: w ? String(w) : { not: undefined },
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     },
                 })
                 
@@ -176,88 +156,326 @@ export class ProductController {
         }
     }
 
+    // async getProductBySlug(req: Request, res: Response) {
+    //     try {
+    //         const {slug} = req.params
+    //         const {w, s} = req.query
+    //         await prisma.$transaction(async (tx)=> {
+    //             const products = await tx.product.findFirst({
+    //                 where: {
+    //                     slug,
+    //                     variants: {
+    //                         some: {
+    //                             isDeleted: false,
+    //                             warehouseProduct: {
+    //                                 some: {
+    //                                     warehouse: {
+    //                                         warehouseName: w ? String(w) : {not: undefined},
+    //                                     },
+    //                                     size: s ? String(s).toUpperCase() as ProductSize : {not: undefined},
+    //                                     isDelete: false
+    //                                 }
+    //                             }
+    //                         }
+    //                     }
+    //                 },
+    //                 include: {
+    //                     images: true,
+    //                     variants: {
+    //                         include: {
+    //                             warehouseProduct: {
+    //                                 where: {
+    //                                     warehouse: {
+    //                                         warehouseName: w ? String(w) : {not: undefined},
+    //                                     },
+    //                                     size: s ? String(s).toUpperCase() as ProductSize : {not: undefined},
+    //                                     isDelete: false
+    //                                 }
+    //                                 ,orderBy: {
+    //                                     updatedAt: 'desc'
+    //                                 }
+    //                             }
+    //                         }
+    //                     },
+    //                     category: true
+    //                 }
+    //             })
+                
+    //             const productsWithStock = {
+    //                 ...products,
+    //                 variants: products!.variants.map((variant:any) => ({
+    //                 ...variant,
+    //                 totalStock: variant.warehouseProduct.reduce((total:any, wp:any) => total + wp.stock, 0)
+    //                 }))
+    //             }
+            
+    //             const productList = {
+    //                 ...productsWithStock,
+    //                 totalStock: products!.variants.reduce((total:any, variant:any) => {
+    //                 return total + variant.warehouseProduct.reduce((variantTotal:any, wp:any) => variantTotal + wp.stock, 0);
+    //                 }, 0)
+    //             }
+
+    //             const sizeSum = await tx.warehouseProduct.groupBy({
+    //                 by: ['size'!, 'productVariantID'],
+    //                 _sum: {
+    //                     stock: true
+    //                 }, 
+    //                 where: {
+    //                     productVariant: {
+    //                         product: {
+    //                             slug
+    //                         }
+    //                     },
+    //                 },
+
+    //             })
+                
+    //             return res.status(200).send({
+    //                 status: 'ok',
+    //                 message: 'product found',
+    //                 productList,
+    //                 sizeSum
+    //             })
+                    
+    //         })
+    //     } catch (error:any) {
+    //         serverResponse(res, 400, 'error', error)
+    //     } 
+    // }
+
     async getProductBySlug(req: Request, res: Response) {
         try {
             const {slug} = req.params
             const {w, s} = req.query
             await prisma.$transaction(async (tx)=> {
-                const products = await tx.product.findFirst({
-                    where: {
-                        slug,
-                        variants: {
-                            some: {
-                                isDeleted: false,
-                                warehouseProduct: {
-                                    some: {
-                                        warehouse: {
-                                            warehouseName: w ? String(w) : {not: undefined},
-                                        },
-                                        size: s ? String(s).toUpperCase() as ProductSize : {not: undefined},
-                                        isDelete: false
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    include: {
-                        images: true,
-                        variants: {
-                            include: {
-                                warehouseProduct: {
-                                    where: {
-                                        warehouse: {
-                                            warehouseName: w ? String(w) : {not: undefined},
-                                        },
-                                        size: s ? String(s).toUpperCase() as ProductSize : {not: undefined},
-                                        isDelete: false
-                                    }
-                                    ,orderBy: {
-                                        updatedAt: 'desc'
-                                    }
-                                }
-                            }
-                        },
-                        category: true
-                    }
-                })
-                
-                const productsWithStock = {
-                    ...products,
-                    variants: products!.variants.map((variant:any) => ({
-                    ...variant,
-                    totalStock: variant.warehouseProduct.reduce((total:any, wp:any) => total + wp.stock, 0)
-                    }))
-                }
-            
-                const productList = {
-                    ...productsWithStock,
-                    totalStock: products!.variants.reduce((total:any, variant:any) => {
-                    return total + variant.warehouseProduct.reduce((variantTotal:any, wp:any) => variantTotal + wp.stock, 0);
-                    }, 0)
-                }
-
-                const sizeSum = await tx.warehouseProduct.groupBy({
-                    by: ['size'!, 'productVariantID'],
-                    _sum: {
-                        stock: true
-                    }, 
-                    where: {
-                        productVariant: {
-                            product: {
+                if (w === "All Warehouses" || w === '') {
+                    if (s) {
+                        const products = await tx.product.findFirst({
+                            where: {
                                 slug
+                            },
+                            include: {
+                                images: true,
+                                variants: {
+                                    include: {
+                                        warehouseProduct: {
+                                            select: {
+                                                warehouseID: true,
+                                                id: true,
+                                                size: true,
+                                                stock: true,
+                                                updatedAt: true,
+                                            },orderBy: {
+                                                updatedAt: 'desc'
+                                            }, where: {
+                                                size: String(s).toUpperCase() as ProductSize,
+                                                isDelete: false
+                                            }
+                                        }
+                                    },
+                                    where: {
+                                        isDeleted: false
+                                    }
+                                },
+                                category: true
                             }
-                        },
-                    },
-
-                })
-                
-                return res.status(200).send({
-                    status: 'ok',
-                    message: 'product found',
-                    productList,
-                    sizeSum
-                })
+                        })
+                        const productsWithStock = {
+                            ...products,
+                            variants: products!.variants.map((variant:any) => ({
+                            ...variant,
+                            totalStock: variant.warehouseProduct.reduce((total:any, wp:any) => total + wp.stock, 0)
+                            }))
+                        }
                     
+                        const productList = {
+                            ...productsWithStock,
+                            totalStock: products!.variants.reduce((total:any, variant:any) => {
+                            return total + variant.warehouseProduct.reduce((variantTotal:any, wp:any) => variantTotal + wp.stock, 0);
+                            }, 0)
+                        }
+                        
+                        return res.status(200).send({
+                            status: 'ok',
+                            message: 'product found',
+                            productList
+                        })
+                    } else {
+                        const products = await tx.product.findFirst({
+                            where: {
+                                slug
+                            },
+                            include: {
+                                images: true,
+                                variants: {
+                                    include: {
+                                        warehouseProduct: {
+                                            select: {
+                                                warehouseID: true,
+                                                id: true,
+                                                size: true,
+                                                stock: true,
+                                                updatedAt: true,
+                                            },orderBy: {
+                                                updatedAt: 'desc'
+                                            },where: {
+                                                isDelete: false
+                                            }
+                                        }
+                                    }, where: {
+                                        isDeleted: false
+                                    }
+                                },
+                                category: true
+                            }
+                        })
+                        const productsWithStock = {
+                            ...products,
+                            variants: products!.variants.map((variant:any) => ({
+                            ...variant,
+                            totalStock: variant.warehouseProduct.reduce((total:any, wp:any) => total + wp.stock, 0)
+                            }))
+                        }
+                    
+                        const productList = {
+                            ...productsWithStock,
+                            totalStock: products!.variants.reduce((total:any, variant:any) => {
+                            return total + variant.warehouseProduct.reduce((variantTotal:any, wp:any) => variantTotal + wp.stock, 0);
+                            }, 0)
+                        }
+
+                        const sizeSum = await tx.warehouseProduct.groupBy({
+                            by: ['size'!, 'productVariantID'],
+                            _sum: {
+                                stock: true
+                            }, 
+                            where: {
+                                productVariant: {
+                                    product: {
+                                        slug
+                                    }
+                                },
+                            },
+
+                        })
+                        
+                        return res.status(200).send({
+                            status: 'ok',
+                            message: 'product found',
+                            productList,
+                            sizeSum
+                        })
+                    }
+                } else {
+                    if (s) {
+                        const products = await tx.product.findFirst({
+                            where: {
+                                slug,
+                            },
+                            include: {
+                                images: true,
+                               variants: {
+                                    include: {
+                                        warehouseProduct: {
+                                            where: {
+                                                warehouse: {
+                                                    warehouseName: String(w)
+                                                }, 
+                                                size: String(s).toUpperCase() as ProductSize,
+                                                isDelete: false
+
+                                            },
+                                            select: {
+                                                warehouseID: true,
+                                                id: true,
+                                                size: true,
+                                                stock: true,
+                                                updatedAt: true,
+                                            },orderBy: {
+                                                updatedAt: 'desc'
+                                            }
+                                        }
+                                    }, where: {
+                                        isDeleted: false
+                                    }
+                                },
+                                category: true
+                            }
+                        })
+                        const productsWithStock = {
+                            ...products,
+                            variants: products!.variants.map((variant:any) => ({
+                            ...variant,
+                            totalStock: variant.warehouseProduct.reduce((total:any, wp:any) => total + wp.stock, 0)
+                            }))
+                        }
+                    
+                        const productList = {
+                            ...productsWithStock,
+                            totalStock: products!.variants.reduce((total:any, variant:any) => {
+                            return total + variant.warehouseProduct.reduce((variantTotal:any, wp:any) => variantTotal + wp.stock, 0);
+                            }, 0)
+                        }
+                        
+                        return res.status(200).send({
+                            status: 'ok',
+                            message: 'product found',
+                            productList
+                        })
+                    } else {
+                        const products = await tx.product.findFirst({
+                            where: {
+                                slug,
+                            },
+                            include: {
+                                images: true,
+                               variants: {
+                                    include: {
+                                        warehouseProduct: {
+                                            where: {
+                                                warehouse: {
+                                                    warehouseName: String(w),
+                                                }, isDelete: false
+                                            },
+                                            select: {
+                                                warehouseID: true,
+                                                id: true,
+                                                size: true,
+                                                stock: true,
+                                                updatedAt: true,
+                                            },orderBy: {
+                                                updatedAt: 'desc'
+                                            }
+                                        }
+                                    }, where: {
+                                        isDeleted: false
+                                    }
+                                },
+                                category: true
+                            }
+                        })
+                        const productsWithStock = {
+                            ...products,
+                            variants: products!.variants.map((variant:any) => ({
+                            ...variant,
+                            totalStock: variant.warehouseProduct.reduce((total:any, wp:any) => total + wp.stock, 0)
+                            }))
+                        }
+                    
+                        const productList = {
+                            ...productsWithStock,
+                            totalStock: products!.variants.reduce((total:any, variant:any) => {
+                            return total + variant.warehouseProduct.reduce((variantTotal:any, wp:any) => variantTotal + wp.stock, 0);
+                            }, 0)
+                        }
+                        return res.status(200).send({
+                            status: 'ok',
+                            message: 'product found',
+                            productList
+                        })
+                    }
+                }
             })
         } catch (error:any) {
             serverResponse(res, 400, 'error', error)
@@ -276,6 +494,18 @@ export class ProductController {
         try {
             const {slug} = req.params
             await prisma.$transaction(async (tx) => {
+                await tx.stockMutationItem.deleteMany({
+                    where: {
+                        WarehouseProduct: {
+                            productVariant: {
+                                product: {
+                                    slug
+                                }
+                            }
+                        }
+                    }
+                })
+
                 await tx.warehouseProduct.deleteMany({
                     where: {
                         productVariant: {
@@ -285,6 +515,7 @@ export class ProductController {
                         }
                     }
                 })
+
                 await tx.productVariant.deleteMany({
                     where: {
                         product: {
@@ -299,6 +530,7 @@ export class ProductController {
                         }
                     }
                 })
+
                 await tx.product.delete({
                     where: {
                         slug
@@ -335,7 +567,7 @@ export class ProductController {
                             name: {
                                 contains: String(q).replace('-', ' ')
                             },
-                            isDeleted: false,
+                            isActive: true,
                         }, 
                         include: {
                             images: true,
@@ -344,7 +576,8 @@ export class ProductController {
                                     warehouseProduct: {
                                         select: {
                                             stock: true,
-                                        }, where: {
+                                        },
+                                        where: {
                                             isDelete: false
                                         }
                                     }
@@ -354,29 +587,27 @@ export class ProductController {
                                 }
                             },
                             category: true
-                        }, 
-                        take: +limit,
-                        skip: (+p! - 1) * +limit,
+                        },
                         orderBy: {
-                            [sort] : direction
+                            [sort]: direction
                         }
-                    })
+                    });
                     
                     const productsWithStock = products.map(product => ({
                         ...product,
                         variants: product.variants.map(variant => ({
-                        ...variant,
-                        totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
+                            ...variant,
+                            totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
                         }))
                     }));
-                
+                    
                     const productNotSorted = productsWithStock.map(product => ({
                         ...product,
                         totalStock: product.variants.reduce((total, variant) => {
-                        return total + variant.warehouseProduct.reduce((variantTotal, wp) => variantTotal + wp.stock, 0);
+                            return total + variant.warehouseProduct.reduce((variantTotal, wp) => variantTotal + wp.stock, 0);
                         }, 0)
                     }));                   
-
+                    
                     const productList = productNotSorted.sort((a, b) => {
                         if (a.totalStock === 0 && b.totalStock !== 0) {
                             return 1;
@@ -386,19 +617,22 @@ export class ProductController {
                         }
                         return 0;
                     });
-    
+                    
+                    // Apply pagination to the sorted list
+                    const paginatedProductList = productList.slice((+p! - 1) * +limit, +p! * +limit);
+                    
                     const totalProduct = await prisma.product.count({
                         where: {
                             name: {
                                 contains: String(q).replace('-', ' ')
                             },
-                            isDeleted: false
-                        }, 
-                    })
+                            isActive: true
+                        }
+                    });
                     return res.status(200).send({
                         status: 'ok',
                         message: 'product found',
-                        productList,
+                        productList:paginatedProductList,
                         totalProduct,
                     })
                 }  else if (g && c && t) {
@@ -406,15 +640,17 @@ export class ProductController {
                         where: {
                             category: {
                                 AND: [
-                                    {OR: [
-                                        {gender:{equals:String(g).toUpperCase() as ProductGender}},
-                                        {gender:{equals:'UNISEX'}}
-                                    ]},
-                                    {slug:{equals:String(c)}}
-                                ], 
+                                    {
+                                        OR: [
+                                            { gender: { equals: String(g).toUpperCase() as ProductGender } },
+                                            { gender: { equals: 'UNISEX' } }
+                                        ]
+                                    },
+                                    { slug: { equals: String(c) } }
+                                ],
                             },
-                             isDeleted: false,
-                        }, 
+                            isActive: true,
+                        },
                         include: {
                             images: true,
                             variants: {
@@ -422,7 +658,8 @@ export class ProductController {
                                     warehouseProduct: {
                                         select: {
                                             stock: true,
-                                        }, where: {
+                                        },
+                                        where: {
                                             isDelete: false
                                         }
                                     }
@@ -432,69 +669,70 @@ export class ProductController {
                                 }
                             },
                             category: true
-                        }, 
-                        take: +limit, 
-                        skip: (+p! - 1) * +limit, 
+                        },
                         orderBy: {
-                            [sort] : direction
+                            [sort]: direction
                         }
-                    })
+                    });
                     
+                    // Calculate total stock for each variant and product
                     const productsWithStock = products.map(product => ({
                         ...product,
                         variants: product.variants.map(variant => ({
-                        ...variant,
-                        totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
+                            ...variant,
+                            totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
                         }))
                     }));
-                
-                    const productNotSorted = productsWithStock.map(product => ({
+                    
+                    const productWithAndWithoutStock = productsWithStock.map(product => ({
                         ...product,
-                        totalStock: product.variants.reduce((total, variant) => {
-                        return total + variant.warehouseProduct.reduce((variantTotal, wp) => variantTotal + wp.stock, 0);
-                        }, 0)
-                    }));                   
-
-                    const productList = productNotSorted.sort((a, b) => {
-                        if (a.totalStock === 0 && b.totalStock !== 0) {
-                            return 1;
-                        }
-                        if (a.totalStock !== 0 && b.totalStock === 0) {
-                            return -1;
-                        }
-                        return 0;
-                    });
-    
+                        totalStock: product.variants.reduce((total, variant) => total + variant.totalStock, 0),
+                    }));
+                    
+                    // Separate products with stock from those without stock
+                    const productsWithStockOnly = productWithAndWithoutStock.filter(product => product.totalStock > 0);
+                    const productsWithoutStockOnly = productWithAndWithoutStock.filter(product => product.totalStock === 0);
+                    
+                    // Combine both lists with products with stock first
+                    const combinedProductList = [...productsWithStockOnly, ...productsWithoutStockOnly];
+                    
+                    // Apply pagination to the combined list
+                    const paginatedProductList = combinedProductList.slice((+p! - 1) * +limit, +p! * +limit);
+                    
                     const totalProduct = await prisma.product.count({
                         where: {
                             category: {
                                 AND: [
-                                    {OR: [
-                                        {gender:{equals:String(g).toUpperCase() as ProductGender}},
-                                        {gender:{equals:'UNISEX'}}
-                                    ]},
-                                    {slug:{equals:String(c)}}
+                                    {
+                                        OR: [
+                                            { gender: { equals: String(g).toUpperCase() as ProductGender } },
+                                            { gender: { equals: 'UNISEX' } }
+                                        ]
+                                    },
+                                    { slug: { equals: String(c) } }
                                 ]
                             },
-                            isDeleted: false
-                        }, 
-                    })
+                            isActive: true
+                        }
+                    });
+                    
                     return res.status(200).send({
                         status: 'ok',
                         message: 'product found',
-                        productList,
+                        productList: paginatedProductList,
                         totalProduct,
-                    })
+                    });
                 } else if (g && !c && !t) {
                     const products = await prisma.product.findMany({
                         where: {
                             category: {
-                                    OR: [
-                                        {gender:{equals:String(g).toUpperCase() as ProductGender}},
-                                        {gender:{equals:'UNISEX'}}
-                                    ]},
-                                    isDeleted: false
+                                OR: [
+                                    { gender: { equals: String(g).toUpperCase() as ProductGender } },
+                                    { gender: { equals: 'UNISEX' } }
+                                ]
                             },
+                            isActive: true
+                        },
                         include: {
                             images: true,
                             variants: {
@@ -502,7 +740,8 @@ export class ProductController {
                                     warehouseProduct: {
                                         select: {
                                             stock: true,
-                                        }, where: {
+                                        },
+                                        where: {
                                             isDelete: false
                                         }
                                     }
@@ -513,68 +752,69 @@ export class ProductController {
                             },
                             category: true
                         },
-                        take: +limit, 
-                        skip: (+p! - 1) * +limit, 
                         orderBy: {
-                            [sort] : direction
+                            [sort]: direction
                         }
-                    })
+                    });
+                    
+                    // Calculate total stock for each variant and product
                     const productsWithStock = products.map(product => ({
                         ...product,
                         variants: product.variants.map(variant => ({
-                        ...variant,
-                        totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
+                            ...variant,
+                            totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
                         }))
                     }));
-                
-                    const productNotSorted = productsWithStock.map(product => ({
+                    
+                    const productWithAndWithoutStock = productsWithStock.map(product => ({
                         ...product,
-                        totalStock: product.variants.reduce((total, variant) => {
-                        return total + variant.warehouseProduct.reduce((variantTotal, wp) => variantTotal + wp.stock, 0);
-                        }, 0)
-                    }));                   
-
-                    const productList = productNotSorted.sort((a, b) => {
-                        if (a.totalStock === 0 && b.totalStock !== 0) {
-                            return 1;
-                        }
-                        if (a.totalStock !== 0 && b.totalStock === 0) {
-                            return -1;
-                        }
-                        return 0;
-                    });
-    
+                        totalStock: product.variants.reduce((total, variant) => total + variant.totalStock, 0),
+                    }));
+                    
+                    // Separate products with stock from those without stock
+                    const productsWithStockOnly = productWithAndWithoutStock.filter(product => product.totalStock > 0);
+                    const productsWithoutStockOnly = productWithAndWithoutStock.filter(product => product.totalStock === 0);
+                    
+                    // Combine both lists with products with stock first
+                    const combinedProductList = [...productsWithStockOnly, ...productsWithoutStockOnly];
+                    
+                    // Apply pagination to the combined list
+                    const paginatedProductList = combinedProductList.slice((+p! - 1) * +limit, +p! * +limit);
+                    
                     const totalProduct = await prisma.product.count({
                         where: {
                             category: {
                                 OR: [
-                                    {gender:{equals:String(g).toUpperCase() as ProductGender}},
-                                    {gender:{equals:'UNISEX'}}
-                                ]},
-                            isDeleted: false
-                        },
-                    })
+                                    { gender: { equals: String(g).toUpperCase() as ProductGender } },
+                                    { gender: { equals: 'UNISEX' } }
+                                ]
+                            },
+                            isActive: true
+                        }
+                    });
+                    
                     return res.status(200).send({
                         status: 'ok',
                         message: 'product found',
-                        productList,
+                        productList: paginatedProductList,
                         totalProduct,
-                        
                     })
                 } else if (t && g && !c) {
                     const products = await prisma.product.findMany({
                         where: {
                             category: {
                                 AND: [
-                                    {OR: [
-                                        {gender:{equals:String(g).toUpperCase() as ProductGender}},
-                                        {gender:{equals:'UNISEX'}}
-                                    ]},
-                                    {type:{equals:String(t).toUpperCase() as ProductTypes}}
+                                    {
+                                        OR: [
+                                            { gender: { equals: String(g).toUpperCase() as ProductGender } },
+                                            { gender: { equals: 'UNISEX' } }
+                                        ]
+                                    },
+                                    { type: { equals: String(t).toUpperCase() as ProductTypes } }
                                 ]
                             },
-                            isDeleted: false
-                        }, 
+                            isActive: true
+                        },
                         include: {
                             images: true,
                             variants: {
@@ -582,7 +822,8 @@ export class ProductController {
                                     warehouseProduct: {
                                         select: {
                                             stock: true,
-                                        }, where: {
+                                        },
+                                        where: {
                                             isDelete: false
                                         }
                                     }
@@ -593,115 +834,116 @@ export class ProductController {
                             },
                             category: true
                         },
-                        take: +limit, 
-                        skip: (+p! - 1) * +limit, 
                         orderBy: {
-                            [sort] : direction
+                            [sort]: direction
                         }
-                    })
+                    });
+                    
+                    // Calculate total stock for each variant and product
                     const productsWithStock = products.map(product => ({
                         ...product,
                         variants: product.variants.map(variant => ({
-                        ...variant,
-                        totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
+                            ...variant,
+                            totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
                         }))
                     }));
-                
-                    const productNotSorted = productsWithStock.map(product => ({
+                    
+                    const productWithAndWithoutStock = productsWithStock.map(product => ({
                         ...product,
-                        totalStock: product.variants.reduce((total, variant) => {
-                        return total + variant.warehouseProduct.reduce((variantTotal, wp) => variantTotal + wp.stock, 0);
-                        }, 0)
-                    }));                   
-
-                    const productList = productNotSorted.sort((a, b) => {
-                        if (a.totalStock === 0 && b.totalStock !== 0) {
-                            return 1;
-                        }
-                        if (a.totalStock !== 0 && b.totalStock === 0) {
-                            return -1;
-                        }
-                        return 0;
-                    });
+                        totalStock: product.variants.reduce((total, variant) => total + variant.totalStock, 0),
+                    }));
+                    
+                    // Separate products with stock from those without stock
+                    const productsWithStockOnly = productWithAndWithoutStock.filter(product => product.totalStock > 0);
+                    const productsWithoutStockOnly = productWithAndWithoutStock.filter(product => product.totalStock === 0);
+                    
+                    // Combine both lists with products with stock first
+                    const combinedProductList = [...productsWithStockOnly, ...productsWithoutStockOnly];
+                    
+                    // Apply pagination to the combined list
+                    const paginatedProductList = combinedProductList.slice((+p! - 1) * +limit, +p! * +limit);
+                    
                     const totalProduct = await prisma.product.count({
                         where: {
                             category: {
                                 AND: [
-                                    {OR: [
-                                        {gender:{equals:String(g).toUpperCase() as ProductGender}},
-                                        {gender:{equals:'UNISEX'}}
-                                    ]},
-                                    {type:{equals:String(t).toUpperCase() as ProductTypes}}
+                                    {
+                                        OR: [
+                                            { gender: { equals: String(g).toUpperCase() as ProductGender } },
+                                            { gender: { equals: 'UNISEX' } }
+                                        ]
+                                    },
+                                    { type: { equals: String(t).toUpperCase() as ProductTypes } }
                                 ]
                             },
-                            isDeleted: false
-                        }, 
-                    })
+                            isActive: true
+                        }
+                    });
+                    
                     return res.status(200).send({
                         status: 'ok',
                         message: 'product found',
-                        productList,
+                        productList: paginatedProductList,
                         totalProduct,
                     })
                 } else if (!g && !t && !c) {
                     const products = await prisma.product.findMany({
                         where: {
-                            isDeleted: false
+                            isActive: true,
                         },
                         include: {
-                            images: true,
-                            variants: {
-                                include: {
-                                    warehouseProduct: {
-                                        select: {
-                                            stock: true,
-                                        }, where: {
-                                            isDelete: false
-                                        }
-                                    }
+                          images: true,
+                          variants: {
+                            include: {
+                              warehouseProduct: {
+                                select: {
+                                  stock: true,
                                 },
                                 where: {
-                                    isDeleted: false
-                                }
+                                  isDelete: false,
+                                },
+                              },
                             },
-                            category: true,
+                            where: {
+                              isDeleted: false,
+                            },
+                          },
+                          category: true,
                         },
-                        take: +limit, 
-                        skip: (+p! - 1) * +limit, 
                         orderBy: {
-                            [sort] : direction
-                        }
-                    })
-                    const productsWithStock = products.map(product => ({
+                          [sort]: direction,
+                        },
+                      });
+                      
+                      // Calculate total stock for each variant and product
+                      const productsWithStock = products.map(product => ({
                         ...product,
                         variants: product.variants.map(variant => ({
-                        ...variant,
-                        totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0)
-                        }))
-                    }));
-                
-                    const productNotSorted = productsWithStock.map(product => ({
+                          ...variant,
+                          totalStock: variant.warehouseProduct.reduce((total, wp) => total + wp.stock, 0),
+                        })),
+                      }));
+                      
+                      const productWithAndWithoutStock = productsWithStock.map(product => ({
                         ...product,
-                        totalStock: product.variants.reduce((total, variant) => {
-                        return total + variant.warehouseProduct.reduce((variantTotal, wp) => variantTotal + wp.stock, 0);
-                        }, 0)
-                    }));                   
-
-                    const productList = productNotSorted.sort((a, b) => {
-                        if (a.totalStock === 0 && b.totalStock !== 0) {
-                            return 1;
-                        }
-                        if (a.totalStock !== 0 && b.totalStock === 0) {
-                            return -1;
-                        }
-                        return 0;
-                    });
-    
-                    const totalProduct = await prisma.product.count({
+                        totalStock: product.variants.reduce((total, variant) => total + variant.totalStock, 0),
+                      }));
+                      
+                      // Separate products with stock from those without stock
+                      const productsWithStockOnly = productWithAndWithoutStock.filter(product => product.totalStock > 0);
+                      const productsWithoutStockOnly = productWithAndWithoutStock.filter(product => product.totalStock === 0);
+                      
+                      // Combine both lists with products with stock first
+                      const combinedProductList = [...productsWithStockOnly, ...productsWithoutStockOnly];
+                      
+                      // Apply pagination to the combined list
+                      const productList = combinedProductList.slice((+p! - 1) * +limit, +p! * +limit);
+                      
+                      const totalProduct = await prisma.product.count({
                         where: {
-                            isDeleted: false
-                        }, 
-                    })
+                            isActive: true,
+                        },
+                      });
                     return res.status(200).send({
                         status: 'ok',
                         message: 'product found',

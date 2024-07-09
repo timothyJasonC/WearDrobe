@@ -66,7 +66,7 @@ export const SalesReport = () => {
       const filter = {date, g, t, c, q}
 
       const res = await getAllSales(warehouse, page, 10, filter)
-      if (res.status == 'ok') {
+      if (res.status == 'ok') {       
           setProductQty(res.totalSales._count)
           setSalesList(res.SalesList)
           setGross(res.totalSales._sum.price)
@@ -94,7 +94,7 @@ export const SalesReport = () => {
           />
           <StatisticsCard 
             title='Sold Quantity'
-            number={sold}
+            number={sold ? sold : 0}
           />
         </div>
         <div className='flex flex-col w-full items-end mb-7'>

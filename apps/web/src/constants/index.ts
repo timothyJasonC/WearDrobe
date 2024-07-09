@@ -123,6 +123,7 @@ export interface IColorVariant {
     category: ICategory;
     totalStock: number;
     sales: number
+    isActive: boolean
     stockIn:{_sum:{quantity:number}}
     stockOut:{_sum:{quantity:number}}
     toDateStock:number

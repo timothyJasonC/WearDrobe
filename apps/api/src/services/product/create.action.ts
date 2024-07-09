@@ -45,19 +45,6 @@ export async function createProduct(req: Request, res: Response) {
                 data: { id: uuidv4(), productID: newProduct.id, color: colorVariant[i].name, 
                 HEX: colorVariant[i].code, image: colorVariant[i].variantImageURL }
             })
-            for (let k = 0; k<wareHouseList.length; k++) {
-                if (oneSize) {
-                    await tx.warehouseProduct.create({
-                        data: { id: uuidv4(), warehouseID: wareHouseList[k].id, productVariantID: variant.id, size: 'ONESIZE', stock: 0 }
-                    })
-                } else {
-                    for (let s = 0; s<sizeArray.length; s++) {
-                        await tx.warehouseProduct.create({
-                            data: {id: uuidv4(), warehouseID: wareHouseList[k].id, productVariantID: variant.id, size: sizeArray[s], stock: 0 }
-                        })
-                    }
-                }
-            }
         }
         return serverResponse(res, 200, 'ok', 'Product successfully created.')
     })

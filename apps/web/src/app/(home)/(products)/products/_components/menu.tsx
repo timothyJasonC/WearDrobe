@@ -31,7 +31,9 @@ export const ProductMenu = ({product, setIndex, index, sizeSum}:ICarousel) => {
         const getData = async() => {
             const res = await getVariantStock(colorID, '', size.toLowerCase())
             if (res.status == 'ok') {
-                setStock(res.data.stock)
+                if (res.data.stock !== null) {
+                    setStock(res.data.stock)
+                }
             }
         }
         getData()
@@ -97,7 +99,7 @@ export const ProductMenu = ({product, setIndex, index, sizeSum}:ICarousel) => {
             <p className='font-semibold'>Quantity</p>
             <div className='flex justify-between items-center gap-4'>
                 <Input
-                        disabled={stock == 0 ? true : false}
+                        disabled={stock !== 0 ? false : true}
                         type='text'
                         inputMode='decimal'
                         placeholder="0"

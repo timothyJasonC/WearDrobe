@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default function Layout({children}: Readonly<{children: React.ReactNode}>) {
 
   return (
-    <div className='w-full overflow-hidden'>
+    <div className='w-full'>
         {children}
     </div>
   );

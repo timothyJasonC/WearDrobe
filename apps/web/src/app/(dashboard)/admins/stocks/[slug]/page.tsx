@@ -25,7 +25,7 @@ const monthFirstDate = () => {
 
 export default function Page() {
     const {slug} = useParams()
-    const typeArr = ['Select All','Restock', 'Remove', 'Transfer', 'Inbound', 'Delete', 'Transaction']
+    const typeArr = ['All','Restock', 'Remove', 'Transfer', 'Inbound', 'Delete', 'Transaction']
     const [selectedWH, setSelectedWH] = useState('All Warehouses')
     const [warehouseList, setWarehouseList] = useState<IWarehouse[]>([])
     const [StockList, setStockList] = useState<IStockMutationItem[]>([])
@@ -164,14 +164,14 @@ export default function Page() {
               <Selector
                 width='max-sm:max-w-16 sm:w-20 lg:w-32'
                 label="variants"
-                state={["All", ...productData.variants.map(item => item.color)]}
+                state={productData ? ["All", ...productData.variants.map(item => item.color)] : ['All']}
                 setState={setVariants}                
               /> }
               {productData &&             
               <Selector
                 width='max-sm:max-w-16 sm:w-20 lg:w-32'
                 label="Size"
-                state={productData.oneSize ? "One Size" : ["All", "XL", "L", "M", "S"]}
+                state={productData.oneSize && productData ? ["One Size"] : ["All", "XL", "L", "M", "S"]}
                 setState={setSize}              
               /> }
               <Selector 

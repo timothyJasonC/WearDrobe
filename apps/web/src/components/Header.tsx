@@ -4,7 +4,7 @@ import Link from "next/link"
 import { cn, shuffleArray } from "@/lib/utils"
 import Cookies from "js-cookie";
 import { isTokenExp } from "@/lib/utils";
-import { PiFireSimple, PiMagnifyingGlass } from "react-icons/pi";
+import { PiFireSimple, PiMagnifyingGlass, PiStackSimple } from "react-icons/pi";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu"
 import { HeaderDropdown } from "../app/(home)/_components/HeaderDropdown";
 import AccountMenu from "@/app/(home)/_components/AccountMenu";
@@ -113,7 +113,7 @@ export function Header() {
                             <NavigationMenuItem>
                                 <Link href="/catalogs" legacyBehavior passHref>
                                     <NavigationMenuLink className={`${navigationMenuTriggerStyle()} flex gap-2`}>
-                                        New Arrival <PiFireSimple fontSize={`1rem`} className=" text-black" />
+                                        Catalog <PiStackSimple size={`1.1rem`} />
                                     </NavigationMenuLink>
                                 </Link>
                             </NavigationMenuItem>
@@ -121,7 +121,7 @@ export function Header() {
                             <NavigationMenuItem>
                                 <NavigationMenuTrigger>Women</NavigationMenuTrigger>
                                 <NavigationMenuContent className="max-lg:hidden">
-                                    <ul className="grid w-[600px] gap-3 p-4 md:grid-cols-4">
+                                    <ul className={`grid w-[600px] gap-3 p-4 md:grid-cols-4 relative ${ womenCategories.length > 0 ? '' : 'lg:py-6' }`}>
                                         {   
                                             womenCategories && womenCategories.length > 0 ?
                                             shuffleArray(womenCategories).map((item: ICategory) => (
@@ -132,7 +132,9 @@ export function Header() {
                                                 />
                                             ))
                                             :
-                                            <></>
+                                            <div className="flex items-center justify-center absolute text-center w-full gap-4 text-black/70 h-full">
+                                                <Spinner size={'small'} /><span>Fetching categories. Please wait..</span>
+                                            </div>
                                         }
                                     </ul>
                                 </NavigationMenuContent>
@@ -141,20 +143,19 @@ export function Header() {
                             <NavigationMenuItem>
                                 <NavigationMenuTrigger>Men</NavigationMenuTrigger>
                                 <NavigationMenuContent className="max-lg:hidden">
-                                    <ul className="grid w-[600px] gap-3 p-4 md:grid-cols-4">
+                                    <ul className={`grid w-[600px] gap-3 p-4 md:grid-cols-4 relative ${ menCategories.length > 0 ? '' : 'lg:py-6' }`}>
                                         {   
                                             menCategories && menCategories.length > 0 ?
                                             shuffleArray(menCategories).map((item: ICategory) => (
                                                 <ListItem
-                                                    className="font-light"
                                                     key={item.id}
                                                     title={item.category}
                                                     href={`/catalogs?g=Men&t=${item.type}&c=${item.category}`}
                                                 />
                                             ))
                                             :
-                                            <div>
-                                                <Spinner size={'small'} />Fetching categories. Please wait..
+                                            <div className="flex items-center justify-center absolute text-center w-full gap-4 text-black/70 h-full">
+                                                <Spinner size={'small'} /><span>Fetching categories. Please wait..</span>
                                             </div>
                                         }
                                     </ul>
@@ -198,7 +199,7 @@ const ListItem = React.forwardRef<
                     )}
                     {...props}
                 >
-                    <div className="text-sm font-light text-black/80 leading-none">{title}</div>
+                    <div className="text-sm font-normal text-black/80 leading-none">{title}</div>
                     <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                         {children}
                     </p>

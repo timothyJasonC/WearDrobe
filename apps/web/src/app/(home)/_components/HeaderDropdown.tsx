@@ -4,7 +4,7 @@ import {
     DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator,
     DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiMapPinSimple, PiPassword, PiReceipt, PiShoppingCartSimple, PiSignIn, PiSignOut, PiUser } from "react-icons/pi"
+import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiMapPinSimple, PiPassword, PiReceipt, PiShoppingCartSimple, PiSignIn, PiSignOut, PiStackSimple, PiUser } from "react-icons/pi"
 import { Input } from "../../../components/ui/input"
 import Cart from "@/components/cart/Cart"
 import { handleLogout } from "@/lib/utils"
@@ -24,8 +24,8 @@ export function HeaderDropdown({ userLogged, router }: { userLogged: boolean, ro
                 <Search />
                 <DropdownMenuItem className="flex items-center justify-between">
                     <div className="flex gap-2">
-                        <PiFireSimple size={'16px'} />
-                        <span>New Arrival</span>
+                        <PiStackSimple size={`1rem`} />
+                        <span>Catalog</span>
                     </div>
                     <Badge className="bg-red-400 font-light">Hot</Badge>
                 </DropdownMenuItem>

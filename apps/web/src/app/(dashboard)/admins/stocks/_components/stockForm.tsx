@@ -68,8 +68,9 @@ export const StockForm = ({selectedWH, warehouseList, setOpen}:IDropdown) => {
           toast.success('Stock successfully updated. Stock changes added to log.')
           setStockArray([])
           getData()
+          setOpen(false)
         } else {
-          toast.error(res.message)
+          toast.error('error')
         }
       }
     } catch (error) {

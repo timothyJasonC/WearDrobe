@@ -104,4 +104,97 @@ export class WarehouseController {
             return serverResponse(res, 400, 'error', error)
         }
     }
+
+    async assignAdminToWarehouse(req: Request, res: Response) {
+        try {
+            const warehouse = await prisma.warehouse.findFirst({ where: { id: req.body.warehouseId }});
+            const admin = await prisma.admin.findFirst({ where: { id: req.body.adminId }});
+            if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            if (!admin) return serverResponse(res, 404, 'error', 'Admin not found')
+            const assignedWarehouse  = await prisma.warehouse.findFirst({ where: { adminID: admin.id } });
+            if (assignedWarehouse?.warehouseName == warehouse.warehouseName) return serverResponse(res, 404, 'error', `${ admin.fullName } has been assigned to ${ assignedWarehouse.warehouseName } warehouse.`)
+            if (assignedWarehouse) return serverResponse(res, 404, 'error', `${ admin.fullName } has been assigned to ${ assignedWarehouse.warehouseName } warehouse. One warehouse can only be assigned to one admin.`)
+            await prisma.warehouse.update({ where: { id: warehouse.id }, data: { adminID: admin.id } })
+            serverResponse(res, 200, 'ok', `${admin.fullName} is successfully assigned to ${warehouse.warehouseName} warehouse`, warehouse)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async dissmissAdminFromWarehouse(req: Request, res: Response) {
+        try {
+            const warehouse = await prisma.warehouse.findFirst({ where: { id: req.body.warehouseId }});
+            const admin = await prisma.admin.findFirst({ where: { id: req.body.adminId }});
+            if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            if (!admin) return serverResponse(res, 404, 'error', 'Admin not found')
+            if (!warehouse.adminID) return serverResponse(res, 404, 'error', `No admin is assigned at ${ warehouse.warehouseName } warehouse, yet`)
+            if (warehouse.adminID != admin.id) return serverResponse(res, 404, 'error', 'Admin ID does not match with the assigned admin with related warehouse')
+            await prisma.warehouse.update({ where: { id: warehouse.id }, data: { adminID: null } })
+            serverResponse(res, 200, 'ok', `${admin.fullName} is successfully dismissed from ${warehouse.warehouseName} warehouse`)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async deactivateWarehouse(req: Request, res: Response) {
+        try {
+            const warehouse = await prisma.warehouse.findFirst({ where: { id: req.params.id }});
+            if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            if (!warehouse.isActive) return serverResponse(res, 400, 'error', 'Warehouse is already deactivated')
+            if (warehouse.adminID) await prisma.warehouse.update({ where: { id: warehouse.id }, data: { adminID: null } })
+            await prisma.warehouse.update({ where: { id: warehouse.id }, data: { isActive: false } })
+            serverResponse(res, 200, 'ok', `${warehouse?.warehouseName} warehouse is successfully deactivated` )
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async reactivateWarehouse(req: Request, res: Response) {
+        try {
+            const warehouse = await prisma.warehouse.findFirst({ where: { id: req.params.id }});
+            if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            if (warehouse.isActive) return serverResponse(res, 400, 'error', `${ warehouse.warehouseName }Warehouse is still active`)
+            await prisma.warehouse.update({ where: { id: warehouse.id }, data: { isActive: true } })
+            serverResponse(res, 200, 'ok', `${ warehouse.warehouseName } warehouse is successfully reactivated`)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async editWarehouse(req: Request, res: Response) {
+        try {
+
+            const { selectedCity, address, warehouseName, assignedAdmin } = req.body
+            console.log(req.body)
+            const city = await fetch(`https://api.rajaongkir.com/starter/city?id=${selectedCity}`, {
+                method: 'GET',
+                headers: { key: `${process.env.NEXT_PUBLIC_RAJA_ONGKIR_API_KEY}` }
+            });
+            const data = await city.json()
+            const result = data.rajaongkir.results
+
+            const warehouse = await prisma.warehouse.update({
+                where: {
+                    id: req.params.id
+                },
+                data: {
+                    warehouseName: warehouseName,
+                    coordinate: `${address}, ${result.type} ${result.city_name}, ${result.province}, Indonesia`,
+                    address: address,
+                    city_id: result.city_id,
+                    province_id: result.province_id,
+                    province: result.province,
+                    type: result.type,
+                    city_name: result.city_name,
+                    postal_code: result.postal_code,
+                    adminID: assignedAdmin ? assignedAdmin : null, 
+                }
+            })
+
+            serverResponse(res, 200, 'ok', `${ warehouse.warehouseName } warehouse is successfully updated!`)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
 }

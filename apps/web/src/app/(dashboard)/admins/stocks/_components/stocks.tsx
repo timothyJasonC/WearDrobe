@@ -86,7 +86,7 @@ export const Stocks = () => {
   useEffect(() => {
     getData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWH, page, date, gender, type, category, q])
+  }, [selectedWH, page, date, gender, type, category, q, open])
   
   return (
     <div>  

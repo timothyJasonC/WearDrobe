@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa6";
 import { PiArrowUpRight, PiArrowLeft } from "react-icons/pi";
 import * as z from 'zod'
 import { useForm } from "react-hook-form"
@@ -22,7 +21,7 @@ import { SSOUsernameForm } from "./SSOUsernameForm"
 
 export function AuthCard() {
     const router = useRouter();
-    const { googleSSO, facebookSSO, SSOUserData } = useAuth();
+    const { googleSSO, SSOUserData } = useAuth();
     const [ isLoading, setIsLoading ] = useState(false);
 
     useEffect(() => {
@@ -33,7 +32,7 @@ export function AuthCard() {
                 email: user.email, imgUrl: user.photoURL
             }
             try {
-                const res = await postRequest(userData, '/user/create-sso-user');
+                const res = await postRequest(userData, 'user/create-sso-user');
                 const data = await res.json();
                 const formDialog = document.getElementById('username-form');
                 if (res.status == 200 || res.status == 201) {
@@ -86,7 +85,7 @@ export function AuthCard() {
         setIsLoading(true)
         const { email } = registerForm.getValues()
         try {
-            const res = await postRequest({ email: email }, '/user')
+            const res = await postRequest({ email: email }, 'user')
             if (res) setIsLoading(false)
             if (res.ok) {
                 toast.success("Email successfully registered!", { description: "Please check your email to verify account." })
@@ -109,7 +108,7 @@ export function AuthCard() {
     async function handleLogin() {
         setIsLoading(true)
         try {
-            const res = await postRequest(loginForm.getValues(), '/account/login')
+            const res = await postRequest(loginForm.getValues(), 'account/login')
 
             if (res) setIsLoading(false)
             if (res.ok) {
@@ -212,7 +211,6 @@ export function AuthCard() {
                     </div>
                     <CardContent className="flex flex-col gap-2">
                         <Button onClick={googleSSO} className="bg-white text-black border-[1px] border-black/20 flex gap-2 hover:text-white">Login with Google <FcGoogle /> </Button>
-                        <Button onClick={facebookSSO} className="bg-white text-black border-[1px] border-black/20 flex gap-2 hover:text-white">Login with Facebook <FaFacebook /> </Button>
                     </CardContent>
                 </Card>
             </TabsContent>

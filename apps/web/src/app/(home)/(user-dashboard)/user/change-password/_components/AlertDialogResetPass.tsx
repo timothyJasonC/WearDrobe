@@ -14,7 +14,7 @@ export default function AlertDialogResetPass({ confirmText, cancelText }: { conf
         setIsLoading(true)
         const user = await getUserClientSide();
         try {
-            const res = await postRequest({ email: user.email }, '/account/request-reset-pass')
+            const res = await postRequest({ email: user.email }, 'account/request-reset-pass')
             if (res) setIsLoading(false)
             if (res.status == 202) {
                 toast.warning("We've already sent you an email before", { description: 'please check your email or spam' })

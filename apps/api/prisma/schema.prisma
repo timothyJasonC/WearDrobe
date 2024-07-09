@@ -163,7 +163,7 @@ model Product {
     price          Int
     oneSize        Boolean          @default(false)
     categoryID     String
-    isDeleted      Boolean?         @default(false)
+    isActive       Boolean?         @default(false)
     thumbnailURL   String?
     createdAt      DateTime         @default(now())
     updatedAt      DateTime?        @default(now())

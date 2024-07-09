@@ -77,15 +77,16 @@ export async function getAddressUserById(addressId: string) {
 
 export async function getAddressCoordinates(addresLoc: string) {
     try {
-        const encodedAddress = encodeURIComponent(addresLoc).replace(/%20/g, '+')
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}`);
+        const encodedAddress = encodeURIComponent(addresLoc).replace(/%20/g, '+');
+        const apiKey = 'PsYxZBSXcseSSIr6soAI'
+        const response = await fetch(`https://api.maptiler.com/geocoding/${encodedAddress}.json?key=${apiKey}`);
         const data = await response.json();
-        if (data.length > 0) {
-            const location = data[0];
+        if (data.features.length > 0) {
+            const location = data.features[0].geometry.coordinates;
             return {
-                lat: location.lat,
-                lon: location.lon,
-                display_name: location.display_name
+                lat: location[1],
+                lon: location[0],
+                display_name: data.features[0].place_name
             };
         } else {
             return null;

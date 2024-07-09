@@ -70,15 +70,22 @@ interface IProdTable {
                 <div className="flex gap-2">
                   <EditProductDialog 
                     slug={product.slug}
-                    action={action}
+                    action={() => action()}
                     isSuper={isSuper}
                     />
                   <SubmitAlert 
                     action={() => handleDelete(product.slug)} 
                     hidden={isSuper ? false : true}
-                    icon={<PiTrashFill className='flex hover:cursor-pointer text-xl text-red-400 hover:text-red-500'/>} 
+                    icon={<PiTrashFill className='flex hover:cursor-pointer text-xl text-red-400 hover:text-red-500' />} 
                     title={"Delete product?"} 
-                    message={"Product and its stocks will be permanently deleted. Action cannot be undone."}/>
+                    message={
+                        <>
+                            <p>Product and its stock data will be permanently deleted. This action cannot be undone.</p>
+                            <br />
+                            <p>If you want to hide the product, change its visibility instead.</p>
+                        </>
+                    }
+                  />
                 </div>
               </TableCell>
               <TableCell className="text-pretty font-semibold min-w-[100px] sm:min-w-[200px]">{product.name}</TableCell>

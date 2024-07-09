@@ -26,12 +26,11 @@ export function Selector({label, state, defValue, setState, disabled, width}:{la
                 value={item.category ? item.category : item.warehouseName ? item.warehouseName : item.name? item.name : item} 
                 >
                   <div className="flex items-center gap-2">
-                    <PiGlobeHemisphereWestDuotone className={`${item == "All Warehouse" ? "flex" : "hidden"}`}/>
-                    <PiWarehouseDuotone className={`${item !== "All Warehouse"  && label == "Warehouse" ? "flex" : "hidden"}`}/>
+                    <PiGlobeHemisphereWestDuotone className={`${item == "All Warehouses" ? "flex" : "hidden"}`}/>
                     <p>{item.category ? item.category : item.warehouseName ? item.warehouseName : item.name? item.name : item}</p>
                   </div>
                 </SelectItem>
-                <Separator className={item == 'Select All' || item == 'All'  ? '' : 'hidden'}/>
+                <Separator className={item == 'Select All' || item == 'All' || item == 'All Warehouses' ? '' : 'hidden'}/>
               </div>
             )
           })}

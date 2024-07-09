@@ -697,7 +697,6 @@ export class StockController {
         const toDate = new Date(date.to);
         toDate.setHours(23, 59, 59, 999);  
         const limit = l ? l : 10
-        console.log(t);
         
         let size = s == 'One Size' ? 'ONESIZE' : String(s).toUpperCase() 
         try {

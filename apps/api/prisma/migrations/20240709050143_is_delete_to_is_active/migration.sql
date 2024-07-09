@@ -106,7 +106,7 @@ CREATE TABLE `Product` (
     `price` INTEGER NOT NULL,
     `oneSize` BOOLEAN NOT NULL DEFAULT false,
     `categoryID` VARCHAR(191) NOT NULL,
-    `isDeleted` BOOLEAN NULL DEFAULT false,
+    `isActive` BOOLEAN NULL DEFAULT true,
     `thumbnailURL` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),

@@ -19,44 +19,39 @@ export class ProductController {
 
     async getProductName(req: Request, res: Response) {
         try {
-            const {n} = req.query
-            let productNameList
-            if (n) {
-                productNameList = await prisma.product.findMany({
-                    select: {
-                        name: true,
-                        slug: true
-                    },where: {
-                        name: {
-                            contains: String(n),
-                        }
-                    }, 
-                    orderBy: {
-                        name: 'asc'
-                    }, 
-                    take: 6
-                })
-            } else {
-                productNameList = await prisma.product.findMany({select: {name:true, slug:true}, orderBy: {name:'asc'}, where: {isDeleted: false}})
+            const { n } = req.query;
+            const query: any = {
+                select: {
+                    name: true,
+                    slug: true
+                },
+                where: {
+                    name: n ? { contains: String(n) } : { not: undefined }
+                },
+                orderBy: {
+                    name: 'asc'
+                }
             }
-            serverResponse(res, 200, 'ok', 'product name found.', productNameList)
-        } catch (error:any) {
-            serverResponse(res, 400, 'error', error)
+            if (n) {
+                query.take = 6;
+            }
+            const productNameList = await prisma.product.findMany(query);
+        
+            serverResponse(res, 200, 'ok', 'product name found.', productNameList);
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error);
         }
     }
 
     async getProduct(req: Request, res: Response) {
         try {
             const {w, p, l} = req.query
-            console.log(w);
             const { date, g, t, c, q } = req.body;
             const limit = l ? l : 10
             const fromDate = new Date(date.from);
             fromDate.setHours(0, 0, 0, 0)
             const toDate = new Date(date.to);
             toDate.setHours(23, 59, 59, 999);        
-            console.log('QUERY', req.query);
-            console.log('BODY', req.body);
                   
             
             await prisma.$transaction(async (tx)=> {
@@ -499,6 +494,18 @@ export class ProductController {
         try {
             const {slug} = req.params
             await prisma.$transaction(async (tx) => {
+                await tx.stockMutationItem.deleteMany({
+                    where: {
+                        WarehouseProduct: {
+                            productVariant: {
+                                product: {
+                                    slug
+                                }
+                            }
+                        }
+                    }
+                })
+
                 await tx.warehouseProduct.deleteMany({
                     where: {
                         productVariant: {
@@ -508,6 +515,7 @@ export class ProductController {
                         }
                     }
                 })
+
                 await tx.productVariant.deleteMany({
                     where: {
                         product: {
@@ -522,6 +530,7 @@ export class ProductController {
                         }
                     }
                 })
+
                 await tx.product.delete({
                     where: {
                         slug
@@ -558,7 +567,7 @@ export class ProductController {
                             name: {
                                 contains: String(q).replace('-', ' ')
                             },
-                            isDeleted: false,
+                            isActive: true,
                         }, 
                         include: {
                             images: true,
@@ -617,7 +626,7 @@ export class ProductController {
                             name: {
                                 contains: String(q).replace('-', ' ')
                             },
-                            isDeleted: false
+                            isActive: true
                         }
                     });
                     return res.status(200).send({
@@ -640,7 +649,7 @@ export class ProductController {
                                     { slug: { equals: String(c) } }
                                 ],
                             },
-                            isDeleted: false,
+                            isActive: true,
                         },
                         include: {
                             images: true,
@@ -703,7 +712,7 @@ export class ProductController {
                                     { slug: { equals: String(c) } }
                                 ]
                             },
-                            isDeleted: false
+                            isActive: true
                         }
                     });
                     
@@ -722,7 +731,7 @@ export class ProductController {
                                     { gender: { equals: 'UNISEX' } }
                                 ]
                             },
-                            isDeleted: false
+                            isActive: true
                         },
                         include: {
                             images: true,
@@ -780,7 +789,7 @@ export class ProductController {
                                     { gender: { equals: 'UNISEX' } }
                                 ]
                             },
-                            isDeleted: false
+                            isActive: true
                         }
                     });
                     
@@ -804,7 +813,7 @@ export class ProductController {
                                     { type: { equals: String(t).toUpperCase() as ProductTypes } }
                                 ]
                             },
-                            isDeleted: false
+                            isActive: true
                         },
                         include: {
                             images: true,
@@ -867,7 +876,7 @@ export class ProductController {
                                     { type: { equals: String(t).toUpperCase() as ProductTypes } }
                                 ]
                             },
-                            isDeleted: false
+                            isActive: true
                         }
                     });
                     
@@ -880,7 +889,7 @@ export class ProductController {
                 } else if (!g && !t && !c) {
                     const products = await prisma.product.findMany({
                         where: {
-                          isDeleted: false,
+                            isActive: true,
                         },
                         include: {
                           images: true,
@@ -932,7 +941,7 @@ export class ProductController {
                       
                       const totalProduct = await prisma.product.count({
                         where: {
-                          isDeleted: false,
+                            isActive: true,
                         },
                       });
                     return res.status(200).send({

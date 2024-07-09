@@ -12,9 +12,6 @@ export class SalesController {
         fromDate.setHours(0, 0, 0, 0)
         const toDate = new Date(date.to);
         toDate.setHours(23, 59, 59, 999);     
-        console.log(w, p, l);
-        console.log( g, t, c, q);
-        console.log(fromDate, toDate)
    
         try {
             let warehouse = await prisma.warehouse.findFirst({

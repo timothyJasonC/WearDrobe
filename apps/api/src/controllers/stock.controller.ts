@@ -17,11 +17,11 @@ export class StockController {
             const mutationType = type.toUpperCase() 
             const warehouseCheck = await prisma.warehouse.findFirst()
             if (!warehouseCheck) throw 'There is no existing warehouse.'           
-            await prisma.$transaction(async (tx) => {
+                
                 if (warehouseName === "All Warehouses" || warehouseName==='') {
-                    const wareHouseList = await tx.warehouse.findMany()
+                    const wareHouseList = await prisma.warehouse.findMany()
                     for (let w = 0; w < wareHouseList.length; w++) {
-                        const stockMutation = await tx.stockMutation.create({
+                        const stockMutation = await prisma.stockMutation.create({
                             data: {
                                 id: uuidv4(),
                                 warehouseID: wareHouseList[w].id,
@@ -32,7 +32,7 @@ export class StockController {
                             if (variant[i].size === "All Sizes") {
                                 for (let k = 0; k<sizeArray.length; k++) {
                                     let currentStock
-                                     currentStock = await tx.warehouseProduct.findFirst({
+                                     currentStock = await prisma.warehouseProduct.findFirst({
                                         where: {
                                             productVariantID: variant[i].id,
                                             size: sizeArray[k],
@@ -50,7 +50,7 @@ export class StockController {
                                         }
                                     })
                                     if (!currentStock) {
-                                        currentStock = await tx.warehouseProduct.create({
+                                        currentStock = await prisma.warehouseProduct.create({
                                             data: {
                                                 id: uuidv4(),
                                                 size: sizeArray[k],
@@ -72,7 +72,7 @@ export class StockController {
                                         })
                                     }
                                     if (currentStock!.stock < variant[i].qty && type == "REMOVE") throw `Failed to remove, insufficient stock at ${wareHouseList[w].warehouseName} (${currentStock!.stock}, ${currentStock?.productVariant.color}, ${sizeArray[k]})` 
-                                    const newStockLog = await tx.stockMutationItem.create({
+                                    const newStockLog = await prisma.stockMutationItem.create({
                                         data: {
                                             id: uuidv4(),
                                             quantity: variant[i].qty,
@@ -80,7 +80,7 @@ export class StockController {
                                             warehouseProductID: currentStock!.id
                                         }
                                     })
-                                    await tx.warehouseProduct.update({
+                                    await prisma.warehouseProduct.update({
                                         where: {
                                             id: currentStock?.id,
                                         }, 
@@ -95,9 +95,10 @@ export class StockController {
                                         }
                                     })
                                 }
-                            } else {
+                            } 
+                            else {
                                 let currentStock
-                                currentStock = await tx.warehouseProduct.findFirst({
+                                currentStock = await prisma.warehouseProduct.findFirst({
                                     where: {
                                         productVariantID: variant[i].id,
                                         size: variant[i].size.toUpperCase(),
@@ -115,7 +116,7 @@ export class StockController {
                                     }
                                 }) 
                                 if (!currentStock) {
-                                    currentStock = await tx.warehouseProduct.create({
+                                    currentStock = await prisma.warehouseProduct.create({
                                         data: {
                                             id: uuidv4(),
                                             size: variant[i].size.toUpperCase(),
@@ -137,7 +138,7 @@ export class StockController {
                                     })
                                 }
                                 if (currentStock!.stock < variant[i].qty && type == "REMOVE") throw `Failed to remove, insufficient stock at  ${wareHouseList[w].warehouseName} (${currentStock!.stock}, ${currentStock?.productVariant.color}, ${variant[i].size.toUpperCase()}`       
-                                const newStockLog = await tx.stockMutationItem.create({
+                                const newStockLog = await prisma.stockMutationItem.create({
                                     data: {
                                         id: uuidv4(),
                                         quantity: variant[i].qty,
@@ -145,7 +146,7 @@ export class StockController {
                                         warehouseProductID: currentStock!.id
                                     }
                                 })                                                          
-                                await tx.warehouseProduct.update({
+                                await prisma.warehouseProduct.update({
                                     where: {
                                         id: currentStock?.id,
                                     }, 
@@ -162,14 +163,14 @@ export class StockController {
                         }
                     }
                 } else {
-                    const wareHouseList = await tx.warehouse.findFirst({
+                    const wareHouseList = await prisma.warehouse.findFirst({
                         where: {
                             warehouseName
                         }
                     })
                     if (!wareHouseList) throw "Invalid warehouse."
                     if (!wareHouseList) throw "Warehouse not found."                    
-                    const stockMutation = await tx.stockMutation.create({
+                    const stockMutation = await prisma.stockMutation.create({
                         data: {
                             id: uuidv4(),
                             warehouseID: wareHouseList!.id,
@@ -180,7 +181,7 @@ export class StockController {
                         if (variant[i].size === "All Sizes") {
                             for (let k = 0; k<sizeArray.length; k++) {
                                 let currentStock
-                                currentStock = await tx.warehouseProduct.findFirst({
+                                currentStock = await prisma.warehouseProduct.findFirst({
                                     where: {
                                         productVariantID: variant[i].id,
                                         size: sizeArray[k],
@@ -198,7 +199,7 @@ export class StockController {
                                     }
                                 })
                                 if (!currentStock) {
-                                    currentStock = await tx.warehouseProduct.create({
+                                    currentStock = await prisma.warehouseProduct.create({
                                         data: {
                                             id: uuidv4(),
                                             size: sizeArray[k],
@@ -220,7 +221,7 @@ export class StockController {
                                     })
                                 }
                                 if (currentStock!.stock < variant[i].qty && type == "REMOVE") throw `Failed to remove, insufficient stock at ${wareHouseList!.warehouseName} (${currentStock!.stock}, ${currentStock?.productVariant.color}, ${sizeArray[k]})` 
-                                const newStockLog = await tx.stockMutationItem.create({
+                                const newStockLog = await prisma.stockMutationItem.create({
                                     data: {
                                         id: uuidv4(),
                                         quantity: variant[i].qty,
@@ -228,7 +229,7 @@ export class StockController {
                                         warehouseProductID: currentStock!.id
                                     }
                                 })
-                                await tx.warehouseProduct.update({
+                                await prisma.warehouseProduct.update({
                                     where: {
                                         id: currentStock?.id,
                                     }, 
@@ -245,7 +246,7 @@ export class StockController {
                             }
                         } else {
                             let currentStock
-                            currentStock = await tx.warehouseProduct.findFirst({
+                            currentStock = await prisma.warehouseProduct.findFirst({
                                 where: {
                                     productVariantID: variant[i].id,
                                     size: variant[i].size.toUpperCase(),
@@ -263,7 +264,7 @@ export class StockController {
                                 }
                             })  
                             if (!currentStock) {
-                                currentStock = await tx.warehouseProduct.create({
+                                currentStock = await prisma.warehouseProduct.create({
                                     data: {
                                         id: uuidv4(),
                                         size: variant[i].size.toUpperCase(),
@@ -285,7 +286,7 @@ export class StockController {
                                 })
                             }
                             if (currentStock!.stock < variant[i].qty && type == "REMOVE") throw `Failed to remove, insufficient stock at ${wareHouseList!.warehouseName} (${currentStock!.stock}, ${currentStock?.productVariant.color}, ${variant[i].size.toUpperCase()})`       
-                            const newStockLog = await tx.stockMutationItem.create({
+                            const newStockLog = await prisma.stockMutationItem.create({
                                 data: {
                                     id: uuidv4(),
                                     quantity: variant[i].qty,
@@ -293,7 +294,7 @@ export class StockController {
                                     warehouseProductID: currentStock!.id
                                 }
                             })                                                       
-                            await tx.warehouseProduct.update({
+                            await prisma.warehouseProduct.update({
                                 where: {
                                     id: currentStock?.id,
                                 }, 
@@ -309,7 +310,7 @@ export class StockController {
                         }
                     }
                 } 
-                const getProduct = await tx.productVariant.findUnique({
+                const getProduct = await prisma.productVariant.findUnique({
                     where: {
                         id: variant[0].id
                     }, select: {
@@ -320,7 +321,7 @@ export class StockController {
                         }
                     }
                 })
-                await tx.product.update({
+                await prisma.product.update({
                     data: {
                         stockUpdatedAt: new Date()
                     },
@@ -332,7 +333,7 @@ export class StockController {
                     status: 'ok',
                     message: 'stock updated'
                 }) 
-            })     
+                
         } catch (error:any) {
             serverResponse(res, 400, 'error', error)
         }
@@ -688,14 +689,16 @@ export class StockController {
     }     
     
     async getStockSlug(req: Request, res: Response) {
-        const {w, type, p, l} = req.query
+        const {w, p, l} = req.query
         const {slug} = req.params
-        const { date, v, s } = req.body;
+        const { date, t, v, s } = req.body;
         const fromDate = new Date(date.from);
         fromDate.setHours(0, 0, 0, 0)
         const toDate = new Date(date.to);
         toDate.setHours(23, 59, 59, 999);  
         const limit = l ? l : 10
+        console.log(t);
+        
         let size = s == 'One Size' ? 'ONESIZE' : String(s).toUpperCase() 
         try {
             const stocks = await prisma.stockMutationItem.findMany({
@@ -715,7 +718,7 @@ export class StockController {
                             gte: fromDate,
                             lte: toDate
                         },
-                        type: type ? String(type).toUpperCase() as MutationTypes
+                        type: t ? String(t).toUpperCase() as MutationTypes
                         : { not: undefined },
                         warehouse: {
                             warehouseName: w ? String(w)
@@ -758,7 +761,7 @@ export class StockController {
                             product: { slug }
                         }
                     },stockMutation: {
-                        type: type ? String(type).toUpperCase() as MutationTypes
+                        type: t ? String(t).toUpperCase() as MutationTypes
                         : { not: undefined },
                         warehouse: {
                             warehouseName: w ? String(w)

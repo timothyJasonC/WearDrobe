@@ -20,6 +20,7 @@ jobs:
       - name: Build Project
         run: |
           npm install
+          npm i @radix-ui/react-roving-focus
           npx prisma generate --schema=./apps/api/prisma/schema.prisma
           npm run build
       - name: Deploy to Linode

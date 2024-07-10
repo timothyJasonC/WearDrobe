@@ -22,13 +22,6 @@ export interface IUser {
     createdAt: Date; imgUrl?: string | null | undefined;
 }
 
-type FormValues = {
-    username: string;
-    email: string;
-    dob: string;
-    gender: string;
-};
-
 export default function EditProfileForm({ user } : { user: IUser | null }) {
     const [ isLoading, setIsLoading ] = useState(false)
     const [ isDisabled, setIsDisabled ] = useState(true)

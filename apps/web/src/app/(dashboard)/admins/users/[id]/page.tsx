@@ -8,17 +8,18 @@ import ActiveIndicator from "@/components/sidebar/ActiveIndicator"
 import { IUser } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm"
 import { ExpTable } from "../../_components/ExpTable"
 import columns from "./_components/columns"
+import { IOrder } from "@/constants"
 
 export default async function Page({ params }: { params: { id: string } }) {
 
     let user: IUser | null;
-    let userOrder;
+    let userOrder: IOrder[] | [] ;
     try {
         const res = await (await getRequest(`user/${params.id}`)).json()
         user = res.data
         
         const resOrder = await (await postRequest({adminId: null, userId: user?.id, date: { from: new Date('1970'), to: new Date()} }, `order/warehouseOrder/?q=&limit=1000&page=1&w=`)).json()
-        userOrder = resOrder;
+        userOrder = resOrder.orderList;
     } catch (error) {
         return 
     }
@@ -36,8 +37,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                             <div className="w-40 h-40 rounded-full overflow-hidden">
                                 {
                                     user && user?.imgUrl ? 
-                                    <Image priority fill
-                                     sizes="(min-width: 768px) 10vw, 10vw"
+                                    <Image priority width={500} height={500}
                                      className="h-full object-cover w-full"
                                      src={user.imgUrl} alt={""} />
                                     :

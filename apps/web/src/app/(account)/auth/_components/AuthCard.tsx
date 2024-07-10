@@ -24,34 +24,34 @@ export function AuthCard() {
     const { googleSSO, SSOUserData } = useAuth();
     const [ isLoading, setIsLoading ] = useState(false);
 
-    useEffect(() => {
-        async function registerUserFromProvider() {
-            const { user } = SSOUserData;
-            const userData = {
-                accountActive: user.emailVerified, username: user.displayName,
-                email: user.email, imgUrl: user.photoURL
-            }
-            try {
-                const res = await postRequest(userData, 'user/create-sso-user');
-                const data = await res.json();
-                const formDialog = document.getElementById('username-form');
-                if (res.status == 200 || res.status == 201) {
-                    Cookies.set('role', 'user', { expires: 1 })
-                    Cookies.set('token', data.data.token, { expires: 1 })
-                    toast.success(`Hello ${user.displayName}`, { description: 'Welcome to WearDrobe!' })
-                    setTimeout(() => { router.push('/') }, 2000);
-                } else if (res.status == 409) {
-                    toast.error("Username has been taken")
-                    formDialog?.classList.add('flex')
-                    formDialog?.classList.remove('hidden')
-                } else {
-                    toast.error("Request error")
-                }
-            } catch (error) {
-                toast.error("Server error")
-            }
+    async function registerUserFromProvider() {
+        const { user } = SSOUserData;
+        const userData = {
+            accountActive: user.emailVerified, username: user.displayName,
+            email: user.email, imgUrl: user.photoURL
         }
+        try {
+            const res = await postRequest(userData, 'user/create-sso-user');
+            const data = await res.json();
+            const formDialog = document.getElementById('username-form');
+            if (res.status == 200 || res.status == 201) {
+                Cookies.set('role', 'user', { expires: 1 })
+                Cookies.set('token', data.data.token, { expires: 1 })
+                toast.success(`Hello ${user.displayName}`, { description: 'Welcome to WearDrobe!' })
+                setTimeout(() => { router.push('/') }, 2000);
+            } else if (res.status == 409) {
+                toast.error("Username has been taken")
+                formDialog?.classList.add('flex')
+                formDialog?.classList.remove('hidden')
+            } else {
+                toast.error("Request error")
+            }
+        } catch (error) {
+            toast.error("Server error")
+        }
+    }
 
+    useEffect(() => {
         if (SSOUserData) {
             registerUserFromProvider()
         }

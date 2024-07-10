@@ -49,7 +49,7 @@ interface ITableData {
 interface IAdmin extends ITableData {
     id: string;
     role: Role;
-    accountActive: boolean | null;
+    accountActive: boolean;
     fullName?: string;
     email: string;
     password?: string;
@@ -165,20 +165,20 @@ export function ExpTable({ accounts, columns, optionalComp, users, admins, wareh
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                        <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                            return (
-                                <TableHead key={header.id}>
-                                {header.isPlaceholder
-                                    ? null
-                                    : flexRender(
-                                        header.column.columnDef.header,
-                                        header.getContext()
-                                    )}
-                                </TableHead>
-                            )
-                            })}
-                        </TableRow>
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
+                                return (
+                                    <TableHead key={header.id}>
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                    </TableHead>
+                                )
+                                })}
+                            </TableRow>
                         ))}
                     </TableHeader>
                     <TableBody>

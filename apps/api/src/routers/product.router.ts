@@ -15,7 +15,7 @@ export class ProductRouter {
         this.router.post('/lists', this.productController.getProduct)
         this.router.post('/', this.productController.createProduct)
         this.router.get('/names', this.productController.getProductName)
-        this.router.get('/catalogs', this.productController.getProductByQuery)
+        this.router.get('/catalogs', this.productController.getCatalogs)
         this.router.get('/:slug', this.productController.getProductBySlug)
         this.router.patch('/:slug', this.productController.editProduct)
         this.router.delete('/:slug', this.productController.deleteProduct)

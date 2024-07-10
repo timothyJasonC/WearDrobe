@@ -53,7 +53,7 @@ export default function OrderTable({ orderList, setOrderList, currentPage, date 
               {user && item.status === "SHIPPED" && (
                 <div className="flex flex-row gap-2 items-center">
                   <p>{item.status}</p>
-                  <ConfirmShipped orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} date={date}/>
+                  <ConfirmShipped orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} date={date} />
                 </div>
               )}
               {item.status !== "SHIPPED" && "PROCESSED" && (
@@ -64,7 +64,11 @@ export default function OrderTable({ orderList, setOrderList, currentPage, date 
                   {user ? (
                     <CancelOrder orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} date={date} />
                   ) : (
-                    <ChangeToShipped orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} date={date}/>
+                    <>
+                      <ChangeToShipped orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} date={date} />
+                      <CancelOrder orderId={item.id} setOrderList={setOrderList} currentPage={currentPage} date={date} />
+                    </>
+
                   )}
                 </div>
               )}

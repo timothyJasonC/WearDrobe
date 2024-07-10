@@ -7,7 +7,7 @@ import path from "path";
 import { transporter } from '@/helpers/nodemailer';
 import { findClosestWarehouse, getAddressById, getAddressCoordinates, getAllWarehouseAddress, getWarehouseById, getWarehouseByName } from "@/services/address/address.action";
 import { generateInvoicePdf } from "@/helpers/pdf";
-import { addStockWarehouse, createMutation, createMutationItem, createMutationTransfer, reduceStockWarehouse } from "@/services/stock/stock.action";
+import { addStockWarehouse, createMutation, createMutationItem, createMutationTransaction, reduceStockWarehouse } from "@/services/stock/stock.action";
 
 export class OrderController {
 
@@ -147,11 +147,18 @@ export class OrderController {
                 await createMutationItem(createMutationSender, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
                 const createMutationInbound = await createMutation(mutation.toWarehouse!, mutation.fromWarehouse?.id!, 'INBOUND', 'ACCEPTED')
                 await createMutationItem(createMutationInbound, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
-                const createMutationTransaction = await createMutationTransfer(mutation.fromWarehouse?.id!, 'TRANSACTION', 'ACCEPTED')
-                await createMutationItem(createMutationTransaction, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
 
                 await reduceStockWarehouse(mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size, mutation.quantity)
                 await addStockWarehouse(mutation.toWarehouse, mutation.productVariantId, mutation.size, mutation.quantity)
+            }
+
+            const orderItems = await getCartItemsByOrderId(orderId)
+
+            for (const item of orderItems) {
+                const createMutationTransactions = await createMutationTransaction(warehouseId, 'TRANSACTION', 'ACCEPTED')
+                console.log(createMutationTransactions);
+                const itemMutation = await createMutationItem(createMutationTransactions.id, item.quantity, warehouseId, item.productVariantId, item.size)
+                console.log(itemMutation);
             }
 
             const order = await updateToOrder(orderId, shippingCost, subTotal, warehouseId, userAddress, shipping, selectedShipping.service, selectedShipping.description, selectedShipping.cost[0].etd)

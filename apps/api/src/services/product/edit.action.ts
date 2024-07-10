@@ -13,7 +13,7 @@ export async function editProduct(req: Request, res: Response) {
     }
     await prisma.$transaction(async (tx) => {
         const { slug } = req.params;
-        const { name, description, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData } = req.body;
+        const { name, isVisible, description, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData } = req.body;
         const symbolRegex = /[^a-zA-Z0-9\s-]/;
         if (name.length > 30 || name.length < 2 || name.trim().length === 0 || symbolRegex.test(name)) throw "Invalid name input."
         if (description.length > 500 || description.length < 15 || description.trim().length === 0) throw "Invalid description input."
@@ -34,6 +34,7 @@ export async function editProduct(req: Request, res: Response) {
                 name,
                 description,
                 price,
+                isActive: isVisible,
                 slug: name.toLowerCase().replaceAll(" ", "-"),
                 categoryID: productCategory!.id,
                 updatedAt: new Date()
@@ -139,41 +140,43 @@ export async function editProduct(req: Request, res: Response) {
                             productVariantID: colorVariantDelete[i]
                         }
                     })   
-                    const stockLog = await tx.stockMutation.create({
-                        data: {
-                            id: uuidv4(),
-                            warehouseID: wareHouseList[k].id,
-                            type: 'DELETE',
-                        }
-                    })
-                    for (let c = 0; c<currentStock.length; c++) {
-                        await tx.stockMutationItem.create({
+                    if (currentStock.length > 0) {
+                        const stockLog = await tx.stockMutation.create({
                             data: {
                                 id: uuidv4(),
-                                quantity: currentStock[c].stock,
-                                stockMutationID: stockLog.id,
-                                warehouseProductID: currentStock[c].id
+                                warehouseID: wareHouseList[k].id,
+                                type: 'DELETE',
                             }
                         })
-                        await tx.warehouseProduct.updateMany({
-                            where: {
-                                productVariantID: colorVariantDelete[i],
-                                warehouseID: wareHouseList[k].id
-                            },
-                            data: {
-                                isDelete: true,
-                                stock: 0
-                            }
-                        })
-                        await tx.productVariant.update({
-                            where: {
-                                id: colorVariantDelete[i]
-                            },
-                            data: {
-                                isDeleted: true
-                            }
-                        })
+                        for (let c = 0; c<currentStock.length; c++) {
+                            await tx.stockMutationItem.create({
+                                data: {
+                                    id: uuidv4(),
+                                    quantity: currentStock[c].stock,
+                                    stockMutationID: stockLog.id,
+                                    warehouseProductID: currentStock[c].id
+                                }
+                            })
+                            await tx.warehouseProduct.updateMany({
+                                where: {
+                                    productVariantID: colorVariantDelete[i],
+                                    warehouseID: wareHouseList[k].id
+                                },
+                                data: {
+                                    isDelete: true,
+                                    stock: 0
+                                }
+                            })
+                        }
                     }
+                    await tx.productVariant.update({
+                        where: {
+                            id: colorVariantDelete[i]
+                        },
+                        data: {
+                            isDeleted: true
+                        }
+                    })
                 }
                 
                      

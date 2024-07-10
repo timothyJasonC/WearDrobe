@@ -18,6 +18,7 @@ export const Search = () => {
 	const [search, setSearch] = useState('')
 	const router = useRouter()
 	const [nameArr, setNameArr] = useState<INameArr[] | []>([])
+    const [focus, setFocus] = useState(false)
   
 	const debounced = useDebouncedCallback(
     (value) => {
@@ -28,7 +29,7 @@ export const Search = () => {
 
 	const handleSubmit = (e:any) => {
 		if (search.length > 0) {
-			router.push(`/catalogs?q=${search.toLowerCase().replaceAll(' ', '-')}`)
+			router.push(`/catalogs?q=${search}`)
 			e.preventDefault()
 		}
         setValue('')
@@ -53,10 +54,14 @@ export const Search = () => {
                 placeholder="Search" 
                 className="group focus-visible:ring-white/0 w-56 focus-visible:border-black/80 duration-200"
                 onChange={(e) => {debounced(e.target.value); setSearch(e.target.value)}}
+				onFocus={() => setFocus(true)}
+				onBlur={() => setTimeout(() => {
+                    setFocus(false);
+                }, 100)}
             />
             <PiMagnifyingGlass className="absolute top-0 bottom-0 right-4 m-auto fill-black/50" />
         </div>
-        <div>
+        <div className={focus ? '' : 'hidden'}>
             {   nameArr?.length > 0 ?
                     <div className={`z-[1] absolute bg-white w-56 border-[1px] p-2 border-black/15 rounded-lg top-12 flex flex-col gap-1 ${ value ? '' : 'hidden' } `}>
                         {

@@ -49,7 +49,7 @@ export const Catalogs = () => {
               <p className='text-right mb-1'>Sort by:</p>
               <Selector 
               label="Sort by"
-              state={['Newest', 'Low to high', 'High to low']}
+              state={['Newest', 'Low to high', 'High to low', 'A-Z', 'Most Purchased']}
               setState={setSort}
               defValue={sort}
               />

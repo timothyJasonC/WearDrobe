@@ -20,6 +20,7 @@ import { EditColorField } from "./form/edit/editColorField"
 import { IEditAdditional, IEditColor } from "@/constants"
 import { SubmitAlert } from "../../../../../../components/submitAlertTemplate"
 import { checkInvalidEdit } from "@/lib/productValidation"
+import { Visibility } from "./form/edit/editVisibility"
 
 const formSchema = z.object({})
 
@@ -31,6 +32,7 @@ interface ICategory {
 export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Dispatch<React.SetStateAction<boolean>>}) {
   const [categoryList, setCategoryList] = useState<ICategory[]>([])
   const [name, setName] = useState('')
+  const [isVisible, setIsVisible] = useState(false)
   const [description, setDescription] = useState('')
   const [price, setPrice] = useState(0)
   const [gender, setGender] = useState('')
@@ -66,6 +68,7 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
     setName(data.productList.name)
     setDescription(data.productList.description)
     setPrice(data.productList.price)
+    setIsVisible(data.productList.isActive)
     setGender(data.productList.category.gender.charAt(0) + data.productList.category.gender.slice(1).toLowerCase())
     setType(data.productList.category.type.charAt(0) + data.productList.category.type.slice(1).toLowerCase())
     setCategory(data.productList.category.category)
@@ -150,7 +153,7 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
             additionalDelete.push(currentAdditional[i].id)
           }
         }       
-        const data = {name, description, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData:{gender, type, category}}        
+        const data = {name, isVisible, description, price, thumbnailURL, additionalURL, additionalDelete, colorVariantEdit, colorVariantNew, colorVariantDelete, categoryData:{gender, type, category}}        
         const res = await editProduct(data, slug)
         if (res.status == 'ok') {
           setOpen(false)
@@ -161,11 +164,15 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
       }
     }
 
+    console.log(isVisible);
+    
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full pt-5 ">
         <div className="flex max-md:flex-wrap w-full gap-5">
           <ScrollArea className="h-[500px] md:w-[200px] bg-gray-100 rounded-sm max-md:hidden p-4">
+            
             <ImageField 
               currentAdditional={currentAdditional}
               currentThumbnail={currentThumbnail}
@@ -179,6 +186,8 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
             />
           </ScrollArea>
           <ScrollArea className="flex max-md:h-[65vh] md:h-[500px] grow">
+              <Visibility isVisible={isVisible} setIsVisible={setIsVisible}/>
+            <Separator className="my-7"/>
               <NameField name={name} setName={setName} setNameErrorMessage={setNameErrorMessage} nameErrorMessage={nameErrorMessage}/>
             <Separator className="my-7"/>
               <DescriptionField description={description} setDescription={setDescription} descErrorMessage={descErrorMessage} setDescErrorMessage={setDescErrorMessage}/>
@@ -195,7 +204,7 @@ export function EditProductForm({setOpen, slug}:{slug:string, setOpen:React.Disp
                 invalidCategory={invalidCategory}
                 category={category}
               />
-            <Separator className="my-7"/>
+            {/* <Separator className="my-7"/> */}
               {/* <SizingField 
                 isOneSize={isOneSize}
                 setIsOneSize={setIsOneSize}

@@ -73,6 +73,7 @@ export default function BestSeller({ all, headerText, totalCol }: { all: boolean
                             return <CarouselItem key={idx} className={` ${ totalCol ? totalCol: 'sm:basis-1/2 lg:basis-1/3' } flex flex-col items-stretch`}>
                                 <div className="cursor-pointer relative w-full">
                                     <Image
+                                        priority
                                         width={350} height={100}
                                         className="rounded-lg w-full" src={item.img} alt="" 
                                     />

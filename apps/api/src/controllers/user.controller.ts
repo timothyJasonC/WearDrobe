@@ -27,7 +27,7 @@ export class UserController {
 
             const payload = { id: user.id, role: 'user' }
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
-            const link = `http://localhost:3000/verify/user/${token}`;
+            const link = `${process.env.NEXT_PUBLIC_BASE_API_URL}verify/user/${token}`;
 
             const templatePath = path.join(__dirname, "../templates", "register.html")
             const templateSource = fs.readFileSync(templatePath, 'utf-8')
@@ -155,7 +155,7 @@ export class UserController {
 
     async updatePersonalInfo(req: Request, res: Response) {
         try { 
-            const { email } = req.body
+            const { email, prevEmail } = req.body
 
             const user = await prisma.user.findFirst({ where : { id: req.params.id }})
             if (email) {
@@ -170,16 +170,20 @@ export class UserController {
                         const existingUsername = await prisma.user.findFirst({ where : { username: value }})
                         if (existingUsername) return serverResponse(res, 409, 'error', 'Username has been taken!')
                     }
-                    await prisma.user.update({ where: { id: user.id }, data: {
-                        [key]: value,
-                    } })
+                    if (key != 'email' && key != 'prevEmail') {
+                        await prisma.user.update({ 
+                            where: { id: user.id }, 
+                            data: { [key]: value }
+                        });
+                    }
+                    
                 }
                 if (email) {
                     await prisma.user.update({ where: { id: user.id }, data: { accountActive: false, } })
                     
-                    const payload = { id: user.id, role: 'user' }
+                    const payload = { id: user.id, role: 'user', prevEmail: prevEmail, newEmail: email }
                     const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
-                    const link = `http://localhost:3000/verify/user/${token}`;
+                    const link = `${process.env.NEXT_PUBLIC_BASE_API_URL}verify/user/${token}`;
             
                     const templatePath = path.join(__dirname, "../templates", "reVerifyAccount.html")
                     const templateSource = fs.readFileSync(templatePath, 'utf-8')

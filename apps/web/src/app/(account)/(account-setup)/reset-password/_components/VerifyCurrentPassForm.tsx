@@ -30,7 +30,7 @@ export function VerifyCurrentPassForm({ className } : { className: string }) {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: { password: "hello world!" }
+        defaultValues: { password: "" }
     })
 
     useEffect(() => {

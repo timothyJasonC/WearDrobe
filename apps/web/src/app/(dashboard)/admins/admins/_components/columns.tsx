@@ -22,10 +22,11 @@ import { Input } from "@/components/ui/input"
 
 export interface IAdmin {
     id: string;
-    role: Role;
-    accountActive: boolean | null;
+    role: Role.WarAdm | Role.SuperAdm ;
+    accountActive: boolean;
     fullName?: string;
     email: string;
+    imgUrl?: string | null;
     password?: string;
     gender?: Gender;
     dob?: Date;

@@ -4,12 +4,12 @@ import { toast } from "sonner"
 import { getCatalog } from "@/app/action"
 import { IProduct } from "@/constants"
 
-export default async function WomenChoice() {
+export default async function MenChoice() {
 
-    let womenProducts: IProduct[] | []  = []
+    let menChoice: IProduct[] | []  = []
     try {
-        const res = await getCatalog('women', '', '', '', '', '1', '5')
-        womenProducts = res.productList;
+        const res = await getCatalog('men', '', '', '', '', '1', '5')
+        menChoice = res.productList;
 
     } catch (error) {
         toast.error(error instanceof Error ? error.message: "Error fetching Women products")
@@ -17,7 +17,7 @@ export default async function WomenChoice() {
 
     return (
         <div className="flex justify-center">
-            <BestSeller data={womenProducts} all={false} headerText={"Women's Choice"} totalCol="sm:basis-1/3" />
+            <BestSeller data={menChoice} all={false} headerText={"Men's Choice"} totalCol="sm:basis-1/2" />
         </div>
     )
 };

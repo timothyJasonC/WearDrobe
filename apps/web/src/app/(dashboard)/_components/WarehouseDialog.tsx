@@ -23,11 +23,6 @@ export function WarehouseDialog({setWarehouse, assignWarehouse, warehouse, wareh
       const data = {warehouseName: warehouse, qtySize: qtySize, qtyColor: qtyColor}
       const updatedAssignment = [...assignWarehouse, {...data}]
     setAssignWarehouse(updatedAssignment)
-    // const updatedColors = [...color, {...data}];
-    // setColor(updatedColors)
-    // setColorHEX('#000000')
-    // setColorName('')
-    // setOpen(false)
     }
 
   return (

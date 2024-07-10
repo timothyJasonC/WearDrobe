@@ -143,7 +143,7 @@ export class WarehouseController {
             if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
             if (!warehouse.isActive) return serverResponse(res, 400, 'error', 'Warehouse is already deactivated')
             if (warehouse.adminID) await prisma.warehouse.update({ where: { id: warehouse.id }, data: { adminID: null } })
-            // handleWarehouseDelete(warehouse.id)  
+            handleWarehouseDelete(warehouse.id)  
             await prisma.warehouse.update({ where: { id: warehouse.id }, data: { isActive: false } })
             serverResponse(res, 200, 'ok', `${warehouse?.warehouseName} warehouse is successfully deactivated` )
         } catch (error: any) {

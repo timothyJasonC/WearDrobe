@@ -609,7 +609,6 @@ export class ProductController {
                 }
             });
             
-            
             // Calculate total stock for each variant and product
             const productsWithStock = products.map(product => ({
                 ...product,

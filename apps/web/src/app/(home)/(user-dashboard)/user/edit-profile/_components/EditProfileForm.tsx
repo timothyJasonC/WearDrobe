@@ -51,8 +51,10 @@ export default function EditProfileForm({ user } : { user: IUser | null }) {
             const currentData = { username: user.username, email: user.email, gender: user.gender, dob: user.dob }
             const newData = { username: values.username, email: values.email, gender: values.gender, dob: values.dob instanceof Date ? values.dob.toISOString() : values.dob }
             const keys: (keyof typeof currentData)[] = ["username", "email", "gender", "dob"]
-            type UserDataKeys = "username" | "email" | "dob" | "gender";
+            type UserDataKeys = "username" | "email" | "dob" | "gender" | "prevEmail";
             const changedData: Partial<Record<UserDataKeys, any>> = {};
+            changedData.prevEmail = currentData.email;
+
             keys.forEach(key => {
                 if (currentData[key] !== newData[key]) {
                     changedData[key] = newData[key];
@@ -183,34 +185,7 @@ export default function EditProfileForm({ user } : { user: IUser | null }) {
 
                     <span className="text-black/60 text-xs">*Changing your email will be required you to re-verify your account</span>
                     <LoadingButton type="submit" loading={isLoading} className="px-10 flex items-center gap-2 w-fit max-sm:w-full">Save Change<PiFloppyDiskBold size={`1rem`}/></LoadingButton>
-                    
-                    {/* <AlertDialog open={openDialog}>
-                        <AlertDialogTrigger asChild onClick={() => { user.username != userProfileForm.getValues('username') || user.email != userProfileForm.getValues('email') || user.gender != userProfileForm.getValues('gender') || user.dob != userProfileForm.getValues('dob')?.toISOString() ? setOpenDialog(true) : toast.warning("You haven't made any change") } }>
-                            <div className="flex justify-end w-full">
-                                <LoadingButton type="submit" loading={isLoading} className="px-10 flex items-center gap-2 w-fit max-sm:w-full">Proceed<PiFloppyDiskBold size={`1rem`}/></LoadingButton>
-                                <Button type="button" className="px-10 flex items-center gap-2 w-fit">Save Change</Button>
-                            </div>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="lg:max-w-[50rem]">
-                            <AlertDialogTitle>
-                                <div className="flex items-start">
-                                    Are you sure you want to update your profile information?
-                                    <PiX className="sm:hidden" onClick={() => setOpenDialog(false)}/>
-                                </div>
-                            </AlertDialogTitle>
-                            <p className="text-black/60">You're about to change</p>
-                            <div className="flex flex-col gap-2">
-                                <EditedData labelText="Username" data={user.username} newData={userProfileForm.getValues('username')}/>
-                                <EditedData labelText="Email" data={user.email} newData={userProfileForm.getValues('email')}/>
-                                <EditedData labelText="Gender" data={user.gender} newData={userProfileForm.getValues('gender')}/>
-                                <EditedData labelText="Date of Birth" data={parseDate(user.dob)} newData={parseDate(userProfileForm.getValues('dob'))}/>
-                            </div>
-                            <AlertDialogFooter className="flex flex-col">
-                                <AlertDialogCancel className="max-sm:hidden" onClick={() => setOpenDialog(false)}>Cancel</AlertDialogCancel>
-                                <LoadingButton type="submit" loading={isLoading} className="px-10 flex items-center gap-2 w-fit max-sm:w-full">Proceed<PiFloppyDiskBold size={`1rem`}/></LoadingButton>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog> */}
+                
                 </form>
             </Form>
         </div>

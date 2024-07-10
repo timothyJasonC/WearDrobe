@@ -40,13 +40,23 @@ export class AccountController {
 
     async verifyUser(req: Request, res: Response) {
         try {
+            const { password } = req.body;
+            
             const accountID = req.body.account.id
             const user = await prisma.user.findFirst({ where: { id: accountID } })
-    
             if (user) {
-                await prisma.user.update({ where: { id: accountID }, data: { accountActive: true } })
-            } else { return serverResponse(res, 404, 'error', 'user not found') }
-            
+                if (user && user.password) {
+                    const isMatched = await compare(password, user?.password)
+                    if (isMatched) {
+                        await prisma.user.update({ where: { id: accountID }, data: { accountActive: true, email: req.body.account.newEmail } })
+                    } else {
+                        return serverResponse(res, 400, 'error', 'Password incorrect!')
+                    }
+                }
+            }
+    
+            if (!user) return serverResponse(res, 404, 'error', 'user not found') 
+
             serverResponse(res, 200, 'ok', 'Account has been verified!')
     
         } catch (error: any) {

@@ -8,10 +8,10 @@ export default async function Page() {
 
     const user = await getUserServerSide(cookies)
 
-
     return (
         <Wrapper title={"Wishlist"} className={""}>
-            <WishlistBlocks user={user && user} />
+            Wishlist example
+            {/* <WishlistBlocks user={user && user} /> */}
         </Wrapper>
     )
 };

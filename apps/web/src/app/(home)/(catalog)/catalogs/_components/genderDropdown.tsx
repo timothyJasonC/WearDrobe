@@ -32,10 +32,10 @@
             {genderList.map((item:string, index) => {
               return (
                 <div key={index}>
-                    <DropdownMenuItem  onClick={() => setGender(item)}>
-                    <span className={item === 'Select' ? 'hidden' : ''}>{item}</span>
+                  <DropdownMenuItem  onClick={() => setGender(item)}>
+                      {item}
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className={index == 3 || item === 'Select' ? 'hidden' : ''} />
+                  <DropdownMenuSeparator className={index == 2 ? 'hidden' : ''} />
                 </div>
               )
             })}

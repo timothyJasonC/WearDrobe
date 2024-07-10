@@ -137,7 +137,6 @@ export class SalesController {
         toDate.setHours(23, 59, 59, 999);     
         let size = s == 'One Size' ? 'ONESIZE' : String(s).toUpperCase() 
         
-        
         try {
             let warehouse = await prisma.warehouse.findFirst({
                 where: {
@@ -160,7 +159,7 @@ export class SalesController {
                     },
                     warehouseId: warehouse 
                     ? warehouse.id
-                    : {not: null},
+                    : {not: undefined},
                     updatedAt: {gte: fromDate, lte: toDate},
                     order: {
                         status: 'COMPLETED'
@@ -190,6 +189,9 @@ export class SalesController {
                 skip: (+p! - 1) * +limit,
             })
 
+            console.log(productSales);
+            
+
             const totalGross = await prisma.orderItem.aggregate({
                 where: {
                     productVariant: {
@@ -199,7 +201,7 @@ export class SalesController {
                     },
                     warehouseId: warehouse 
                     ? warehouse.id
-                    : {not: null},
+                    : {not: undefined},
                     updatedAt: {gte: fromDate, lte: toDate},
                     order: {
                         status: 'COMPLETED'

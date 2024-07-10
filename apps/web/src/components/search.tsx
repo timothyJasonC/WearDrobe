@@ -29,7 +29,7 @@ export const Search = () => {
 
 	const handleSubmit = (e:any) => {
 		if (search.length > 0) {
-			router.push(`/catalogs?q=${search.toLowerCase().replaceAll(' ', '-')}`)
+			router.push(`/catalogs?q=${search}`)
 			e.preventDefault()
 		}
         setValue('')

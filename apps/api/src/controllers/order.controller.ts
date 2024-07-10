@@ -147,8 +147,8 @@ export class OrderController {
                 await createMutationItem(createMutationSender, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
                 const createMutationInbound = await createMutation(mutation.toWarehouse!, mutation.fromWarehouse?.id!, 'INBOUND', 'ACCEPTED')
                 await createMutationItem(createMutationInbound, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
-                const createMutationTransaction = await createMutationTransfer(mutation.fromWarehouse?.id!, 'TRANSACTION', 'ACCEPTED')
-                await createMutationItem(createMutationTransaction, mutation.quantity, mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size)
+                const createMutationTransaction = await createMutationTransfer(mutation.toWarehouse?.id!, 'TRANSACTION', 'ACCEPTED')
+                await createMutationItem(createMutationTransaction, mutation.quantity, mutation.toWarehouse?.id!, mutation.productVariantId, mutation.size)
 
                 await reduceStockWarehouse(mutation.fromWarehouse?.id!, mutation.productVariantId, mutation.size, mutation.quantity)
                 await addStockWarehouse(mutation.toWarehouse, mutation.productVariantId, mutation.size, mutation.quantity)
@@ -167,10 +167,7 @@ export class OrderController {
                     }
                 }
                 const paymentLink = await getPaymentLink(data)
-                console.log('OOOORDDERRRR', order);
-                console.log('DATAAAAAAAAA',data);
-                console.log('PAYMENNRTNE', paymentLink);
-                
+                await createMutationTransfer(warehouseId, 'TRANSACTION', 'ACCEPTED')
                 res.json(paymentLink)
             }
         } catch (err) {

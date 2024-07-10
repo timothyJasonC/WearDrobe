@@ -18,7 +18,8 @@ interface ITypes {
 
 interface IActiveCat {
   g:string, 
-  c:string
+  c:string,
+  t:string
 }
   
 export function CatAccordion({gender, activeCat}:{gender:string, activeCat:IActiveCat}) {
@@ -26,7 +27,7 @@ export function CatAccordion({gender, activeCat}:{gender:string, activeCat:IActi
     
     useEffect(() => {
       const getData = async() => {
-        const res = await getCategory((gender == 'Select' ? 'men' : gender.toLowerCase()), '')
+        const res = await getCategory((gender ? 'women' : gender.toLowerCase()), '')
         setData(res)
       }
       getData()
@@ -39,16 +40,19 @@ export function CatAccordion({gender, activeCat}:{gender:string, activeCat:IActi
           <AccordionContent>
             <div className="flex items-center mb-2">
               <PiDotOutlineFill />
-              <Link href={`/catalogs?g=${gender}&t=tops`} className="">All Tops Collections</Link>
+              <Link href={`/catalogs?g=${gender}&t=tops`} 
+              className={`text-black xl:hover:text-base hover:font-semibold duration-200 ${activeCat.c == '' && activeCat.t.toLowerCase() == 'tops' ? 'font-semibold' : ''}`}>
+                All Tops Collections
+              </Link>
             </div>
             {data?.tops.map((item:ICategory) => {
                 return (
                     <Link
-                    href={`/catalogs?g=${(gender == 'Select' ? 'men' : gender.toLowerCase())}&t=${'tops'}&c=${item.slug}`}
+                    href={`/catalogs?g=${gender.toLowerCase()}&t=${'tops'}&c=${item.slug}`}
                     key={item.id}
                     className="flex items-center mb-2 hover:cursor-pointer">
                         <PiDotOutlineFill />
-                        <p className={activeCat.c == item.slug && activeCat.g == gender.toLowerCase() ? 'font-semibold' : ''}>{item.category}</p>
+                        <p className={`text-black xl:hover:text-xl hover:font-semibold duration-200 ${activeCat.c == item.slug && activeCat.g == gender.toLowerCase() ? 'font-semibold' : ''}`}>{item.category}</p>
                     </Link>
                 )
             })}
@@ -59,16 +63,19 @@ export function CatAccordion({gender, activeCat}:{gender:string, activeCat:IActi
           <AccordionContent>
             <div className="flex items-center mb-2">
               <PiDotOutlineFill />
-              <Link href={`/catalogs?g=${gender}&t=bottoms`} className="">All Bottoms Collections</Link>
+              <Link href={`/catalogs?g=${gender}&t=bottoms`}
+              className={`text-black xl:hover:text-base hover:font-semibold duration-200 ${activeCat.c == '' && activeCat.t.toLowerCase() == 'bottoms' ? 'font-semibold' : ''}`}>
+                All Bottoms Collections
+              </Link>
             </div>
             {data?.bottoms.map((item:ICategory) => {
                     return (
                       <Link
-                      href={`/catalogs?g=${(gender == 'Select' ? 'men' : gender.toLowerCase())}&t=${'bottoms'}&c=${item.slug}`}
+                      href={`/catalogs?g=${gender.toLowerCase()}&t=${'bottoms'}&c=${item.slug}`}
                       key={item.id}
                       className="flex items-center mb-2 hover:cursor-pointer">
                           <PiDotOutlineFill />
-                          <p className={activeCat.c == item.slug && activeCat.g == gender.toLowerCase() ? 'font-semibold' : ''}>{item.category}</p>
+                          <p className={`text-black xl:hover:text-xl hover:font-semibold duration-200  ${activeCat.c == item.slug && activeCat.g == gender.toLowerCase() ? 'font-semibold' : ''}`}>{item.category}</p>
                       </Link>
                     )
                 })}
@@ -79,15 +86,18 @@ export function CatAccordion({gender, activeCat}:{gender:string, activeCat:IActi
           <AccordionContent>
             <div className="flex items-center mb-2">
               <PiDotOutlineFill />
-              <Link href={`/catalogs?g=${gender}&t=accessories`} className="">All Accessories Collections</Link>
+              <Link href={`/catalogs?g=${gender}&t=accessories`} 
+              className={`text-black xl:hover:text-base hover:font-semibold duration-200 ${activeCat.c == '' && activeCat.t.toLowerCase() == 'accessories' ? 'font-semibold' : ''}`}>
+                All Accessories Collections
+              </Link>
             </div>
             {data?.accessories.map((item:ICategory) => {
                     return (
                       <Link
-                      href={`/catalogs?g=${(gender == 'Select' ? 'men' : gender.toLowerCase())}&t=${'accessories'}&c=${item.slug}`} key={item.id}
+                      href={`/catalogs?g=${gender.toLowerCase()}&t=${'accessories'}&c=${item.slug}`} key={item.id}
                       className="flex items-center mb-2 hover:cursor-pointer">
                           <PiDotOutlineFill />
-                          <p className={activeCat.c == item.slug && activeCat.g == gender.toLowerCase() ? 'font-semibold' : ''}>{item.category}</p>
+                          <p className={`text-black xl:hover:text-xl hover:font-semibold duration-200 ${activeCat.c == item.slug && activeCat.g == gender.toLowerCase() ? 'font-semibold' : ''}`}>{item.category}</p>
                       </Link>
                     )
                 })}

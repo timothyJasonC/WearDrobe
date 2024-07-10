@@ -160,8 +160,8 @@ export class AccountController {
 
                 const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
                 let link: string = ''
-                if (user) link = `http://localhost:3000/forgot-password/user/${token}`;
-                if (admin) link = `http://localhost:3000/forgot-password/admin/${token}`;
+                if (user) link = `${process.env.NEXT_PUBLIC_BASE_API_URL}forgot-password/user/${token}`;
+                if (admin) link = `${process.env.NEXT_PUBLIC_BASE_API_URL}forgot-password/admin/${token}`;
 
                 const templatePath = path.join(__dirname, "../templates", "reRequestResetPassword.html")
                 const templateSource = fs.readFileSync(templatePath, 'utf-8')
@@ -201,8 +201,8 @@ export class AccountController {
 
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
             let link: string = ''
-            if (user) link = `http://localhost:3000/forgot-password/user/${token}`;
-            if (admin) link = `http://localhost:3000/forgot-password/admin/${token}`;
+            if (user) link = `${process.env.NEXT_PUBLIC_BASE_API_URL}forgot-password/user/${token}`;
+            if (admin) link = `${process.env.NEXT_PUBLIC_BASE_API_URL}forgot-password/admin/${token}`;
 
             let newRequest;
             let newRequestData = { id: uuid(), currentToken: token }
@@ -289,8 +289,8 @@ export class AccountController {
 
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
             let link: string = ''
-            if (user) link = `http://localhost:3000/reset-password/user/${token}`;
-            if (admin) link = `http://localhost:3000/reset-password/admin/${token}`;
+            if (user) link = `${process.env.NEXT_PUBLIC_BASE_API_URL}reset-password/user/${token}`;
+            if (admin) link = `${process.env.NEXT_PUBLIC_BASE_API_URL}reset-password/admin/${token}`;
 
             let newRequest;
             let newRequestData = { id: uuid(), currentToken: token }

@@ -2,18 +2,23 @@ import React from "react"
 import DashboardWrapper from "../../_components/DashboardWrapper"
 import Link from "next/link"
 import { PiArrowLeft, PiGenderFemaleBold, PiGenderMaleBold, PiUserCircleThin } from "react-icons/pi"
-import { getRequest } from "@/lib/fetchRequests"
+import { getRequest, postRequest } from "@/lib/fetchRequests"
 import Image from "next/image"
 import ActiveIndicator from "@/components/sidebar/ActiveIndicator"
 import { IUser } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm"
+import { ExpTable } from "../../_components/ExpTable"
+import columns from "./_components/columns"
 
 export default async function Page({ params }: { params: { id: string } }) {
 
-    
     let user: IUser | null;
+    let userOrder;
     try {
         const res = await (await getRequest(`user/${params.id}`)).json()
         user = res.data
+        
+        const resOrder = await (await postRequest({adminId: null, userId: user?.id, date: { from: new Date('1970'), to: new Date()} }, `order/warehouseOrder/?q=&limit=1000&page=1&w=`)).json()
+        userOrder = resOrder;
     } catch (error) {
         return 
     }
@@ -43,7 +48,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                             <div className="flex flex-col gap-1">
                                 <span className="text-black/60 flex items-center gap-2">
                                     <ActiveIndicator isActive={user && user?.accountActive? true : false} activeText={`User is verified`} nonActiveText={"User is not verified"} />
-                                    Active User
+                                    User
                                 </span>
                                 <div className="flex gap-1">
                                     <h3 className="font-bold text-3xl cursor-pointer">{user && user?.username ? user?.username : ''}</h3>
@@ -78,8 +83,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                     </div>
                 </div>
 
-                <div className="w-full h-72 border-2 border-red-300">Table</div>
-
+                <ExpTable accounts={userOrder} columns={columns} />
             </div>
         </DashboardWrapper>
     )

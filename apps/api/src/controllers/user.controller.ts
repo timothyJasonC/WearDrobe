@@ -27,7 +27,7 @@ export class UserController {
 
             const payload = { id: user.id, role: 'user' }
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
-            const link = `http://localhost:3000/verify/user/${token}`;
+            const link = `${process.env.NEXT_PUBLIC_BASE_API_URL}verify/user/${token}`;
 
             const templatePath = path.join(__dirname, "../templates", "register.html")
             const templateSource = fs.readFileSync(templatePath, 'utf-8')
@@ -179,7 +179,7 @@ export class UserController {
                     
                     const payload = { id: user.id, role: 'user' }
                     const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
-                    const link = `http://localhost:3000/verify/user/${token}`;
+                    const link = `${process.env.NEXT_PUBLIC_BASE_API_URL}verify/user/${token}`;
             
                     const templatePath = path.join(__dirname, "../templates", "reVerifyAccount.html")
                     const templateSource = fs.readFileSync(templatePath, 'utf-8')

@@ -36,6 +36,7 @@ import { Gender } from "@/app/(home)/(user-dashboard)/user/edit-profile/_compone
 import ExcelButton from "./ExcelButton"
 import { downloadAdminsToExcel, downloadUsersToExcel, downloadWarehousesToExcel } from "@/lib/utils"
 import { IWarehouse } from "../warehouses/_components/columns"
+import { IOrderItem } from "@/constants"
 
 export enum Role {
     WarAdm = "warAdm",
@@ -80,6 +81,21 @@ interface Warehouse extends ITableData {
     createdAt: string;
     adminID: string | null;
     isActive: boolean;
+}
+
+interface IUserOrder extends ITableData {
+    id: string;
+    userId: string;
+    status: "CART" | "PENDING" | "COMPLETED" | "CANCELLED" | "SHIPPED" | "PROCESSED"
+    warehouseId: string | null;
+    totalAmount: number;
+    shippingMethod: string | null,
+    shippedAt: string | Date | null,
+    paymentStatus: "PENDING" | "PAID" | "FAILED";
+    createdAt: string | Date; // ISO date string
+    updatedAt: string; // ISO date string
+    items?: IOrderItem[];
+    user?: {addresses: [{city_name: string}] }
 }
 
 export function ExpTable({ accounts, columns, optionalComp, users, admins, warehouses }: { accounts: ITableData[] , columns: any, optionalComp?:any, users?: IUser[], admins?: IAdmin[], warehouses?: IWarehouse[] }) {

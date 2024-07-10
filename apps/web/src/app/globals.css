@@ -93,6 +93,15 @@
     .input-layout-user-profile {
         @apply flex flex-col lg:flex-row items-start w-full gap-1 lg:items-center justify-between;
     }
+
+    .input-width-admin-profile {
+
+    }
+
+    .input-layout-admin-profile {
+        
+    }
+
 }
 
 .scrollcontrol {

@@ -195,7 +195,7 @@ export class AdminController {
 
     async updatePersonalInfo(req: Request, res: Response) {
         try { 
-            const { email } = req.body
+            const { email, prevEmail } = req.body
 
             const admin = await prisma.admin.findFirst({ where : { id: req.params.id }})
             if (email) {
@@ -206,14 +206,16 @@ export class AdminController {
 
             if (admin) {
                 for (const [key, value] of Object.entries(req.body)) {
-                    await prisma.admin.update({ where: { id: admin.id }, data: {
-                        [key]: value,
-                    } })
+                    if (key != 'email' && key != 'prevEmail') {
+                        await prisma.admin.update({ where: { id: admin.id }, data: {
+                            [key]: value,
+                        } })
+                    }
                 }
                 if (email) {
                     await prisma.admin.update({ where: { id: admin.id }, data: { accountActive: false, } })
                     
-                    const payload = { id: admin.id, role: 'admin' }
+                    const payload = { id: admin.id, role: admin.role, prevEmail: prevEmail, newEmail: email }
                     const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
                     const link = `${process.env.PUBLIC_URL}verify/admin/${token}`;
             

@@ -59,22 +59,6 @@ export default function Page() {
         
     }, [ user ])
 
-    useEffect(() => {
-        // async function verifyAccount() {
-        //     try {
-        //         if (res.ok) {
-        //             setVerified(true)
-        //         } 
-        //     } catch (error) {
-        //         if (typeof error == 'string') {
-        //             toast.error(error)
-        //         } else console.log(error)
-        //     }
-        // }
-        // verifyAccount();
-
-    }, [ activeToken ])
-
     async function handleSubmit() {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}user/re-verify-account`, {

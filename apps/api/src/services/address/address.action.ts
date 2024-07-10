@@ -100,7 +100,11 @@ export async function getAllWarehouseAddress() {
     const warehouseAddress: { [key: string]: { lat: string; lon: string; display_name: string } | null } = {}
 
     try {
-        const warehouses = await prisma.warehouse.findMany()
+        const warehouses = await prisma.warehouse.findMany({
+            where: {
+                isActive: true
+            }
+        })
         for (const warehouse of warehouses) {
             const address = warehouse.address
 

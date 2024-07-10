@@ -958,6 +958,7 @@ export class ProductController {
             serverResponse(res, 400, 'error', error)
         }
     }
+
 }
 
 

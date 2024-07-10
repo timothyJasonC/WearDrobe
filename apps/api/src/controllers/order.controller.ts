@@ -234,7 +234,6 @@ export class OrderController {
 
     async getOrderByAdmin(req: Request, res: Response) {
         try {
-            console.log(req.body)
             const { adminId, userId, date } = req.body
             let { q: query, page, limit, w } = req.query;
 

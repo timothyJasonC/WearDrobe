@@ -78,9 +78,11 @@ export default function DisplayOrder({ warehouse }: DisplayOrderProps) {
     }, [encodedsSearchQuery, limitQuery, currentQuery, date, encodedsWarehouseQuery, getOrder])
     return (
         <>
+        <div>
             <SearchOrder data={searchQuery || ''} date={date} setDate={setDate} />
             <OrderTable orderList={orderList} setOrderList={setOrderList} currentPage={currentQuery} date={date!}/>
             <PaginationOrder page={currentPage} totalPages={totalPages} />
+        </div>
         </>
     )
 }

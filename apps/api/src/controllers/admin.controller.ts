@@ -26,7 +26,7 @@ export class AdminController {
     
             const payload = { id: admin.id, role: admin.role }
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
-            const link = `http://localhost:3000/verify/admin/${token}`;
+            const link = `${process.env.PUBLIC_URL}verify/admin/${token}`;
     
             const templatePath = path.join(__dirname, "../templates", "registerAdmin.html")
             const templateSource = fs.readFileSync(templatePath, 'utf-8')
@@ -126,7 +126,7 @@ export class AdminController {
                     
             const payload = { id: admin.id, role: admin.role }
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
-            const link = `http://localhost:3000/verify/admin/${token}`;
+            const link = `${process.env.PUBLIC_URL}verify/admin/${token}`;
     
             const templatePath = path.join(__dirname, "../templates", "reVerifyAccount.html")
             const templateSource = fs.readFileSync(templatePath, 'utf-8')
@@ -163,6 +163,76 @@ export class AdminController {
             if (!admin) return serverResponse(res, 404, 'error', 'account not found')
             await prisma.admin.delete({ where: { id: admin.id } })
             serverResponse(res, 200, 'ok', 'Admin has been discharged!')
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async updatePhoto(req: Request, res: Response) {
+        try { 
+            const admin = await prisma.admin.findFirst({ where : { id: req.params.id }})
+            if (admin) {
+                await prisma.admin.update({ where: { id: admin.id }, data: { imgUrl: req.body.imgUrl  } })
+            } else return serverResponse(res, 404, 'error', 'admin not found!')
+            serverResponse(res, 200, 'ok', 'photo profile has been updated')
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async removePhoto(req: Request, res: Response) {
+        try { 
+            const admin = await prisma.admin.findFirst({ where : { id: req.params.id }})
+            if (admin) {
+                if (admin.imgUrl == null) return serverResponse(res, 400, 'error', 'You have no photo profile')
+                await prisma.admin.update({ where: { id: admin.id }, data: { imgUrl: null  } })
+            } else return serverResponse(res, 404, 'error', 'admin not found!')
+            serverResponse(res, 200, 'ok', 'Photo profile has deleted!')
+        } catch (error: any) {
+            serverResponse(res, 400, 'error', error)
+        }
+    }
+
+    async updatePersonalInfo(req: Request, res: Response) {
+        try { 
+            const { email } = req.body
+
+            const admin = await prisma.admin.findFirst({ where : { id: req.params.id }})
+            if (email) {
+                const existingUserEmail = await prisma.user.findUnique({ where : { email: email }})
+                const existingAdminEmail = await prisma.admin.findUnique({ where : { email: email }})
+                if (existingAdminEmail || existingUserEmail) return serverResponse(res, 409, 'error', 'Email has been taken!')
+            }
+
+            if (admin) {
+                for (const [key, value] of Object.entries(req.body)) {
+                    await prisma.admin.update({ where: { id: admin.id }, data: {
+                        [key]: value,
+                    } })
+                }
+                if (email) {
+                    await prisma.admin.update({ where: { id: admin.id }, data: { accountActive: false, } })
+                    
+                    const payload = { id: admin.id, role: 'admin' }
+                    const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
+                    const link = `${process.env.PUBLIC_URL}verify/admin/${token}`;
+            
+                    const templatePath = path.join(__dirname, "../templates", "reVerifyAccount.html")
+                    const templateSource = fs.readFileSync(templatePath, 'utf-8')
+                    const compiledTemplate = handlebars.compile(templateSource)
+                    const html = compiledTemplate({ link, name: admin?.fullName })
+            
+                    await transporter.sendMail({
+                        from: "weardrobe2000@gmail.com",
+                        to: email,
+                        subject: "Action Required: Re-Verify Your WearDrobe Account Email",
+                        html
+                    })
+                } 
+                
+            } else return serverResponse(res, 404, 'error', 'Account not found!')
+
+            serverResponse(res, 200, 'ok', 'Your personal info has been successfully updated!')
         } catch (error: any) {
             serverResponse(res, 400, 'error', error)
         }

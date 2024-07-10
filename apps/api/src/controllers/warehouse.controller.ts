@@ -199,4 +199,15 @@ export class WarehouseController {
         }
     }
 
+    async getWarehouseById(req: Request, res: Response) {
+        try {
+            const warehouse = await prisma.warehouse.findFirst({ where: { id: req.params.id }});
+            if (!warehouse) return serverResponse(res, 404, 'error', 'Warehouse not found')
+            if (!warehouse.isActive) return serverResponse(res, 400, 'error', `${ warehouse.warehouseName }Warehouse is not active`)
+            serverResponse(res, 200, 'ok', `${ warehouse.warehouseName } warehouse found`, warehouse)
+        } catch (error: any) {
+            return serverResponse(res, 400, 'error', error)
+        }
+    }
+
 }

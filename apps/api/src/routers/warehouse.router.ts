@@ -13,6 +13,7 @@ export class WarehouseRouter {
 
     private initializeRoutes(): void {
         this.router.get('/available-warehouses', this.warehouseController.getAvailableWarehouse)
+        this.router.get('/get-warehouse-by-id/:id', this.warehouseController.getWarehouseById)
         this.router.get('/assigned-warehouse/:id', this.warehouseController.getWarehouseByAdminId)
         this.router.get('/all', this.warehouseController.getWarehouses)
         this.router.get('/filter/:filter', this.warehouseController.getWarehouseFiltered)

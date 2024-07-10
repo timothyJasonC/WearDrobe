@@ -2,14 +2,14 @@ import React from "react"
 import { DialogCreateAdmin } from "./_components/DialogCreateAdmin"
 import DashboardWrapper from "../_components/DashboardWrapper"
 import { getRequest } from "@/lib/fetchRequests"
-import columns from "./_components/columns"
+import columns, { IAdmin } from "./_components/columns"
 import { ExpTable } from "../_components/ExpTable"
 import { StatisticsCard } from "../../_components/statisticsCard"
 import DashboardHeaderPhoto from "../_components/DashboardHeaderPhoto"
 
 export default async function Page() {
 
-    let admins = []
+    let admins: IAdmin[] | [] = []
     try {
         const res =  await (await getRequest('admin/')).json()
         admins = res.data;
@@ -28,12 +28,7 @@ export default async function Page() {
                     <StatisticsCard  title='Total Admin(s)' number={admins && admins?.length ? admins?.length : 0}/>
                 </div>
             </div>
-            {
-                admins?.length > 0 ?
-                    <ExpTable admins={admins} accounts={admins} columns={columns} optionalComp={<DialogCreateAdmin />} />
-                    :
-                    <div>Admins not found</div>
-            }
+            <ExpTable admins={admins} accounts={admins} columns={columns} optionalComp={<DialogCreateAdmin />} />
         </DashboardWrapper>
             
     )

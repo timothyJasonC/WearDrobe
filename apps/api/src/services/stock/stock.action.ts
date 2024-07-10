@@ -31,7 +31,7 @@ export async function createMutation(warehouseID: string, associatedWarehouseID:
     return stockMutation.id!
 }
 
-export async function createMutationTransfer(warehouseID: string, type: string, status: string) {
+export async function createMutationTransaction(warehouseID: string, type: string, status: string) {
     const stockMutation = await prisma.stockMutation.create({
         data: {
             id: uuidv4(),
@@ -40,12 +40,12 @@ export async function createMutationTransfer(warehouseID: string, type: string, 
             status: status as MutationStatus,
         }
     });
-    return stockMutation.id!
+    return stockMutation
 }
 
 export async function createMutationItem(stockMutationID: string, quantity: number, warehouseId: string, productVariantId: string, size: string) {
     const warehouse = await getWarehouseProductId(warehouseId!, productVariantId!, size!)
-    await prisma.stockMutationItem.create({
+    const item = await prisma.stockMutationItem.create({
         data: {
             id: uuidv4(),
             quantity,
@@ -53,6 +53,7 @@ export async function createMutationItem(stockMutationID: string, quantity: numb
             stockMutationID
         }
     })
+    return item
 }
 
 export async function reduceStockWarehouse( warehouseID: string, productVariantID: string, size: string, quantity: number) {

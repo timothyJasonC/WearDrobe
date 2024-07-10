@@ -15,7 +15,7 @@ import { EditProductForm } from "./editProductForm";
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-      action()
+      action
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open])
     return (

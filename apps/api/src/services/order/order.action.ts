@@ -79,7 +79,7 @@ async function updateSuccessStock(items: any, warehouseID: string) {
     for (const item of items) {
         const { productVariantId, quantity, size } = item;
 
-        
+
 
         await prisma.warehouseProduct.updateMany({
             where: { productVariantID: productVariantId, size, warehouseID },
@@ -92,8 +92,6 @@ async function updateSuccessStock(items: any, warehouseID: string) {
     }
     return
 }
-
-
 
 export async function successOrder(orderId: string) {
     const updateOrder = await prisma.order.update({
@@ -124,33 +122,39 @@ export async function failedOrder(orderId: string) {
     return updateOrder
 }
 
-async function getAllOrder(warehouseId: string | null, query: string, page: string, limit: string, warehouse: string) {
+async function getAllOrder(warehouseId: string | null, query: string, page: string, limit: string, warehouse: string, fromDate: Date, toDate: Date) {
     if (warehouseId === 'none') return null;
+    console.log(fromDate);
+
+    const whereCondition: any = {
+        AND: [
+            { createdAt: { gte: fromDate, lte: toDate } },
+            {
+                OR: [
+                    { id: { contains: query } },
+                ]
+            }
+        ]
+    };
+
+    if (warehouseId) {
+        whereCondition.AND.push({ warehouseId: warehouseId });
+    } else {
+        whereCondition.AND.push({ warehouseId: warehouse });
+    }
+
     const order = await prisma.order.findMany({
         orderBy: {
             createdAt: 'desc',
         },
-        where: warehouseId ? {
-            AND: [
-                { warehouseId: warehouseId }
-            ],
-            OR: [
-                { id: { contains: query } },
-            ]
-        } : {
-            AND: [
-                { warehouseId: warehouse }
-            ],
-            OR: [
-                { id: { contains: query } },
-                { warehouseId: warehouse }
-            ]
-        },
+        where: whereCondition,
         skip: (+page - 1) * +limit,
         take: +limit
     });
-    return order
+
+    return order;
 }
+
 
 async function totalTransactionByAdmin(warehouseId: string | null, query: string) {
     if (warehouseId === 'none') return null;
@@ -189,7 +193,7 @@ async function totalTransactionByAdmin(warehouseId: string | null, query: string
     return order
 }
 
-export async function getOrderByUser(userId: string, query: string, page: string, limit: string, fromDate:Date, toDate:Date) {
+export async function getOrderByUser(userId: string, query: string, page: string, limit: string, fromDate: Date, toDate: Date) {
     const orders = await prisma.order.findMany({
         orderBy: {
             createdAt: 'desc',
@@ -197,6 +201,7 @@ export async function getOrderByUser(userId: string, query: string, page: string
         where: {
             AND: [
                 { userId: userId },
+                { createdAt: { gte: fromDate, lte: toDate } },
                 {
                     NOT: {
                         status: {
@@ -207,7 +212,6 @@ export async function getOrderByUser(userId: string, query: string, page: string
             ],
             OR: [
                 { id: { contains: query } },
-                { createdAt: { gte: fromDate,lte: toDate } }
             ]
         },
         skip: (+page - 1) * +limit,
@@ -247,7 +251,7 @@ export async function getTotalOrderByAdmin(adminId: string, query: string) {
     }
 }
 
-export async function getOrderByAdmin(adminId: string, query: string, page: string, limit: string, warehouse: string, fromDate:Date, toDate:Date) {
+export async function getOrderByAdmin(adminId: string, query: string, page: string, limit: string, warehouse: string, fromDate: Date, toDate: Date) {
     const admin = await prisma.admin.findUnique({
         where: { id: adminId },
         include: {
@@ -255,11 +259,11 @@ export async function getOrderByAdmin(adminId: string, query: string, page: stri
         }
     })
     if (admin?.role === 'superAdm') {
-        const orders = await getAllOrder(null, query, page, limit, warehouse)
+        const orders = await getAllOrder(null, query, page, limit, warehouse, fromDate, toDate)
         return orders
     }
     if (admin?.role === 'warAdm') {
-        const orders = await getAllOrder(admin.Warehouse?.id ? admin.Warehouse.id : 'none', query, page, limit, warehouse)
+        const orders = await getAllOrder(admin.Warehouse?.id ? admin.Warehouse.id : 'none', query, page, limit, warehouse, fromDate, toDate)
         return orders
     }
 }

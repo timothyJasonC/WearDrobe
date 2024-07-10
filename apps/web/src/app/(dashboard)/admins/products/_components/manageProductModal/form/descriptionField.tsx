@@ -45,7 +45,7 @@ export const DescriptionField = ({description, setDescription, descErrorMessage,
               <Textarea 
                 value={description}
                 placeholder="ex: A minimalist yet elegant bomber with our signature design on the back." 
-                className="focus-visible:ring-transparent placeholder:text-xs text-sm h-8 resize-none grow shrink"
+                className="focus-visible:ring-transparent placeholder:text-xs text-sm h-48 resize-none grow shrink"
                 onChange={(e) => {validateDesc(e.target.value)}}
                 />
             </FormControl>

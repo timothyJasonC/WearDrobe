@@ -31,7 +31,7 @@ export async function createMutation(warehouseID: string, associatedWarehouseID:
     return stockMutation.id!
 }
 
-export async function createMutationTransfer(warehouseID: string, type: string, status: string) {
+export async function createMutationTransaction(warehouseID: string, type: string, status: string) {
     const stockMutation = await prisma.stockMutation.create({
         data: {
             id: uuidv4(),
@@ -40,12 +40,12 @@ export async function createMutationTransfer(warehouseID: string, type: string, 
             status: status as MutationStatus,
         }
     });
-    return stockMutation.id!
+    return stockMutation
 }
 
 export async function createMutationItem(stockMutationID: string, quantity: number, warehouseId: string, productVariantId: string, size: string) {
     const warehouse = await getWarehouseProductId(warehouseId!, productVariantId!, size!)
-    await prisma.stockMutationItem.create({
+    const item = await prisma.stockMutationItem.create({
         data: {
             id: uuidv4(),
             quantity,
@@ -53,6 +53,7 @@ export async function createMutationItem(stockMutationID: string, quantity: numb
             stockMutationID
         }
     })
+    return item
 }
 
 export async function reduceStockWarehouse( warehouseID: string, productVariantID: string, size: string, quantity: number) {
@@ -83,4 +84,42 @@ export async function addStockWarehouse( warehouseID: string, productVariantID: 
             }
         }
     })
+}
+
+export async function handleWarehouseDelete( warehouseID:string) {
+        await prisma.$transaction(async (tx) => {
+            const whProducts = await tx.warehouseProduct.findMany({
+                where: {
+                    warehouseID
+                }
+            })
+            
+            const mutation = await tx.stockMutation.create({
+                data: {
+                    type: "DELETE",
+                    warehouseID
+                }
+            })
+
+            for (let i = 0; i<whProducts.length; i++) {
+                await tx.stockMutationItem.create({
+                    data: {
+                        id: uuidv4(),
+                        quantity: whProducts[i].stock,
+                        stockMutationID: mutation.id,
+                        warehouseProductID: whProducts[i].id                
+                    }
+                })
+            }
+
+            await tx.warehouseProduct.updateMany({
+                where: {
+                    warehouseID
+                },
+                data: {
+                    stock: 0
+                }
+            })
+            return 'stock emptied'
+        })
 }

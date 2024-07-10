@@ -113,7 +113,7 @@ export default function Page({ params: { id } }: CheckoutProps) {
     }
 
     return (
-        <section className="mt-8 px-7">
+        <section className="mt-8 py-8 px-7 ">
             <div className="text-center">
                 <SectionHeaders mainHeader="Cart" />
             </div>

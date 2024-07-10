@@ -26,7 +26,7 @@ export class AdminController {
     
             const payload = { id: admin.id, role: admin.role }
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
-            const link = `${process.env.NEXT_PUBLIC_BASE_API_URL}verify/admin/${token}`;
+            const link = `${process.env.PUBLIC_URL}verify/admin/${token}`;
     
             const templatePath = path.join(__dirname, "../templates", "registerAdmin.html")
             const templateSource = fs.readFileSync(templatePath, 'utf-8')
@@ -126,7 +126,7 @@ export class AdminController {
                     
             const payload = { id: admin.id, role: admin.role }
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
-            const link = `${process.env.NEXT_PUBLIC_BASE_API_URL}verify/admin/${token}`;
+            const link = `${process.env.PUBLIC_URL}verify/admin/${token}`;
     
             const templatePath = path.join(__dirname, "../templates", "reVerifyAccount.html")
             const templateSource = fs.readFileSync(templatePath, 'utf-8')
@@ -215,7 +215,7 @@ export class AdminController {
                     
                     const payload = { id: admin.id, role: 'admin' }
                     const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
-                    const link = `${process.env.NEXT_PUBLIC_BASE_API_URL}verify/admin/${token}`;
+                    const link = `${process.env.PUBLIC_URL}verify/admin/${token}`;
             
                     const templatePath = path.join(__dirname, "../templates", "reVerifyAccount.html")
                     const templateSource = fs.readFileSync(templatePath, 'utf-8')

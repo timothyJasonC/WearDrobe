@@ -11,15 +11,13 @@ export function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
     const tokenCookie = req.cookies.get('token');
     const token = tokenCookie ? tokenCookie.value : null;
-    const warAdmPath = ['/admins/products', '/admins/stocks', '/admins/transactions', '/admins/overview', '/admins/edit-profile', '/admins/change-password'];
+    const warAdmPath = ['/admins/products', '/admins/stocks', '/admins/transactions', '/admins/overview', '/admins/edit-profile', '/admins/change-password', '/admins/sales'];
     const superAdmPath = [...warAdmPath, '/admins/admins', '/admins/warehouses', '/admins/users'];
     const nextUrl = req.nextUrl.pathname;
 
     if (!token) {
         if (pathname.startsWith('/admins') || pathname.startsWith('/user')) {
-            const redirectUrl = new URL('/auth', req.url);
-            redirectUrl.searchParams.set('redirectTo', nextUrl);
-            return NextResponse.redirect(redirectUrl);
+            return NextResponse.redirect(new URL(`/auth?redirect=${nextUrl}`, req.url));
         }
         return NextResponse.next();
     } else {
@@ -62,12 +60,13 @@ export function middleware(req: NextRequest) {
                     return NextResponse.redirect(new URL('/auth', req.url));
                 } else if (pathname === '/') {
                     return NextResponse.next();
-                } else if (pathname.startsWith('/catalog')) {
-                    if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
-                        return NextResponse.redirect(new URL('/admins/overview', req.url));
-                    }
-                    return NextResponse.next();
-                }
+                } 
+                // else if (pathname.startsWith('/catalog')) {
+                //     if (decoded.role === 'warAdm' || decoded.role === 'superAdm') {
+                //         return NextResponse.redirect(new URL('/admins/overview', req.url));
+                //     }
+                //     return NextResponse.next();
+                // }
 
                 // Default fallback to nextUrl
                 return NextResponse.redirect(new URL(nextUrl, req.url));

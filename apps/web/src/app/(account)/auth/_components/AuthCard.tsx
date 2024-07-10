@@ -10,7 +10,7 @@ import * as z from 'zod'
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { postRequest } from "@/lib/fetchRequests"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { useEffect, useState } from "react"
@@ -23,6 +23,7 @@ export function AuthCard() {
     const router = useRouter();
     const { googleSSO, SSOUserData } = useAuth();
     const [ isLoading, setIsLoading ] = useState(false);
+    const params = useSearchParams()
 
     async function registerUserFromProvider() {
         const { user } = SSOUserData;
@@ -37,8 +38,15 @@ export function AuthCard() {
             if (res.status == 200 || res.status == 201) {
                 Cookies.set('role', 'user', { expires: 1 })
                 Cookies.set('token', data.data.token, { expires: 1 })
-                toast.success(`Hello ${user.displayName}`, { description: 'Welcome to WearDrobe!' })
-                setTimeout(() => { router.push('/') }, 2000);
+                const nextUrl = params.get('redirect')
+                if (nextUrl) {
+                    toast.success(`Hello, ${userData.username}`, { description: 'Welcome to WearDrobe!' })
+                    setTimeout(() => { router.push(nextUrl) }, 2000);
+                } else {
+                    toast.success(`Hello, ${userData.username}`, { description: 'Welcome to WearDrobe!' })
+                    setTimeout(() => { router.push('/') }, 2000);
+                }
+
             } else if (res.status == 409) {
                 toast.error("Username has been taken")
                 formDialog?.classList.add('flex')
@@ -116,8 +124,14 @@ export function AuthCard() {
                 const account = data.data.user || data.data.admin;
                 Cookies.set('role', data.data.role, { expires: 1 })
                 Cookies.set('token', data.data.token, { expires: 1 })
-                toast.success(`Welcome, ${account.role ? account.fullName : account.username }`, { description: `redirecting you to ${account.role ? 'dashboard' : 'homepage'}..` })
-                setTimeout(() => { router.push(account.role ? '/admins/overview' : '/' ) }, 2000);
+                const nextUrl = params.get('redirect')
+                if (nextUrl) {
+                    toast.success(`Welcome, ${account.role ? account.fullName : account.username }`, { description: `redirecting you to ${account.role ? 'dashboard' : 'previous page'}..` })
+                    setTimeout(() => { router.push(nextUrl) }, 2000);
+                } else {
+                    toast.success(`Welcome, ${account.role ? account.fullName : account.username }`, { description: `redirecting you to ${account.role ? 'dashboard' : 'homepage'}..` })
+                    setTimeout(() => { router.push(account.role ? '/admins/overview' : '/' ) }, 2000);
+                }
             } else if (res.status == 401) {
                 toast.error("Password incorrect")
             } else if (res.status == 404) {

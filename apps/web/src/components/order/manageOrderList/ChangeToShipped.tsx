@@ -23,7 +23,7 @@ export default function ChangeToShipped({ orderId, setOrderList, currentPage, da
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button className='rounded-full w-full px-4' variant={'default'} size={"sm"}>Shipped</Button>
+                <Button className='rounded-full w-full px-4' variant={'default'} size={"sm"}>Ship</Button>
             </AlertDialogTrigger>
             <AlertDialogContent className="w-96">
                 <AlertDialogHeader>

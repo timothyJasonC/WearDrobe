@@ -1,4 +1,3 @@
-'use client'
 import * as React from "react"
 import {
   Carousel,
@@ -13,75 +12,31 @@ import { formatToIDR } from "@/lib/utils";
 import Image from "next/image";
 import { IProduct } from "@/constants";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
-export default function BestSeller({ all, headerText, totalCol, data }: { all: boolean, headerText: string, totalCol?: string, data: IProduct[]|[] }) {
-
-    // const dummyData = [
-    //     {
-    //         title: 'Item 1',
-    //         img: 'https://images.unsplash.com/photo-1523199455310-87b16c0eed11?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //         tag: 'Men',
-    //         price: 10000
-    //     },
-    //     {
-    //         title: 'Item 2',
-    //         img: 'https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //         tag: 'Men',
-    //         price: 10000
-    //     },
-    //     {
-    //         title: 'Item 3',
-    //         img: 'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //         tag: 'Men',
-    //         price: 10000
-    //     },
-    //     {
-    //         title: 'Item 4',
-    //         img: 'https://images.unsplash.com/photo-1555836721-6fec17bd948a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //         tag: 'Men',
-    //         price: 10000
-    //     },
-    //     {
-    //         title: 'Item 5',
-    //         img: 'https://images.unsplash.com/photo-1584093091778-e7f4e76e8063?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    //         tag: 'Men',
-    //         price: 10000
-    //     },
-    // ]
+export default function BestSeller({ all, headerText, totalCol, data }: { all: boolean, headerText: string, totalCol?: "sm:basis-1/2" | "sm:basis-1/3", data: IProduct[]|[] }) {
 
     const router = useRouter();
 
-    const dummyBadgeData = [
-        'Tops', 'Bottoms', 'Accessories'
-    ]
-
     return (
         <div className="flex flex-col items-center sm:items-start">
-            <div className="lg:py-4 sm:px-0 duration-200 mb-6">
+            <div className="lg:py-4 sm:px-0 duration-200 flex items-center justify-between w-full">
                 <h2 className="mb-2 text-lg font-bold text-center sm:text-start">{ headerText }</h2>
-                { all && 
-                <div className="flex lg:gap-4 overflow-scroll flex-wrap gap-2 justify-center">
-                    {
-                        dummyBadgeData.map((badge, idx) => {
-                            return <Badge key={idx} variant="outline" className="px-7 py-2 font-normal text-sm text-black/80 hover:cursor-pointer">{ badge }</Badge>
-                        })
-                    }
-                </div>
-                }
+                <span className="text-black/40 text-sm md:hidden max-sm:hidden">scroll right</span>
             </div>
 
             <Carousel opts={{ align: "start", }} className="max-w-72 sm:max-w-[40rem] lg:max-w-[50rem] xl:max-w-[65rem] ">
                 <CarouselContent className="">
                     {
-                        data &&
+                        data.length > 0 ?
                         data.map((item, idx) => {
                             return <CarouselItem onClick={() => router.push(`products/${item.slug}`) } key={idx} className={` ${ totalCol ? totalCol: 'sm:basis-1/2 lg:basis-1/3' } flex flex-col items-stretch`}>
                                 <div className="cursor-pointer relative w-full">
                                     <Image
                                         priority
                                         width={350} height={100}
-                                        className="rounded-lg w-full" src={item.thumbnailURL} alt="" 
+                                        className={`rounded-lg object-cover h-[300px]`} src={item.thumbnailURL} alt="" 
                                     />
                                 </div>
                                 <div className="flex justify-between items-center">
@@ -94,9 +49,15 @@ export default function BestSeller({ all, headerText, totalCol, data }: { all: b
                                 </div>
                             </CarouselItem>
                         })
+                        :
+                        <div className="flex gap-4">
+                            <Skeleton className="h-[400px] w-[400px] rounded-xl" />
+                            <Skeleton className="h-[400px] w-[400px] rounded-xl" />
+                            <Skeleton className="h-[400px] w-[400px] rounded-xl" />
+                        </div>
                     }
                 </CarouselContent>
-                <div className="hidden md:block max-sm:block max-[425px]:hidden">
+                <div className="hidden md:block max-sm:block">
                     <CarouselNext />
                     <CarouselPrevious />
                 </div>

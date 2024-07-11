@@ -43,8 +43,8 @@ export function HeaderDropdown({ userLogged, router, menCategories, womenCategor
                             {
                                 womenCategories && womenCategories.length > 0 ?
                                 shuffleArray(womenCategories).map((item: ICategory) => (
-                                    <Link href={`/catalogs?g=women&t=${item.type}&c=${item.slug}`}>
-                                        <DropdownMenuItem key={item.id}>
+                                    <Link key={item.id} href={`/catalogs?g=women&t=${item.type}&c=${item.slug}`}>
+                                        <DropdownMenuItem >
                                             { item.category }
                                         </DropdownMenuItem>
                                     </Link>
@@ -66,8 +66,8 @@ export function HeaderDropdown({ userLogged, router, menCategories, womenCategor
                             {
                                 menCategories && menCategories.length > 0 ?
                                 shuffleArray(menCategories).map((item: ICategory) => (
-                                    <Link href={`/catalogs?g=men&t=${item.type}&c=${item.slug}`}>
-                                        <DropdownMenuItem key={item.id}>
+                                    <Link key={item.id} href={`/catalogs?g=men&t=${item.type}&c=${item.slug}`}>
+                                        <DropdownMenuItem >
                                             { item.category }
                                         </DropdownMenuItem>
                                     </Link>

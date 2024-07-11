@@ -97,11 +97,11 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
         if (cities) {
             if (id) getEditingCity();
             const selected = cities.filter(city => city.city_name == currentCity)[0]
-            if (currentSubDistrict?.text_id) {
-                setSelectedCity(bandungSubDistricts.includes(currentSubDistrict.text_id) ? '23' : selected?.city_id);
+            if (currentSubDistrict?.text) {
+                setSelectedCity(bandungSubDistricts.includes(currentSubDistrict.text) ? '23' : selected?.city_id);
             } else setSelectedCity(selected?.city_id);
                         
-            const newAddress = currentAddress || currentRoad?.text_id || currentNeighbor?.text_id || currentWard?.text_id || currentSubDistrict?.text_id || "";
+            const newAddress = currentAddress || currentRoad?.text || currentNeighbor?.text || currentWard?.text || currentSubDistrict?.text || "";
             setDefaultAddress(newAddress)
             setAddress(newAddress);
             setCurrentProvince('')

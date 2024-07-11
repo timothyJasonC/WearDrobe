@@ -644,7 +644,7 @@ export class ProductController {
                         slug: c 
                         ? String(c)
                         : {not: undefined},
-                        type: t 
+                        type: t
                         ? String(t).toUpperCase() as ProductTypes
                         : {not: undefined},
                         gender: g

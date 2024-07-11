@@ -4,16 +4,17 @@ import {
     DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator,
     DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiMapPinSimple, PiPassword, PiReceipt, PiShoppingCartSimple, PiSignIn, PiSignOut, PiUser } from "react-icons/pi"
+import { PiFireSimple, PiGenderFemale, PiGenderMale, PiHeart, PiList, PiMagnifyingGlass, PiMapPinSimple, PiPassword, PiReceipt, PiShoppingCartSimple, PiSignIn, PiSignOut, PiStackSimple, PiUser } from "react-icons/pi"
 import { Input } from "../../../components/ui/input"
 import Cart from "@/components/cart/Cart"
-import { handleLogout } from "@/lib/utils"
+import { handleLogout, shuffleArray } from "@/lib/utils"
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Search } from "../../../components/search";
+import { ICategory, IProduct } from "@/constants"
   
-export function HeaderDropdown({ userLogged, router }: { userLogged: boolean, router: AppRouterInstance }) {
+export function HeaderDropdown({ userLogged, router, menCategories, womenCategories }: { userLogged: boolean, router: AppRouterInstance, menCategories: ICategory[] | [], womenCategories: ICategory[] | [] }) {
     
     return (
         <DropdownMenu>
@@ -22,25 +23,58 @@ export function HeaderDropdown({ userLogged, router }: { userLogged: boolean, ro
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 md:hidden">
                 <Search />
-                <DropdownMenuItem className="flex items-center justify-between">
-                    <div className="flex gap-2">
-                        <PiFireSimple size={'16px'} />
-                        <span>New Arrival</span>
-                    </div>
-                    <Badge className="bg-red-400 font-light">Hot</Badge>
-                </DropdownMenuItem>
-                <Link href={`catalogs?g=Women`}>
-                    <DropdownMenuItem className="flex gap-2">
-                        <PiGenderFemale size={'16px'} />
-                        <span>Women</span>
+                <Link href={`catalogs`}>
+                    <DropdownMenuItem className="flex items-center justify-between">
+                        <div className="flex gap-2">
+                            <PiStackSimple size={`1rem`} />
+                            <span>Catalog</span>
+                        </div>
+                        <Badge className="bg-red-400 font-light">Hot</Badge>
                     </DropdownMenuItem>
                 </Link>
-                <Link href={`catalogs?g=Men`}>
-                    <DropdownMenuItem className="flex gap-2">
+
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <PiGenderMale size={'16px'} />
+                        <span>Women</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            {
+                                womenCategories && womenCategories.length > 0 ?
+                                shuffleArray(womenCategories).map((item: ICategory) => (
+                                        <DropdownMenuItem>
+                                            { item.category }
+                                        </DropdownMenuItem>
+                                ))
+                                :
+                                <></>
+                            }
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
                         <PiGenderMale size={'16px'} />
                         <span>Men</span>
-                    </DropdownMenuItem>
-                </Link>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                            {
+                                menCategories && menCategories.length > 0 ?
+                                shuffleArray(menCategories).map((item: ICategory) => (
+                                        <DropdownMenuItem>
+                                            { item.category }
+                                        </DropdownMenuItem>
+                                ))
+                                :
+                                <></>
+                            }
+                        </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuSub>
+
                 <DropdownMenuSeparator />
                 {
                     userLogged &&

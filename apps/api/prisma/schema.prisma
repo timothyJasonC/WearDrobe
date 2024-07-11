@@ -83,6 +83,13 @@ model User {
     orders        Order[]
 }
 
+model WishList {
+    id        String   @id @default(uuid())
+    productId String
+    userId    String
+    createdAt DateTime @default(now())
+}
+
 model AddressList {
     id           String  @id @default(uuid())
     address      String

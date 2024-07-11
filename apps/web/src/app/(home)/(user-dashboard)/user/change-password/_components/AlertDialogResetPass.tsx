@@ -2,19 +2,17 @@
 import React, { useState } from 'react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { postRequest } from '@/lib/fetchRequests';
-import { getUserClientSide } from '@/lib/utils';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { toast } from "sonner"
 
-export default function AlertDialogResetPass({ confirmText, cancelText }: { confirmText: string, cancelText: string }) {
+export default function AlertDialogResetPass({ confirmText, cancelText, email }: { confirmText: string, cancelText: string, email: string }) {
     const [ openDialog, setOpenDialog ] = useState(false)
     const [ isLoading, setIsLoading ] = useState(false)
 
     async function handleResetPasswordRequest() {
         setIsLoading(true)
-        const user = await getUserClientSide();
         try {
-            const res = await postRequest({ email: user.email }, 'account/request-reset-pass')
+            const res = await postRequest({ email: email }, 'account/request-reset-pass')
             if (res) setIsLoading(false)
             if (res.status == 202) {
                 toast.warning("We've already sent you an email before", { description: 'please check your email or spam' })

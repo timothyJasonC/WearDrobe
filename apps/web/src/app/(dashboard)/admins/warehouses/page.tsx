@@ -3,13 +3,13 @@ import DashboardWrapper from "../_components/DashboardWrapper"
 import { DialogWarehouse } from "./_components/DialogWarehouse"
 import { ExpTable } from "../_components/ExpTable"
 import { getRequest } from "@/lib/fetchRequests"
-import columns from "./_components/columns"
+import columns, { IWarehouse } from "./_components/columns"
 import { StatisticsCard } from "../../_components/statisticsCard"
 import DashboardHeaderPhoto from "../_components/DashboardHeaderPhoto"
 
 export default async function Page() {
 
-    let warehouses = []
+    let warehouses: IWarehouse[] | [] = []
     try {
         const res =  await (await getRequest('warehouses/all/')).json()
         warehouses = res.data;
@@ -26,13 +26,8 @@ export default async function Page() {
                 </div>
                 <div className="max-lg:hidden"><DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} /></div>
             </div>
-            {
-                warehouses?.length > 0 ?
-                    <ExpTable warehouses={warehouses} accounts={warehouses} columns={columns} optionalComp={<div className="lg:hidden"><DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} /></div>
-                    } />
-                    :
-                    <div>Warehouse not found</div>
-            }
+            <ExpTable warehouses={warehouses} accounts={warehouses} columns={columns} optionalComp={<div className="lg:hidden"><DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} /></div>
+            } />
         </DashboardWrapper>
     )
 };

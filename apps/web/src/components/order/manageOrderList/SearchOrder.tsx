@@ -38,14 +38,17 @@ export default function SearchOrder({ placeholder = 'Search title...', data, dat
 
     return (
 
-        <div className='flex items-center justify-end gap-2' >
-            <label htmlFor="search"><PiMagnifyingGlass className='text-2xl' /></label>
-            <Input
-                type="text"
-                placeholder={placeholder}
-                defaultValue={data}
-                onChange={(e) => setQuery(e.target.value)}
-                className='max-w-60' />
+        <div className='flex items-center justify-start gap-4' >
+            <div className='relative flex items-center justify-end w-full md:w-64 lg:w-80'>
+                <Input
+                    type="text"
+                    placeholder={placeholder}
+                    defaultValue={data}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className='w-full' 
+                />
+                <label className='absolute right-2' htmlFor="search"><PiMagnifyingGlass size={`1.3rem`} /></label>
+            </div>
             <DatePickerWithRange date={date} setDate={setDate} />
         </div >
     )

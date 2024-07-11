@@ -26,7 +26,7 @@ export default async function Page() {
                 </div>
                 <div className="max-lg:hidden"><DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} /></div>
             </div>
-            <ExpTable warehouses={warehouses} accounts={warehouses} columns={columns} optionalComp={<div className="lg:hidden"><DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} /></div>
+            <ExpTable warehouses={warehouses ? warehouses : []} accounts={warehouses ? warehouses : []} columns={columns} optionalComp={<div className="lg:hidden"><DialogWarehouse btnText={"Create New Warehouse"} editWarehouse={false} /></div>
             } />
         </DashboardWrapper>
     )

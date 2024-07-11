@@ -38,7 +38,7 @@ export default async function Page() {
             <div className="w-72 mb-[6rem] z-[0] relative">
                 <StatisticsCard  title='Total User(s)' number={users && users?.length ? users?.length : 0}/>
             </div>
-            <ExpTable users={users} accounts={users} columns={columns} />
+            <ExpTable users={users ? users : []} accounts={users ? users : []} columns={columns} />
         </DashboardWrapper>
     )
 };

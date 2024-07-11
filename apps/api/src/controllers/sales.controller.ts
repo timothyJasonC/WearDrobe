@@ -41,7 +41,7 @@ export class SalesController {
                                 some: {
                                     order:{
                                         status: 'COMPLETED',
-                                        warehouseId: warehouse ? warehouse.id : { not: null },
+                                        warehouseId: warehouse ? warehouse.id : { not: undefined },
                                         createdAt: {
                                             gte: fromDate,
                                             lte: toDate
@@ -72,7 +72,7 @@ export class SalesController {
                         },
                         order: {
                             status: 'COMPLETED',
-                            warehouseId: warehouse ? warehouse.id : { not: null },
+                            warehouseId: warehouse ? warehouse.id : { not: undefined },
                             createdAt: {
                                 gte: fromDate,
                                 lte: toDate
@@ -87,9 +87,12 @@ export class SalesController {
                 };
             }));
 
+            console.log(SalesList);
+            
+
             const totalSales = await prisma.orderItem.aggregate({
                 where: {
-                    warehouseId: warehouse ? warehouse.id : { not: null },
+                    warehouseId: warehouse ? warehouse.id : { not: undefined },
                     productVariant: {
                         product: {
                             name: q 

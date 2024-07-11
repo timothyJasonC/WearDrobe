@@ -1,4 +1,4 @@
-import { addOrUpdateCartItem, deleteCart, deleteCartItem, getCartItem, getCartItemsByOrderId, getCartItemsWithTotal, getOrCreateCart, getStock, getStockByWarehouse, updateCartItem, updateToOrder } from "@/services/cart/cart.action";
+import { addOrUpdateCartItem, deleteCart, deleteCartItem, getCart, getCartItem, getCartItemsByOrderId, getCartItemsWithTotal, getOrCreateCart, getStock, getStockByWarehouse, updateCartItem, updateToOrder } from "@/services/cart/cart.action";
 import { cancelOrder, existingTransaction, failedOrder, getOrderByAdmin, getOrderById, getOrderByUser, getPaymentLink, getTotalOrderByAdmin, getTotalOrderByUser, getUserById, successOrder, updateCompletedOrder, updateShipped } from "@/services/order/order.action";
 import { Request, Response } from "express";
 import fs from "fs"
@@ -10,6 +10,17 @@ import { generateInvoicePdf } from "@/helpers/pdf";
 import { addStockWarehouse, createMutation, createMutationItem, createMutationTransaction, reduceStockWarehouse } from "@/services/stock/stock.action";
 
 export class OrderController {
+
+    async checkCart(req: Request, res: Response) {
+        const { c } = req.query
+        try {
+            if (typeof c !== "string") throw 'Invalid request'
+            const cart = await getCart(c)
+            res.json(cart)
+        } catch (err) {
+            res.json(err)
+        }
+    }
 
     async addToCart(req: Request, res: Response) {
         const { userId, variantId, quantity, color, size } = req.body

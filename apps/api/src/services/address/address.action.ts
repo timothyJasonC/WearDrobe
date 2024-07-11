@@ -106,9 +106,7 @@ export async function getAllWarehouseAddress() {
             }
         })
         for (const warehouse of warehouses) {
-            const address = warehouse.address
-
-            const coordinates = await getAddressCoordinates(address)
+            const coordinates = await getAddressCoordinates(`${warehouse.address}, ${warehouse.city_name}, ${warehouse.province}`)
             warehouseAddress[warehouse.warehouseName] = coordinates
         }
         return warehouseAddress

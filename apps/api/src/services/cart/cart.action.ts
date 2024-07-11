@@ -3,6 +3,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient()
 
+export async function getCart(cartId: string) {
+    let cart = await prisma.order.findFirst({
+        where: {id: cartId}
+    })
+    return cart
+}
 export async function getOrCreateCart(userId: string) {
     let cart = await prisma.order.findFirst({
         where: {

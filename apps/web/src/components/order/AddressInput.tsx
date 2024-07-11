@@ -174,7 +174,7 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
             </div>
             <div className="flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1">
                 <Label className='text-black'>Address</Label>
-                <Input className={`max-w-full ${ forWarehouse ? 'sm:max-w-96 md:max-w-[35rem] lg:max-w-96' : 'sm:max-w-80' } duration-200`} value={defaultAddress || address} onChange={(e) => setAddress(e.target.value)} placeholder="Address" disabled={!selectedCity} />
+                <Input className={`max-w-full ${ forWarehouse ? 'sm:max-w-96 md:max-w-[35rem] lg:max-w-96' : 'sm:max-w-80' } duration-200`} defaultValue={defaultAddress || address} onChange={(e) => setAddress(e.target.value)} placeholder="Address" disabled={!selectedCity} />
             </div>
         </section>
     );

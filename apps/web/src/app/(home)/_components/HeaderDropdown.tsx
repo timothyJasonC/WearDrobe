@@ -23,7 +23,7 @@ export function HeaderDropdown({ userLogged, router, menCategories, womenCategor
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 md:hidden">
                 <Search />
-                <Link href={`catalogs`}>
+                <Link href={`/catalogs`}>
                     <DropdownMenuItem className="flex items-center justify-between">
                         <div className="flex gap-2">
                             <PiStackSimple size={`1rem`} />
@@ -34,7 +34,7 @@ export function HeaderDropdown({ userLogged, router, menCategories, womenCategor
                 </Link>
 
                 <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger className="flex items-center gap-2">
                         <PiGenderMale size={'16px'} />
                         <span>Women</span>
                     </DropdownMenuSubTrigger>
@@ -43,9 +43,11 @@ export function HeaderDropdown({ userLogged, router, menCategories, womenCategor
                             {
                                 womenCategories && womenCategories.length > 0 ?
                                 shuffleArray(womenCategories).map((item: ICategory) => (
-                                        <DropdownMenuItem>
+                                    <Link href={`/catalogs?g=women&t=${item.type}&c=${item.slug}`}>
+                                        <DropdownMenuItem key={item.id}>
                                             { item.category }
                                         </DropdownMenuItem>
+                                    </Link>
                                 ))
                                 :
                                 <></>
@@ -55,7 +57,7 @@ export function HeaderDropdown({ userLogged, router, menCategories, womenCategor
                 </DropdownMenuSub>
 
                 <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger className="flex items-center gap-2">
                         <PiGenderMale size={'16px'} />
                         <span>Men</span>
                     </DropdownMenuSubTrigger>
@@ -64,9 +66,11 @@ export function HeaderDropdown({ userLogged, router, menCategories, womenCategor
                             {
                                 menCategories && menCategories.length > 0 ?
                                 shuffleArray(menCategories).map((item: ICategory) => (
-                                        <DropdownMenuItem>
+                                    <Link href={`/catalogs?g=men&t=${item.type}&c=${item.slug}`}>
+                                        <DropdownMenuItem key={item.id}>
                                             { item.category }
                                         </DropdownMenuItem>
+                                    </Link>
                                 ))
                                 :
                                 <></>

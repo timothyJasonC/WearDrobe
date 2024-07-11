@@ -3,7 +3,7 @@
 import CartItem from "@/components/cart/CartItem";
 import SectionHeaders from "@/components/order/SectionHeaders";
 import { ShippingCost } from "@/constants";
-import { fetchShippingCost, checkoutOrder, checkStock, getOrderById } from "@/lib/cart";
+import { fetchShippingCost, checkoutOrder, checkStock, getOrderById, checkCart } from "@/lib/cart";
 import { formatToIDR, getUserClientSide } from "@/lib/utils";
 import { useCallback, useEffect, useState } from "react";
 import DropdownAddress from "@/components/order/DropdownAddress";
@@ -49,12 +49,19 @@ export default function Page({ params: { id } }: CheckoutProps) {
         setStockData(stock);
     }, [id]);
 
+    const getCart = useCallback(async () => {
+        const cart = await checkCart(id);
+        if (cart == null) {
+            setNotFound(true)
+        }
+    }, [id]);
+
     const fetchShipping = useCallback(async () => {
         try {
             const result = await fetchShippingCost(warehouseId!, userAddress!, shipping);
             setShippingService(result[0].costs);
         } catch (err) {
-            toast.error('can &apos; t get shipping cost ')
+            toast.error('cant get shipping cost')
         }
     }, [warehouseId, userAddress, shipping]);
 
@@ -71,14 +78,12 @@ export default function Page({ params: { id } }: CheckoutProps) {
         try {
             validate();
             getStock();
+            getCart()
             if (cart && cart.items !== undefined) {
                 setTotalAmount(cart.items.reduce((acc, item) => acc + item.price, 0));
-            } else {
-                setTotalAmount(0);
-                setNotFound(true)
             }
         } catch (err) {
-            router.push('/404');
+            setNotFound(true)
         }
         setIsLoading(false);
     }, [validate, getStock, cart, cart?.items, router]);
@@ -101,7 +106,9 @@ export default function Page({ params: { id } }: CheckoutProps) {
         if (result.message == "Some items are out of stock") {
             toast.error(result.message);
         }
-        router.push(result.redirect_url);
+        if (result.redirect_url) {
+            router.push(result.redirect_url);
+        }
     }
 
     if (isLoading) {
@@ -109,7 +116,7 @@ export default function Page({ params: { id } }: CheckoutProps) {
     }
 
     if (notFound) {
-        return <NotFound/>
+        return <NotFound />
     }
 
     return (

@@ -52,7 +52,7 @@ export const Search = () => {
             <Input 
                 type="text" 
                 placeholder="Search" 
-                className="group focus-visible:ring-white/0 w-56 focus-visible:border-black/80 duration-200"
+                className="group max-lg:w-full focus-visible:ring-white/0 w-56 focus-visible:border-black/80 duration-200"
                 onChange={(e) => {debounced(e.target.value); setSearch(e.target.value)}}
 				onFocus={() => setFocus(true)}
 				onBlur={() => setTimeout(() => {

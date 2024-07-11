@@ -25,7 +25,7 @@ export default async function Page() {
             />
             <div className="mb-[6rem] flex justify-between relative z-[1]">
                 <div className="w-72">
-                    <StatisticsCard  title='Total Admin(s)' number={admins && admins?.length ? admins?.length : 0}/>
+                <StatisticsCard title="Total Admin(s)" number={Array.isArray(admins) ? admins?.length : 0} />
                 </div>
             </div>
             <ExpTable admins={admins} accounts={admins} columns={columns} optionalComp={<DialogCreateAdmin />} />

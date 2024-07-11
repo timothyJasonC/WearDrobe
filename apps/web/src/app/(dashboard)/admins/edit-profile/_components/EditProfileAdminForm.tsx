@@ -12,49 +12,41 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
 import { toast } from "sonner"
 import { patchRequest } from "@/lib/fetchRequests"
+import { IAdmin } from "../../admins/_components/columns"
+import { Gender } from "@/app/(home)/(user-dashboard)/user/edit-profile/_components/EditProfileForm"
 
-export enum Gender { MALE = 'MALE', FEMALE = 'FEMALE' }
-
-export interface IUser {
-    id: string; accountActive: boolean | null;
-    username?: string | null | undefined; email: string; password?: string | null | undefined;
-    gender?: Gender | null | undefined; dob?: Date | null | undefined;
-    createdAt: Date; imgUrl?: string | null | undefined;
-}
-
-export default function EditProfileForm({ user } : { user: IUser | null }) {
+export default function EditProfileAdminForm({ admin } : { admin: IAdmin | null }) {
     const [ isLoading, setIsLoading ] = useState(false)
     const [ isDisabled, setIsDisabled ] = useState(true)
     const [ openDialog, setOpenDialog ] = useState(false)
     const [changedDataState, setChangedDataState] = useState<string[]>([]); 
 
-    const userProfileSchema = z.object({
-        username: z.string().trim().min(6, "username must at least contain 6 characters").max(20, "maximum 20 characters"),
+    const adminProfileSchema = z.object({
+        fullName: z.string().trim().min(6, "Full Name must at least contain 6 characters").max(20, "maximum 20 characters"),
         email: z.string().email(),
         dob: z.date({ required_error: "A date of birth is required." }).optional(),
         gender: z.enum([Gender.MALE, Gender.FEMALE], {required_error: "Gender is required"}).optional(),
     });
     
-    const userProfileForm = useForm<z.infer<typeof userProfileSchema>>({
-        resolver: zodResolver(userProfileSchema),
+    const adminProfileForm = useForm<z.infer<typeof adminProfileSchema>>({
+        resolver: zodResolver(adminProfileSchema),
         defaultValues: {
-            username: user?.username ?? '', 
-            email: user?.email ?? '', 
-            dob: user?.dob ? new Date(user?.dob) : new Date(), 
-            gender: user?.gender ?? (Gender.FEMALE || Gender.MALE)
+            fullName: admin?.fullName ?? '', 
+            email: admin?.email ?? '', 
+            dob: admin?.dob ? new Date(admin?.dob) : new Date(), 
+            gender: admin?.gender ?? (Gender.FEMALE || Gender.MALE)
         }
     });
 
-    async function handleUserProfile(values: z.infer<typeof userProfileSchema>) {
-        if (user) {
+    async function handleUserProfile(values: z.infer<typeof adminProfileSchema>) {
+        if (admin) {
             setIsLoading(true)
-            const currentData = { username: user.username, email: user.email, gender: user.gender, dob: user.dob }
-            const newData = { username: values.username, email: values.email, gender: values.gender, dob: values.dob instanceof Date ? values.dob.toISOString() : values.dob }
-            const keys: (keyof typeof currentData)[] = ["username", "email", "gender", "dob"]
-            type UserDataKeys = "username" | "email" | "dob" | "gender" | "prevEmail";
+            const currentData = { fullName: admin.fullName, email: admin.email, gender: admin.gender, dob: admin.dob }
+            const newData = { fullName: values.fullName, email: values.email, gender: values.gender, dob: values.dob instanceof Date ? values.dob.toISOString() : values.dob }
+            const keys: (keyof typeof currentData)[] = ["fullName", "email", "gender", "dob"]
+            type UserDataKeys = "fullName" | "email" | "dob" | "gender" | "prevEmail";
             const changedData: Partial<Record<UserDataKeys, any>> = {};
             changedData.prevEmail = currentData.email;
-
             keys.forEach(key => {
                 if (currentData[key] !== newData[key]) {
                     changedData[key] = newData[key];
@@ -62,9 +54,8 @@ export default function EditProfileForm({ user } : { user: IUser | null }) {
             });
     
             try {
-                if ((changedData.dob || changedData.username) || (changedData.gender || changedData.email)) {
-                    const res = await patchRequest(changedData, `user/personal/${user.id}`)
-                    if (res) setIsLoading(false)
+                if ((changedData.dob || changedData.fullName) || (changedData.gender || changedData.email)) {
+                    const res = await patchRequest(changedData, `admin/personal/${admin.id}`)
                     const data = await res.json()
                     if (res.ok) {
                         toast.success(data.message)
@@ -77,32 +68,32 @@ export default function EditProfileForm({ user } : { user: IUser | null }) {
                         toast.error(data.message)
                     }
                 } else {
-                    setIsLoading(false)
                     toast.warning("You haven't made any change")
                 }
             } catch (error) {
-                setIsLoading(false)
                 toast.warning("Something went wrong", { description: "server might be down" })
+            } finally {
+                setIsLoading(false)
             }
-        }
+        } 
     }
 
     return (
-        <div className="flex justify-between flex-col h-96 max-lg:h-full">
-            <Form {...userProfileForm} >
-                <form className="h-full flex flex-col lg:justify-between gap-10" onSubmit={userProfileForm.handleSubmit(handleUserProfile)}>
+        <div className="flex justify-between flex-col lg:p-4 min-w-full">
+            <Form {...adminProfileForm} >
+                <form className="h-full flex flex-col lg:justify-between gap-10" onSubmit={adminProfileForm.handleSubmit(handleUserProfile)}>
                     <div className="flex flex-col gap-4">
                         <FormField
-                            control={userProfileForm.control}
-                            name="username"
+                            control={adminProfileForm.control}
+                            name="fullName"
                             render={({ field }) => {
                                 return (
                                     <FormItem>
-                                        <div className="input-layout-user-profile">
+                                        <div className="input-layout-admin-profile">
                                             <FormLabel className="text-black">Username</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    className="input-width-user-profile"
+                                                    className="input-width-admin-profile"
                                                     style={{marginTop: '0'}}
                                                     placeholder="@example: batman666"
                                                     type="text"
@@ -116,20 +107,20 @@ export default function EditProfileForm({ user } : { user: IUser | null }) {
                             }}
                         />
                         <FormField
-                            control={userProfileForm.control}
+                            control={adminProfileForm.control}
                             name="email"
                             render={({ field }) => {
                                 return (
                                     <FormItem>
-                                        <div className="input-layout-user-profile">
+                                        <div className="input-layout-admin-profile">
                                             <FormLabel className="text-black">Email</FormLabel>
                                             <FormControl>
                                                 <Input 
-                                                    className="input-width-user-profile"
+                                                    className="input-width-admin-profile"
                                                     style={{marginTop: '0'}}
                                                     placeholder="@example: brucewayne@gmail.com"
                                                     type="email"
-                                                    disabled={user && !user.password ? true : false}
+                                                    disabled={admin && !admin.password ? true : false}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -140,16 +131,16 @@ export default function EditProfileForm({ user } : { user: IUser | null }) {
                             }}
                         />
                         <FormField
-                            control={userProfileForm.control}
+                            control={adminProfileForm.control}
                             name="gender"
                             render={({ field }) => {
                                 return (
                                     <FormItem>
-                                        <div className="input-layout-user-profile">
+                                        <div className="input-layout-admin-profile">
                                             <FormLabel className="text-black">Gender</FormLabel>
                                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
-                                                    <SelectTrigger className="input-width-user-profile" style={{marginTop: '0'}}>
+                                                    <SelectTrigger className="input-width-admin-profile" style={{marginTop: '0'}}>
                                                         <SelectValue placeholder="Select your gender" />
                                                     </SelectTrigger>
                                                 </FormControl>
@@ -167,14 +158,14 @@ export default function EditProfileForm({ user } : { user: IUser | null }) {
                             }}
                         />
                         <FormField
-                            control={userProfileForm.control}
+                            control={adminProfileForm.control}
                             name="dob"
                             render={({ field }) => {
                                 return (
                                     <FormItem className="flex flex-col">
-                                        <div className="input-layout-user-profile">
+                                        <div className="input-layout-admin-profile">
                                             <FormLabel className="text-black">Date of birth</FormLabel>
-                                            <DatePicker className="input-width-user-profile" field={field} />
+                                            <DatePicker className="input-width-admin-profile w-full" field={field} />
                                         </div>
                                         <FormMessage />
                                     </FormItem>
@@ -184,8 +175,10 @@ export default function EditProfileForm({ user } : { user: IUser | null }) {
                     </div>
 
                     <span className="text-black/60 text-xs">*Changing your email will be required you to re-verify your account</span>
-                    <LoadingButton type="submit" loading={isLoading} className="px-10 flex items-center gap-2 w-fit max-sm:w-full">Save Change<PiFloppyDiskBold size={`1rem`}/></LoadingButton>
-                
+                    <div className="flex justify-end">
+                        <LoadingButton type="submit" loading={isLoading} className="px-10 flex items-center gap-2 w-fit max-sm:w-full">Save Change<PiFloppyDiskBold size={`1rem`}/></LoadingButton>
+                    </div>
+                    
                 </form>
             </Form>
         </div>

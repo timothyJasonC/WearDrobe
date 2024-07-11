@@ -5,7 +5,7 @@ import UserMenu from './_components/UserMenu';
 import { Toaster } from 'sonner';
 
 export default async function Layout({children}: Readonly<{children: React.ReactNode}>) {
-    const user = await  getUserServerSide(cookies);
+    const user = await getUserServerSide(cookies);
 
     return (
         <div className='flex justify-center py-20'>

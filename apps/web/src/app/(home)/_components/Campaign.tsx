@@ -1,6 +1,7 @@
 import React from "react"
 import { Button } from "../../../components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 
 
 export default function Campaign() {
@@ -21,7 +22,9 @@ export default function Campaign() {
                     <p className="font-extralight lg:text-3xl text-2xl h-5 flex items-center"> We&apos;re Committed to a Healthier Environment</p>
                     <p className="font-light text-white/75 hidden sm:block">Read about our progress in our latest impact report.</p>
                 </div>
-                <Button className="px-8 bg-white text-black hover:text-white font-light">Learn more</Button>
+                <Link href={'/green-project'}>
+                    <Button className="px-8 bg-white text-black hover:text-white font-light">Learn more</Button>
+                </Link>
             </div>
             <div className="w-full h-full bg-black/40 absolute top-0 left-0"></div>
         </div>

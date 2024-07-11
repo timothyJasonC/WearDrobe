@@ -40,13 +40,23 @@ export class AccountController {
 
     async verifyUser(req: Request, res: Response) {
         try {
+            const { password } = req.body;
+            
             const accountID = req.body.account.id
             const user = await prisma.user.findFirst({ where: { id: accountID } })
-    
             if (user) {
-                await prisma.user.update({ where: { id: accountID }, data: { accountActive: true } })
-            } else { return serverResponse(res, 404, 'error', 'user not found') }
-            
+                if (user && user.password) {
+                    const isMatched = await compare(password, user?.password)
+                    if (isMatched) {
+                        await prisma.user.update({ where: { id: accountID }, data: { accountActive: true, email: req.body.account.newEmail } })
+                    } else {
+                        return serverResponse(res, 400, 'error', 'Password incorrect!')
+                    }
+                }
+            }
+    
+            if (!user) return serverResponse(res, 404, 'error', 'user not found') 
+
             serverResponse(res, 200, 'ok', 'Account has been verified!')
     
         } catch (error: any) {
@@ -56,12 +66,23 @@ export class AccountController {
 
     async verifyAdmin(req: Request, res: Response) {
         try {
+
+            const { password } = req.body;
+            
             const accountID = req.body.account.id
             const admin = await prisma.admin.findFirst({ where: { id: accountID } })
-            
             if (admin) {
-                await prisma.admin.update({ where: { id: accountID }, data: { accountActive: true } })
-            } else { return serverResponse(res, 404, 'error', 'user not found') }
+                if (admin && admin.password) {
+                    const isMatched = await compare(password, admin?.password)
+                    if (isMatched) {
+                        await prisma.admin.update({ where: { id: accountID }, data: { accountActive: true, email: req.body.account.newEmail } })
+                    } else {
+                        return serverResponse(res, 400, 'error', 'Password incorrect!')
+                    }
+                }
+            }
+    
+            if (!admin) return serverResponse(res, 404, 'error', 'admin not found') 
             
             serverResponse(res, 200, 'ok', 'Account has been verified!')
     
@@ -160,8 +181,8 @@ export class AccountController {
 
                 const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
                 let link: string = ''
-                if (user) link = `http://localhost:3000/forgot-password/user/${token}`;
-                if (admin) link = `http://localhost:3000/forgot-password/admin/${token}`;
+                if (user) link = `${process.env.PUBLIC_URL}forgot-password/user/${token}`;
+                if (admin) link = `${process.env.PUBLIC_URL}forgot-password/admin/${token}`;
 
                 const templatePath = path.join(__dirname, "../templates", "reRequestResetPassword.html")
                 const templateSource = fs.readFileSync(templatePath, 'utf-8')
@@ -201,8 +222,8 @@ export class AccountController {
 
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
             let link: string = ''
-            if (user) link = `http://localhost:3000/forgot-password/user/${token}`;
-            if (admin) link = `http://localhost:3000/forgot-password/admin/${token}`;
+            if (user) link = `${process.env.PUBLIC_URL}forgot-password/user/${token}`;
+            if (admin) link = `${process.env.PUBLIC_URL}forgot-password/admin/${token}`;
 
             let newRequest;
             let newRequestData = { id: uuid(), currentToken: token }
@@ -267,7 +288,7 @@ export class AccountController {
                     await prisma.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
                     await prisma.passwordRequest.update({ where: { accountId: user.id }, data: { currentToken: null } })
                 } else if (admin)  {
-                    await prisma.user.update({ where: { id: admin.id }, data: { password: hashedPassword } })
+                    await prisma.admin.update({ where: { id: admin.id }, data: { password: hashedPassword } })
                     await prisma.passwordRequest.update({ where: { accountId: admin.id }, data: { currentToken: null } })
                 } else return serverResponse(res, 404, 'error', 'Account not found')
                 serverResponse(res, 200, 'ok', 'Password has been updated!')
@@ -289,8 +310,8 @@ export class AccountController {
 
             const token = sign(payload, process.env.KEY_JWT!, { expiresIn: '1h' })
             let link: string = ''
-            if (user) link = `http://localhost:3000/reset-password/user/${token}`;
-            if (admin) link = `http://localhost:3000/reset-password/admin/${token}`;
+            if (user) link = `${process.env.PUBLIC_URL}reset-password/user/${token}`;
+            if (admin) link = `${process.env.PUBLIC_URL}reset-password/admin/${token}`;
 
             let newRequest;
             let newRequestData = { id: uuid(), currentToken: token }

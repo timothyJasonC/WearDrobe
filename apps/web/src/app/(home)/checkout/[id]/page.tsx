@@ -75,10 +75,10 @@ export default function Page({ params: { id } }: CheckoutProps) {
                 setTotalAmount(cart.items.reduce((acc, item) => acc + item.price, 0));
             } else {
                 setTotalAmount(0);
-                setNotFound(true)
             }
         } catch (err) {
             router.push('/404');
+            setNotFound(true)
         }
         setIsLoading(false);
     }, [validate, getStock, cart, cart?.items, router]);

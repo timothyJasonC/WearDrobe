@@ -44,8 +44,9 @@ export default function EditProfileAdminForm({ admin } : { admin: IAdmin | null 
             const currentData = { fullName: admin.fullName, email: admin.email, gender: admin.gender, dob: admin.dob }
             const newData = { fullName: values.fullName, email: values.email, gender: values.gender, dob: values.dob instanceof Date ? values.dob.toISOString() : values.dob }
             const keys: (keyof typeof currentData)[] = ["fullName", "email", "gender", "dob"]
-            type UserDataKeys = "fullName" | "email" | "dob" | "gender";
+            type UserDataKeys = "fullName" | "email" | "dob" | "gender" | "prevEmail";
             const changedData: Partial<Record<UserDataKeys, any>> = {};
+            changedData.prevEmail = currentData.email;
             keys.forEach(key => {
                 if (currentData[key] !== newData[key]) {
                     changedData[key] = newData[key];

@@ -174,7 +174,7 @@ export function Header() {
 
                     <NavigationMenuItem className="md:hidden">
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            <HeaderDropdown userLogged={userLogged} router={router} />
+                            <HeaderDropdown userLogged={userLogged} router={router} menCategories={menCategories} womenCategories={womenCategories} />
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 

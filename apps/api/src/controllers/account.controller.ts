@@ -66,12 +66,23 @@ export class AccountController {
 
     async verifyAdmin(req: Request, res: Response) {
         try {
+
+            const { password } = req.body;
+            
             const accountID = req.body.account.id
             const admin = await prisma.admin.findFirst({ where: { id: accountID } })
-            
             if (admin) {
-                await prisma.admin.update({ where: { id: accountID }, data: { accountActive: true } })
-            } else { return serverResponse(res, 404, 'error', 'user not found') }
+                if (admin && admin.password) {
+                    const isMatched = await compare(password, admin?.password)
+                    if (isMatched) {
+                        await prisma.admin.update({ where: { id: accountID }, data: { accountActive: true, email: req.body.account.newEmail } })
+                    } else {
+                        return serverResponse(res, 400, 'error', 'Password incorrect!')
+                    }
+                }
+            }
+    
+            if (!admin) return serverResponse(res, 404, 'error', 'admin not found') 
             
             serverResponse(res, 200, 'ok', 'Account has been verified!')
     
@@ -277,7 +288,7 @@ export class AccountController {
                     await prisma.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
                     await prisma.passwordRequest.update({ where: { accountId: user.id }, data: { currentToken: null } })
                 } else if (admin)  {
-                    await prisma.user.update({ where: { id: admin.id }, data: { password: hashedPassword } })
+                    await prisma.admin.update({ where: { id: admin.id }, data: { password: hashedPassword } })
                     await prisma.passwordRequest.update({ where: { accountId: admin.id }, data: { currentToken: null } })
                 } else return serverResponse(res, 404, 'error', 'Account not found')
                 serverResponse(res, 200, 'ok', 'Password has been updated!')

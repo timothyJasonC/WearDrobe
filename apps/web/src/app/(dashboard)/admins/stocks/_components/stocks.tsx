@@ -19,6 +19,7 @@ import { useDebouncedCallback } from 'use-debounce'
 import xlsx, { IContent, IJsonSheet } from "json-as-xlsx";
 import { downloadStockToExcel } from '@/lib/xlsx'
 import ExcelButton from '@/app/(dashboard)/_components/excelButton'
+import Image from 'next/image'
 
 const monthFirstDate = () => {
   const now = new Date();
@@ -90,16 +91,15 @@ export const Stocks = () => {
   
   return (
     <div>  
-      <div className='flex w-full mb-7 flex-col-reverse xl:flex-row'>
-        <div className='flex gap-5 md:gap-10 max-md:flex-wrap'>
-
+      <div className='flex w-full flex-col-reverse xl:flex-row relative p-4 sm:p-8 lg:px-10 lg:py-6'>
+        <div className='flex gap-5 md:gap-10 max-md:flex-wrap z-10'>
           <StatisticsCard 
             title='Total Inventories'
             number={inventory ? inventory : 0}
           />
         </div>
-        <div className='flex flex-col w-full items-end mb-7'>
-            <p className='text-xl'>Warehouse</p>
+        <div className='flex flex-col mb-7 w-full items-start lg:items-end z-10'>
+            {/* <p className='text-sm md:text-xl bg-white/80 mb-2 px-2  max-md:font-semibold'>Warehouse</p> */}
             <WarehouseDropdown 
               isSuper={isSuper}
               warehouseList={[...warehouseList]}
@@ -107,9 +107,18 @@ export const Stocks = () => {
               selectedWH={selectedWH}
             />
         </div>
+        <div className='absolute inset-0 overflow-x-hidden'>
+          <Image 
+          className={`w-full h-full object-cover object-center z-0`}
+          width={5184}
+          height={3456}
+          alt='productimage' 
+          src={'https://images.unsplash.com/photo-1586528116691-012ff3ac0fec?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}
+          />
+        </div> 
       </div>
 
-      <div>
+      <div className='p-4 sm:p-8 lg:px-10 lg:py-6'>
 
         <div className='flex items-center w-full gap-4 flex-wrap gap-y-5 justify-between'>
           <div className='flex gap-2 max-sm:justify-center max-sm:flex-wrap sm:flex-1 max-sm:w-full'>

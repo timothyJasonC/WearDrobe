@@ -20,12 +20,12 @@ export function WarehouseDropdown({ selectedWH, setSelectedWH, warehouseList, is
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="text-2xl md:text-4xl hover:bg-gray-100 rounded-none px-0 border-b-2 border-b-black">
-          <PiCaretCircleDownFill className="text-xl mr-2" /> 
+        <Button variant="ghost" className="text-sm md:text-4xl px-2 font-bold md:font-semibold bg-white/80 rounded-none border-b-2 border-b-black">
+          <PiCaretCircleDownFill className="text-sm md:text-xl mr-2" /> 
           {selectedWH}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" onCloseAutoFocus={(e) => e.preventDefault()}>
+      <DropdownMenuContent className="w-52 md:w-80" align="start" onCloseAutoFocus={(e) => e.preventDefault()}>
         <DropdownMenuLabel>Choose Warehouse</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
@@ -41,7 +41,7 @@ export function WarehouseDropdown({ selectedWH, setSelectedWH, warehouseList, is
         <DropdownMenuGroup>
           {warehouseList.map((item: IWarehouse) => {
             return (
-              <DropdownMenuItem key={item.id} onClick={() => setSelectedWH(item.warehouseName!)}>
+              <DropdownMenuItem key={item.id} onClick={() => setSelectedWH(item.warehouseName!)} className="hover:cursor-pointer">
                 <PiWarehouseDuotone className="mr-2 h-4 w-4" />
                 <span>{item.warehouseName}</span>
               </DropdownMenuItem>

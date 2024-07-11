@@ -98,7 +98,7 @@ interface IUserOrder extends ITableData {
     user?: {addresses: [{city_name: string}] }
 }
 
-export function ExpTable({ accounts, columns, optionalComp, users, admins, warehouses }: { accounts: ITableData[] , columns: any, optionalComp?:any, users?: IUser[], admins?: IAdmin[], warehouses?: IWarehouse[] }) {
+export function ExpTable({ accounts, columns, optionalComp, users, admins, warehouses }: { accounts: ITableData[] | [] , columns: any, optionalComp?:any, users?: IUser[] | [], admins?: IAdmin[] | [], warehouses?: IWarehouse[] | [] }) {
     const data = accounts
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])

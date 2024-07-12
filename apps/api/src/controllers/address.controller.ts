@@ -71,7 +71,7 @@ export class AddressController {
             const { address } = req.body
 
             const addressUser = await getAddressUserById(address)
-            const addressCoordinates = await getAddressCoordinates(addressUser?.address!)
+            const addressCoordinates = await getAddressCoordinates(`${addressUser?.address}, ${addressUser?.city_name}, ${addressUser?.province} `)
             const allWarehouseAddress = await getAllWarehouseAddress()
             const closestWarehouse = await findClosestWarehouse(addressCoordinates, allWarehouseAddress)
             if (closestWarehouse) {

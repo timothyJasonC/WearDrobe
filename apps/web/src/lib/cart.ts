@@ -11,6 +11,14 @@ export async function getCartItems(userId: string) {
     return result
 }
 
+export async function checkCart(cartId: string) {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/cart?c=${cartId}`, {
+        method: 'GET'
+    });
+    const result = await response.json()
+    return result
+}
+
 export async function addToCart(userId: string, variantId: string, color: string, size: string, quantity: number) {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}order/cart`, {
         method: 'POST',

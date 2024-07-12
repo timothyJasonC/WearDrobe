@@ -97,11 +97,11 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
         if (cities) {
             if (id) getEditingCity();
             const selected = cities.filter(city => city.city_name == currentCity)[0]
-            if (currentSubDistrict?.text_id) {
-                setSelectedCity(bandungSubDistricts.includes(currentSubDistrict.text_id) ? '23' : selected?.city_id);
+            if (currentSubDistrict?.text) {
+                setSelectedCity(bandungSubDistricts.includes(currentSubDistrict.text) ? '23' : selected?.city_id);
             } else setSelectedCity(selected?.city_id);
                         
-            const newAddress = currentAddress || currentRoad?.text_id || currentNeighbor?.text_id || currentWard?.text_id || currentSubDistrict?.text_id || "";
+            const newAddress = currentAddress || currentRoad?.text || currentNeighbor?.text || currentWard?.text || currentSubDistrict?.text || "";
             setDefaultAddress(newAddress)
             setAddress(newAddress);
             setCurrentProvince('')
@@ -174,7 +174,7 @@ export default function AddressInputs({ selectedProvince, setSelectedProvince, p
             </div>
             <div className="flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1">
                 <Label className='text-black'>Address</Label>
-                <Input className={`max-w-full ${ forWarehouse ? 'sm:max-w-96 md:max-w-[35rem] lg:max-w-96' : 'sm:max-w-80' } duration-200`} value={defaultAddress || address} onChange={(e) => setAddress(e.target.value)} placeholder="Address" disabled={!selectedCity} />
+                <Input className={`max-w-full ${ forWarehouse ? 'sm:max-w-96 md:max-w-[35rem] lg:max-w-96' : 'sm:max-w-80' } duration-200`} defaultValue={defaultAddress || address} onChange={(e) => setAddress(e.target.value)} placeholder="Address" disabled={!selectedCity} />
             </div>
         </section>
     );

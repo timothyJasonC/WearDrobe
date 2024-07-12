@@ -28,7 +28,7 @@ export default async function Page() {
                 <StatisticsCard title="Total Admin(s)" number={Array.isArray(admins) ? admins?.length : 0} />
                 </div>
             </div>
-            <ExpTable admins={admins} accounts={admins} columns={columns} optionalComp={<DialogCreateAdmin />} />
+            <ExpTable admins={admins ? admins : []} accounts={admins ? admins : []} columns={columns} optionalComp={<DialogCreateAdmin />} />
         </DashboardWrapper>
             
     )

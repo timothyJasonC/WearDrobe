@@ -83,19 +83,18 @@ export default function SalesDetail () {
   }, [selectedWH, page, date, size, variants])
   
   return (
-    <div>  
+    <div className='p-4 sm:p-8 lg:px-10 lg:py-6'>  
 
       <div className='flex w-full mb-7 items-center max-sm:flex-col gap-y-7'>
-        <div className='w-full flex items-center gap-0'>
+        <div className='w-full flex items-center gap-0 text-black/60 max-lg:hidden'>
           <Button variant={'ghost'} className='w-5 max-sm:h-5 sm:w-10 p-0'>
               <Link href={'/admins/sales/'} >
               <PiCaretCircleLeft className='text-xs sm:text-3xl'/>
               </Link>
           </Button>
-          <h1 className='text-xl xl:text-4xl font-medium'>Product Sales Details</h1>
+          <h1 className='text-xl xl:text-2xl font-medium'>Product Sales Details</h1>
         </div>
-        <div className='flex flex-col w-full items-end mb-7'>
-          <p className='text-xl'>Warehouse</p>
+        <div className='flex flex-col w-full items-start lg:items-end'>
           <WarehouseDropdown 
               selectedWH={selectedWH}
               setSelectedWH={setSelectedWH}

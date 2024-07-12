@@ -8,20 +8,21 @@ import type { MapController } from "@maptiler/geocoding-control/types";
 import { createMapLibreGlMapController } from "@maptiler/geocoding-control/maplibregl-controller";
 import maplibregl from "maplibre-gl";
 import { toast } from 'sonner';
+import { LanguageString } from '@maptiler/sdk'; 
 
 export default function Map({ setCurrentCity, setCurrentProvince, setLngLat, setCurrentSubDistrict, setCurrentAddress, setCurrentWard, setCurrentNeighbor, setCurrentRoad }: { setCurrentCity:React.Dispatch<React.SetStateAction<string>>, setCurrentProvince: React.Dispatch<React.SetStateAction<string>>, setCurrentSubDistrict:any, setCurrentNeighbor:any, setCurrentAddress:any, setCurrentWard: any, setCurrentRoad:any, setLngLat:any }) {
-    const [ backupCity, setBackupCity ] = useState('')
-    const [API_KEY] = useState('PsYxZBSXcseSSIr6soAI');
+    const [API_KEY] = useState('PMHbm8JtLTjhbqfZCtwb');
     const [mapController, setMapController] = useState<MapController>();
 
     useEffect(() => {
         maptilersdk.config.apiKey = API_KEY;
+        maptilersdk.config.primaryLanguage = maptilersdk.Language.INDONESIAN;
         const options : MapOptions = {
             container: document.getElementById("map") as HTMLElement,
             style: maptilersdk.MapStyle.STREETS,
             geolocate: maptilersdk.GeolocationType.POINT,
             fullscreenControl: 'bottom-right',
-            language: 'name:id',
+            language: 'name:id'
         }
         const map = new maptilersdk.Map(options);
         const marker = new maptilersdk.Marker({ color: '#ff0000' }).setLngLat([0, 0]).addTo(map);
@@ -50,27 +51,48 @@ export default function Map({ setCurrentCity, setCurrentProvince, setLngLat, set
         });
 
         map.on('click', async (e) => {
+            map.setLanguage(maptilersdk.Language.INDONESIAN);
             const { lng, lat } = e.lngLat;
             marker.setLngLat([lng, lat])
             const results = await maptilersdk.geocoding.reverse([lng, lat]);
             if (results.features) {
                 const countryId = results.features.filter(item => item.place_type_name[0] == 'country')[0].id
                 if (countryId == 'country.148') {
-                    const province = results.features.filter(item => item.place_type_name[0] == 'province')[0].text_id
+                    const province = results.features.filter(item => item.place_type_name[0] == 'province')[0].text
+
                     const provinceMapping: { [key: string]: string } = {
-                        'Daerah Istimewa Yogyakarta': 'DI Yogyakarta',
-                        'Daerah Khusus Ibukota Jakarta': 'DKI Jakarta',
-                        'Provinsi Bali': 'Bali',
-                        'Kepulauan Bangka-Belitung': 'Bangka Belitung',
+                        'Special Region of Yogyakarta': 'DI Yogyakarta',
+                        'Special Capital Region of Jakarta': 'DKI Jakarta',
+                        'Bali': 'Bali',
+                        'Bangka Belitung Islands': 'Bangka Belitung',
                         'Aceh': 'Nanggroe Aceh Darussalam (NAD)',
-                        'Nusa Tenggara Barat': 'Nusa Tenggara Barat (NTB)',
-                        'Nusa Tenggara Timur': 'Nusa Tenggara Timur (NTT)',
-                        'Sumatra Utara': 'Sumatera Utara',
-                        'Sumatra Selatan': 'Sumatera Selatan',
-                        'Sumatra Barat': 'Sumatera Barat',
-                        'Papua Selatan': 'Papua',
-                        'Papua Tengah': 'Papua',
-                        'Papua Pegunungan': 'Papua'
+                        'West Nusa Tenggara': 'Nusa Tenggara Barat (NTB)',
+                        'East Nusa Tenggara': 'Nusa Tenggara Timur (NTT)',
+                        'North Sumatra': 'Sumatera Utara',
+                        'South Sumatra': 'Sumatera Selatan',
+                        'West Sumatra': 'Sumatera Barat',
+                        'South Papua': 'Papua',
+                        'Central Papua': 'Papua',
+                        'Highlands Papua': 'Papua',
+                        'West Java': 'Jawa Barat',
+                        'Central Java': 'Jawa Tengah',
+                        'East Java': 'Jawa Timur',
+                        'Banten': 'Banten',
+                        'West Kalimantan': 'Kalimantan Barat',
+                        'Central Kalimantan': 'Kalimantan Tengah',
+                        'South Kalimantan': 'Kalimantan Selatan',
+                        'East Kalimantan': 'Kalimantan Timur',
+                        'North Kalimantan': 'Kalimantan Utara',
+                        'North Sulawesi': 'Sulawesi Utara',
+                        'Central Sulawesi': 'Sulawesi Tengah',
+                        'South Sulawesi': 'Sulawesi Selatan',
+                        'Southeast Sulawesi': 'Sulawesi Tenggara',
+                        'Gorontalo': 'Gorontalo',
+                        'West Sulawesi': 'Sulawesi Barat',
+                        'Maluku': 'Maluku',
+                        'North Maluku': 'Maluku Utara',
+                        'West Papua': 'Papua Barat',
+                        'Papua': 'Papua'
                     };
 
                     const city = results.features.filter(item => item.place_type_name[0] == 'regency')[0]
@@ -113,7 +135,7 @@ export default function Map({ setCurrentCity, setCurrentProvince, setLngLat, set
                         }
 
                         if (typeArr.includes('address')) {
-                            const address = results.features.filter(item => item.place_type_name[0] == 'address')[0].place_name_id;
+                            const address = results.features.filter(item => item.place_type_name[0] == 'address')[0].place_name_id || results.features.filter(item => item.place_type_name[0] == 'address')[0].place_name;
                             setCurrentAddress(address)
                         } else {
                             setCurrentAddress()
@@ -125,25 +147,33 @@ export default function Map({ setCurrentCity, setCurrentProvince, setLngLat, set
 
                     let parsed = ''
                     let parsedBackupCity = ''
-                    if (city && typeof city.text_id === 'string') {
-                        if (city.text_id.includes('Kabupaten')) {
-                            parsed = city.text_id.split('Kabupaten')[1].trim();
-                        } else if (city.text_id.includes('Kota')) {
-                            parsed = city.text_id.split('Kota')[1].trim();
+                    if (city && typeof city.text === 'string') {
+                        if (city.text.includes('Kabupaten')) {
+                            parsed = city.text.split('Kabupaten')[1].trim() || city.text.split('Kabupaten')[1].trim();
+                        } else if (city.text.includes('Kota')) {
+                            parsed = city.text.split('Kota')[1].trim() || city.text.split('Kota')[1].trim()
+                        } else if (city.text.includes('City')) {
+                            parsed = city.text.split('City of ')[1].trim()
                         }
                     } else if (typeArr.length > 0) {
-                        toast('typeArr must exist', { description: typeArr[0] });
+                        // toast('typeArr must be exist', { description: typeArr[0] });
                         const backup = results.features.filter(item => item.place_type_name[0] == typeArr[typeArr.length - 1])[0];
-                        if (backup && backup.text_id && typeof backup.text_id === 'string') {
-                            if (backup.text_id.includes('Kabupaten')) {
-                                parsedBackupCity = backup.text_id.split('Kabupaten')[1].trim();
-                            } else if (backup.text_id.includes('Kota')) {
-                                parsedBackupCity = backup.text_id.split('Kota')[1].trim();
+                        if (backup && backup.text && typeof backup.text == 'string') {
+                            if (backup.text.includes('Kabupaten')) {
+                                parsedBackupCity = backup.text.split('Kabupaten')[1].trim();
+                            } else if (backup.text.includes('Kota')) {
+                                parsedBackupCity = backup.text.split('Kota')[1].trim();
+                            } else if (backup.text.includes('City')) {
+                                parsedBackupCity = backup.text.split('City of ')[1].trim();
+                            } else if (backup.text.includes('Denpasar')) {
+                                parsedBackupCity = 'Denpasar'
                             } else {
-                                parsedBackupCity = backup.text_id;
+                                parsedBackupCity = backup.text;
                             }
-                            setBackupCity(backup.text_id);
                         }
+                        // setTimeout(() => {
+                        //     toast('Back up city', { description: parsedBackupCity })
+                        // }, 1000);
                     }
 
                     const cityMapping: { [key: string]: string } = {
@@ -152,7 +182,7 @@ export default function Map({ setCurrentCity, setCurrentProvince, setLngLat, set
                         "Labuhanbatu Utara": "Labuhan Batu Utara",
                     };
                     
-                    const newCity = cityMapping[city?.text_id] || parsed || city?.text_id || parsedBackupCity || backupCity || "";
+                    const newCity = cityMapping[city?.text] || parsed || city?.text || city?.text || parsedBackupCity || "";
                     setCurrentCity(newCity);
                     setCurrentProvince(provinceMapping[province] || province);
                     setLngLat([lng, lat])

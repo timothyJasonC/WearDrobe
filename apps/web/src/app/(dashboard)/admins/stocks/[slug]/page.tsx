@@ -81,17 +81,17 @@ export default function Page() {
     
     return (
       <div className="flex flex-col w-full min-h-screen">  
-        <div className='flex w-full sm:mb-7 items-center max-sm:flex-col gap-y-7'>
-            <div className='w-full flex items-center gap-0'>
+        <div className='flex mb-7 w-full items-center max-sm:flex-col gap-y-7'>
+            <div className='w-full flex items-center text-black/60 gap-0 max-lg:hidden'>
             <Button variant={'ghost'} className='w-5 max-sm:h-5 sm:w-10 p-0'>
                 <Link href={'/admins/stocks/'} >
                 <PiCaretCircleLeft className='text-xs sm:text-3xl'/>
                 </Link>
             </Button>
-            <h1 className='text-xl xl:text-4xl font-medium'>Product Stock Details</h1>
+            <h1 className='text-xl xl:text-2xl font-medium'>Product Stock Details</h1>
             </div>
-            <div className='flex flex-col w-full items-end mb-7'>
-                <p className='text-xl'>Warehouse</p>
+            <div className='flex flex-col w-full items-start lg:items-end'>
+                {/* <p className='text-xl'>Warehouse</p> */}
                 <WarehouseDropdown 
                     selectedWH={selectedWH}
                     setSelectedWH={setSelectedWH}

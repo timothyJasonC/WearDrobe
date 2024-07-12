@@ -16,6 +16,7 @@ import { SalesPopover } from '../../sales/_components/salesPopover'
 import { useDebouncedCallback } from 'use-debounce'
 import ExcelButton from '@/app/(dashboard)/_components/excelButton'
 import { downloadProductsToExcel } from '@/lib/xlsx'
+import Image from 'next/image'
 
 const monthFirstDate = () => {
   const now = new Date();
@@ -97,9 +98,8 @@ useEffect(() => {
   
   return (
     <div className=''>
-      
-      <div className='flex w-full mb-7 flex-col-reverse xl:flex-row'>
-        <div className='flex gap-5 max-md:flex-wrap'>
+      <div className='flex w-full flex-col-reverse xl:flex-row relative gap-x-5 p-4 sm:p-8 lg:px-10 lg:py-6'>
+        <div className='flex gap-5 max-md:flex-wrap z-10'>
           <StatisticsCard 
             title='Products'
             number={productQty ? productQty : 0}
@@ -111,8 +111,8 @@ useEffect(() => {
             modalElement={<ManageCategoryDialog isSuper={isSuper} setOpenC={setOpenC} openC={openC} />}
           />
         </div>
-        <div className='flex flex-col w-full items-end mb-7'>
-            <p className='text-xl'>Warehouse</p>
+        <div className='flex flex-col mb-7 w-full items-start lg:items-end z-10'>
+            {/* <p className='text-xs md:text-xl bg-white/80 mb-2 px-2'>Warehouse</p> */}
             <WarehouseDropdown 
                 selectedWH={selectedWH}
                 setSelectedWH={setSelectedWH}
@@ -120,29 +120,40 @@ useEffect(() => {
                 isSuper={isSuper}
             />
         </div>
+        <div className='absolute inset-0 overflow-x-hidden'>
+          <Image 
+          className={`w-full h-full object-cover object-center z-0`}
+          width={5472}
+          height={3648}
+          alt='productimage' 
+          src={'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}
+          />
+        </div>
       </div>
 
-      <div className='flex w-full items-center max-sm:gap-2 gap-4 flex-wrap gap-y-5 justify-between'>
-        <ExcelButton func={() => downloadProductsToExcel(productList, selectedWH)}/>
+      <div className='p-4 sm:p-8 lg:px-10 lg:py-6'>  
+        <div className='flex w-full items-center max-sm:gap-2 gap-4 flex-wrap gap-y-5 justify-between'>
+          <ExcelButton func={() => downloadProductsToExcel(productList, selectedWH)}/>
 
-        <div className='flex flex-1 gap-2 max-sm:justify-between justify-end items-center'>
-          <Input id='search' type="text" placeholder="Search products" className='w-full sm:max-w-60 min-w-44' onChange={(e) => debounced(e.target.value)}/>
-          <DatePickerWithRange date={date} setDate={setDate}/>
-          <SalesPopover gender={gender} type={type} category={category} setGender={setGender} setType={setType} setCategory={setCategory}/>
+          <div className='flex flex-1 gap-2 max-sm:justify-between justify-end items-center'>
+            <Input id='search' type="text" placeholder="Search products" className='w-full sm:max-w-60 min-w-44' onChange={(e) => debounced(e.target.value)}/>
+            <DatePickerWithRange date={date} setDate={setDate}/>
+            <SalesPopover gender={gender} type={type} category={category} setGender={setGender} setType={setType} setCategory={setCategory}/>
+          </div>
+
         </div>
 
+        <div className='w-full'>
+          <AdminProductDisplay 
+          page={page}
+          setPage={setPage}
+          productList={productList}
+          getData={() => getData()}
+          productQty={productQty}
+          isSuper={isSuper}
+          />
+        </div>   
       </div>
-
-      <div className='w-full'>
-        <AdminProductDisplay 
-        page={page}
-        setPage={setPage}
-        productList={productList}
-        getData={() => getData()}
-        productQty={productQty}
-        isSuper={isSuper}
-        />
-      </div>   
     </div>
   )
 }

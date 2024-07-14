@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '@/prisma';
 import { serverResponse } from '@/helpers/apiResponse';
-import { handleWarehouseDelete } from '@/services/stock/stock.action';
+import { handleNewWarehouseStock, handleWarehouseDelete } from '@/services/stock/stock.action';
 
 export class WarehouseController {
     async getWarehouseList(req: Request, res: Response) {
@@ -64,6 +64,8 @@ export class WarehouseController {
                     adminID: assignedAdmin ? assignedAdmin : null, 
                 }
             })
+
+            handleNewWarehouseStock(newWarehouse.id)
 
             serverResponse(res, 200, 'ok', 'Warehouse successfully created!')
         } catch (error: any) {
@@ -167,7 +169,6 @@ export class WarehouseController {
         try {
 
             const { selectedCity, address, warehouseName, assignedAdmin } = req.body
-            console.log(req.body)
             const city = await fetch(`https://api.rajaongkir.com/starter/city?id=${selectedCity}`, {
                 method: 'GET',
                 headers: { key: `${process.env.NEXT_PUBLIC_RAJA_ONGKIR_API_KEY}` }

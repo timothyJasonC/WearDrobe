@@ -219,7 +219,7 @@ export class OrderController {
                         warehouseLoc: warehouse?.coordinate,
                         shippingCost: shippingCost,
                         address: address?.coordinate,
-                        qrData: process.env.CLIENT_URL + `/order/${updateOrder?.id}`
+                        qrData: process.env.PUBLIC_URL + `/order/${updateOrder?.id}`
                     }
 
                     const html = compiledTemplate(inputData)

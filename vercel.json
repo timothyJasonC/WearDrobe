@@ -1,24 +1,15 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "apps/web/package.json",
-        "use": "@vercel/next"
-      },
-      {
-        "src": "apps/api/package.json",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/api/(.*)",
-        "dest": "/apps/api/dist/index.js"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "/apps/web/$1"
-      }
-    ]
-  }
-  
+  "buildCommand": "npm run build",
+  "outputDirectory": "apps/web/.next",
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
+}

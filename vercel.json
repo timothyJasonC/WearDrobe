@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "cd apps/api && npx prisma generate && cd ../.. && npm run build",
   "outputDirectory": "/.next",
   "framework": "nextjs",
   "rewrites": [

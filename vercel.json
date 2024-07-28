@@ -1,23 +1,15 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": "cd apps/api && npx prisma generate && cd ../.. && npm run build",
+  "outputDirectory": "apps/web/.next",
+  "framework": "nextjs",
+  "rewrites": [
     {
-      "src": "apps/api/src/index.ts",
-      "use": "@vercel/node"
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
     },
     {
-      "src": "apps/web/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/apps/api/src/index.ts"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/apps/web/.next/$1"
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
